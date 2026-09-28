@@ -1,5 +1,4 @@
-# Eseguibili — non vanno nel repository pubblico
-*.exe
+# Binari non necessari
 *.dll
 *.pdb
 
