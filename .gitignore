@@ -1,0 +1,12 @@
+# Eseguibili — non vanno nel repository pubblico
+*.exe
+*.dll
+*.pdb
+
+# File di log e output personali
+*.log
+genshinData_GOOD_*.json
+
+# Windows
+Thumbs.db
+desktop.ini
