@@ -143,6 +143,9 @@ namespace InventoryKamera
                 OutputPath_TextBox.Text = Directory.GetCurrentDirectory() + @"\GenshinData";
             }
 
+            darkModeToolStripMenuItem.Checked = Properties.Settings.Default.DarkMode;
+            ApplyTheme(Properties.Settings.Default.DarkMode);
+
             AutoCopy_CheckBox.Checked = Properties.Settings.Default.AutoCopyEnabled;
             bool autoCopyOn = AutoCopy_CheckBox.Checked;
             AutoCopyJsonLabel.Enabled = autoCopyOn;
@@ -506,6 +509,128 @@ namespace InventoryKamera
             AutoCopyLogPath_TextBox.Enabled = on;
             Properties.Settings.Default.AutoCopyEnabled = on;
             Properties.Settings.Default.Save();
+        }
+
+        private void darkModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool dark = darkModeToolStripMenuItem.Checked;
+            Properties.Settings.Default.DarkMode = dark;
+            Properties.Settings.Default.Save();
+            ApplyTheme(dark);
+        }
+
+        // ─── Genshin theme colours ────────────────────────────────────────────
+        private static readonly Color GenshinGold  = Color.FromArgb(200, 170, 110);
+        private static readonly Color GenshinNavy  = Color.FromArgb(27,  42,  85);
+        private static readonly Color GenshinDeepNavy = Color.FromArgb(10, 15, 28);
+
+        private void ApplyTheme(bool dark)
+        {
+            Color formBg   = dark ? Color.FromArgb(16, 22, 38)   : Color.FromArgb(245, 232, 208);
+            Color panelBg  = dark ? Color.FromArgb(24, 33, 58)   : Color.FromArgb(232, 218, 190);
+            Color btnBg    = dark ? GenshinGold  : GenshinNavy;
+            Color btnFg    = dark ? GenshinNavy  : GenshinGold;
+            Color labelFg  = dark ? Color.FromArgb(220, 200, 160) : GenshinNavy;
+            Color inputBg  = dark ? Color.FromArgb(28, 38, 65)   : Color.White;
+            Color inputFg  = dark ? Color.FromArgb(220, 200, 160) : GenshinNavy;
+
+            BackColor = formBg;
+
+            menuStrip1.BackColor = dark ? GenshinDeepNavy : GenshinNavy;
+            menuStrip1.ForeColor = GenshinGold;
+            menuStrip1.Renderer  = new ToolStripProfessionalRenderer(new GenshinMenuColors(dark));
+
+            ApplyToControls(Controls, formBg, panelBg, btnBg, btnFg, labelFg, inputBg, inputFg, dark);
+
+            // Main scan button — make it stand out
+            StartScan_Button.BackColor = dark ? GenshinGold : GenshinNavy;
+            StartScan_Button.ForeColor = dark ? GenshinNavy : GenshinGold;
+            StartScan_Button.FlatStyle = FlatStyle.Flat;
+            StartScan_Button.FlatAppearance.BorderColor = GenshinGold;
+            StartScan_Button.FlatAppearance.BorderSize  = 2;
+            StartScan_Button.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Bold);
+        }
+
+        private void ApplyToControls(Control.ControlCollection controls,
+            Color formBg, Color panelBg, Color btnBg, Color btnFg,
+            Color labelFg, Color inputBg, Color inputFg, bool dark)
+        {
+            foreach (Control c in controls)
+            {
+                switch (c)
+                {
+                    case Button btn when btn.Name != "StartScan_Button":
+                        btn.FlatStyle = FlatStyle.Flat;
+                        btn.BackColor = btnBg;
+                        btn.ForeColor = btnFg;
+                        btn.FlatAppearance.BorderColor = GenshinGold;
+                        break;
+
+                    case System.Windows.Forms.Label lbl when lbl.Name != "ProgramStatus_Label":
+                        lbl.BackColor = Color.Transparent;
+                        lbl.ForeColor = labelFg;
+                        break;
+
+                    case System.Windows.Forms.LinkLabel ll:
+                        ll.BackColor      = Color.Transparent;
+                        ll.ForeColor      = GenshinGold;
+                        ll.LinkColor      = GenshinGold;
+                        ll.ActiveLinkColor = Color.FromArgb(230, 200, 130);
+                        break;
+
+                    case TextBox tb:
+                        tb.BackColor = tb.Name == "ErrorLog_TextBox"
+                            ? (dark ? Color.FromArgb(28, 38, 65) : Color.White)
+                            : inputBg;
+                        if (tb.Name != "ErrorLog_TextBox")
+                            tb.ForeColor = inputFg;
+                        break;
+
+                    case CheckBox cb:
+                        cb.BackColor = Color.Transparent;
+                        cb.ForeColor = labelFg;
+                        break;
+
+                    case Panel panel:
+                        panel.BackColor = panelBg;
+                        break;
+
+                    case NumericUpDown nud:
+                        nud.BackColor = inputBg;
+                        nud.ForeColor = inputFg;
+                        break;
+
+                    case TrackBar tr:
+                        tr.BackColor = formBg;
+                        break;
+
+                    case PictureBox pb:
+                        pb.BackColor = Color.Transparent;
+                        break;
+                }
+
+                if (c.Controls.Count > 0)
+                    ApplyToControls(c.Controls, formBg, panelBg, btnBg, btnFg, labelFg, inputBg, inputFg, dark);
+            }
+        }
+
+        private class GenshinMenuColors : ProfessionalColorTable
+        {
+            private readonly bool _dark;
+            private static readonly Color Gold = Color.FromArgb(200, 170, 110);
+            public GenshinMenuColors(bool dark) { _dark = dark; }
+            private Color Bg => _dark ? Color.FromArgb(24, 33, 58) : Color.FromArgb(27, 42, 85);
+            public override Color MenuItemSelected           => _dark ? Color.FromArgb(44, 60, 100) : Color.FromArgb(45, 65, 120);
+            public override Color MenuItemBorder             => Gold;
+            public override Color MenuBorder                 => Gold;
+            public override Color ToolStripDropDownBackground => Bg;
+            public override Color ImageMarginGradientBegin   => Bg;
+            public override Color ImageMarginGradientMiddle  => Bg;
+            public override Color ImageMarginGradientEnd     => Bg;
+            public override Color MenuItemSelectedGradientBegin => _dark ? Color.FromArgb(44, 60, 100) : Color.FromArgb(45, 65, 120);
+            public override Color MenuItemSelectedGradientEnd   => _dark ? Color.FromArgb(44, 60, 100) : Color.FromArgb(45, 65, 120);
+            public override Color MenuItemPressedGradientBegin  => Color.FromArgb(200, 170, 110);
+            public override Color MenuItemPressedGradientEnd    => Color.FromArgb(200, 170, 110);
         }
 
         private static void CopyDirectory(string source, string dest)

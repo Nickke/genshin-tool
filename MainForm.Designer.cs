@@ -86,6 +86,7 @@
             this.DatabaseUpdateMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.updateExecutablesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.darkModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
@@ -668,7 +669,8 @@
             this.characterSlot1KeyToolStripMenuItem,
             this.DatabaseUpdateMenuItem,
             this.toolStripMenuItem1,
-            this.updateExecutablesToolStripMenuItem});
+            this.updateExecutablesToolStripMenuItem,
+            this.darkModeToolStripMenuItem});
             this.keysToolStripMenuItem.Name = "keysToolStripMenuItem";
             this.keysToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.keysToolStripMenuItem.Text = "Options";
@@ -753,7 +755,15 @@
             this.updateExecutablesToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.updateExecutablesToolStripMenuItem.Text = "Update Executables";
             this.updateExecutablesToolStripMenuItem.Click += new System.EventHandler(this.updateExecutablesToolStripMenuItem_Click);
-            // 
+            //
+            // darkModeToolStripMenuItem
+            //
+            this.darkModeToolStripMenuItem.CheckOnClick = true;
+            this.darkModeToolStripMenuItem.Name = "darkModeToolStripMenuItem";
+            this.darkModeToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.darkModeToolStripMenuItem.Text = "Dark Mode";
+            this.darkModeToolStripMenuItem.Click += new System.EventHandler(this.darkModeToolStripMenuItem_Click);
+            //
             // label2
             // 
             this.label2.AutoSize = true;
@@ -1390,6 +1400,7 @@
         private System.Windows.Forms.ToolTip equipArtifactsToolTip;
         private System.Windows.Forms.ToolTip screenshotsToolTip;
         private System.Windows.Forms.ToolStripMenuItem updateExecutablesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem darkModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem characterSlot1KeyToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox slot1StripTextBox;
     }
