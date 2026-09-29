@@ -138,12 +138,7 @@ namespace InventoryKamera
             UpdateKeyTextBoxes();
 
             Delay = ScannerDelay_TrackBar.Value;
-            SpeedToggle_CheckBox.Checked = Properties.Settings.Default.ScannerDelay == 2;
-            SpeedToggle_CheckBox.Text = SpeedToggle_CheckBox.Checked ? "Slow" : "Fast";
-            SpeedToggle_CheckBox.BackColor = SpeedToggle_CheckBox.Checked
-                ? System.Drawing.Color.FromArgb(0, 78, 140)
-                : System.Drawing.Color.FromArgb(0, 120, 212);
-            SpeedToggle_CheckBox.ForeColor = System.Drawing.Color.White;
+            SpeedToggle.Checked = Properties.Settings.Default.ScannerDelay == 2;
 
             ProgramStatus_Label.Text = "";
             if (string.IsNullOrWhiteSpace(OutputPath_TextBox.Text))
@@ -156,12 +151,17 @@ namespace InventoryKamera
 
             AutoCopy_CheckBox.Checked = Properties.Settings.Default.AutoCopyEnabled;
             bool autoCopyOn = AutoCopy_CheckBox.Checked;
-            AutoCopyJsonLabel.Enabled = autoCopyOn;
-            AutoCopyJsonSelect_Button.Enabled = autoCopyOn;
-            AutoCopyJsonPath_TextBox.Enabled = autoCopyOn;
-            AutoCopyLogLabel.Enabled = autoCopyOn;
-            AutoCopyLogSelect_Button.Enabled = autoCopyOn;
-            AutoCopyLogPath_TextBox.Enabled = autoCopyOn;
+            var activeColor   = System.Drawing.Color.FromArgb(0, 120, 212);
+            var inactiveColor = System.Drawing.Color.FromArgb(160, 160, 160);
+            var activeText    = System.Drawing.Color.White;
+            AutoCopyJsonLabel.Enabled            = autoCopyOn;
+            AutoCopyLogLabel.Enabled             = autoCopyOn;
+            AutoCopyJsonSelect_Button.BackColor  = autoCopyOn ? activeColor : inactiveColor;
+            AutoCopyJsonSelect_Button.ForeColor  = activeText;
+            AutoCopyLogSelect_Button.BackColor   = autoCopyOn ? activeColor : inactiveColor;
+            AutoCopyLogSelect_Button.ForeColor   = activeText;
+            AutoCopyJsonPath_TextBox.Enabled     = autoCopyOn;
+            AutoCopyLogPath_TextBox.Enabled      = autoCopyOn;
 
             // Check for game data updates in the background so the UI loads immediately.
             new Thread(StartupGameDataCheck) { IsBackground = true, Name = "StartupUpdateCheck" }.Start();
@@ -454,17 +454,12 @@ namespace InventoryKamera
 
         }
 
-        private void SpeedToggle_CheckBox_CheckedChanged(object sender, EventArgs e)
+        private void SpeedToggle_CheckedChanged(object sender, EventArgs e)
         {
-            int next = SpeedToggle_CheckBox.Checked ? 2 : 0;
+            int next = SpeedToggle.Checked ? 2 : 0;
             Properties.Settings.Default.ScannerDelay = next;
             Properties.Settings.Default.Save();
             Delay = next;
-            SpeedToggle_CheckBox.Text = SpeedToggle_CheckBox.Checked ? "Slow" : "Fast";
-            SpeedToggle_CheckBox.BackColor = SpeedToggle_CheckBox.Checked
-                ? System.Drawing.Color.FromArgb(0, 78, 140)   // dark blue = slow
-                : System.Drawing.Color.FromArgb(0, 120, 212);  // windows blue = fast
-            SpeedToggle_CheckBox.ForeColor = System.Drawing.Color.White;
         }
 
         private void Github_Label_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -522,12 +517,19 @@ namespace InventoryKamera
         private void AutoCopy_CheckBox_CheckedChanged(object sender, EventArgs e)
         {
             bool on = AutoCopy_CheckBox.Checked;
-            AutoCopyJsonLabel.Enabled = on;
-            AutoCopyJsonSelect_Button.Enabled = on;
-            AutoCopyJsonPath_TextBox.Enabled = on;
-            AutoCopyLogLabel.Enabled = on;
-            AutoCopyLogSelect_Button.Enabled = on;
-            AutoCopyLogPath_TextBox.Enabled = on;
+            var activeColor  = System.Drawing.Color.FromArgb(0, 120, 212);
+            var inactiveColor = System.Drawing.Color.FromArgb(160, 160, 160);
+            var activeText   = System.Drawing.Color.White;
+
+            AutoCopyJsonLabel.Enabled            = on;
+            AutoCopyLogLabel.Enabled             = on;
+            AutoCopyJsonSelect_Button.BackColor  = on ? activeColor : inactiveColor;
+            AutoCopyJsonSelect_Button.ForeColor  = activeText;
+            AutoCopyLogSelect_Button.BackColor   = on ? activeColor : inactiveColor;
+            AutoCopyLogSelect_Button.ForeColor   = activeText;
+            AutoCopyJsonPath_TextBox.Enabled     = on;
+            AutoCopyLogPath_TextBox.Enabled      = on;
+
             Properties.Settings.Default.AutoCopyEnabled = on;
             Properties.Settings.Default.Save();
         }
@@ -651,10 +653,6 @@ namespace InventoryKamera
                         tb.BackColor = inputBg;
                         if (tb.Name != "ErrorLog_TextBox")
                             tb.ForeColor = inputFg;
-                        break;
-
-                    case CheckBox cb when cb.Name == "SpeedToggle_CheckBox":
-                        // colours managed by SpeedToggle_CheckBox_CheckedChanged, skip
                         break;
 
                     case CheckBox cb:
