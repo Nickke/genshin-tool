@@ -118,8 +118,12 @@
             this.Weapons_CheckBox = new System.Windows.Forms.CheckBox();
             this.OutputPath_TextBox = new System.Windows.Forms.TextBox();
             this.AutoCopy_CheckBox = new System.Windows.Forms.CheckBox();
-            this.AutoCopySelect_Button = new System.Windows.Forms.Button();
-            this.AutoCopyPath_TextBox = new System.Windows.Forms.TextBox();
+            this.AutoCopyJsonLabel = new System.Windows.Forms.Label();
+            this.AutoCopyJsonSelect_Button = new System.Windows.Forms.Button();
+            this.AutoCopyJsonPath_TextBox = new System.Windows.Forms.TextBox();
+            this.AutoCopyLogLabel = new System.Windows.Forms.Label();
+            this.AutoCopyLogSelect_Button = new System.Windows.Forms.Button();
+            this.AutoCopyLogPath_TextBox = new System.Windows.Forms.TextBox();
             this.ScannerDelay_TrackBar = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.CharacterTalent3_PictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CharacterTalent2_PictureBox)).BeginInit();
@@ -1105,31 +1109,79 @@
             this.AutoCopy_CheckBox.UseVisualStyleBackColor = true;
             this.AutoCopy_CheckBox.CheckedChanged += new System.EventHandler(this.AutoCopy_CheckBox_CheckedChanged);
             //
-            // AutoCopySelect_Button
+            // AutoCopyJsonLabel
             //
-            this.AutoCopySelect_Button.Enabled = false;
-            this.AutoCopySelect_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AutoCopySelect_Button.Location = new System.Drawing.Point(153, 290);
-            this.AutoCopySelect_Button.Margin = new System.Windows.Forms.Padding(2);
-            this.AutoCopySelect_Button.Name = "AutoCopySelect_Button";
-            this.AutoCopySelect_Button.Size = new System.Drawing.Size(50, 19);
-            this.AutoCopySelect_Button.TabIndex = 81;
-            this.AutoCopySelect_Button.Text = "Select";
-            this.AutoCopySelect_Button.UseVisualStyleBackColor = true;
-            this.AutoCopySelect_Button.Click += new System.EventHandler(this.AutoCopySelect_Button_Click);
+            this.AutoCopyJsonLabel.AutoSize = true;
+            this.AutoCopyJsonLabel.Enabled = false;
+            this.AutoCopyJsonLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AutoCopyJsonLabel.Location = new System.Drawing.Point(153, 295);
+            this.AutoCopyJsonLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.AutoCopyJsonLabel.Name = "AutoCopyJsonLabel";
+            this.AutoCopyJsonLabel.TabIndex = 81;
+            this.AutoCopyJsonLabel.Text = "JSON:";
             //
-            // AutoCopyPath_TextBox
+            // AutoCopyJsonSelect_Button
             //
-            this.AutoCopyPath_TextBox.BackColor = System.Drawing.Color.White;
-            this.AutoCopyPath_TextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::InventoryKamera.Properties.Settings.Default, "AutoCopyPath", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.AutoCopyPath_TextBox.Enabled = false;
-            this.AutoCopyPath_TextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AutoCopyPath_TextBox.Location = new System.Drawing.Point(205, 290);
-            this.AutoCopyPath_TextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.AutoCopyPath_TextBox.Name = "AutoCopyPath_TextBox";
-            this.AutoCopyPath_TextBox.Size = new System.Drawing.Size(383, 18);
-            this.AutoCopyPath_TextBox.TabIndex = 82;
-            this.AutoCopyPath_TextBox.Text = global::InventoryKamera.Properties.Settings.Default.AutoCopyPath;
+            this.AutoCopyJsonSelect_Button.Enabled = false;
+            this.AutoCopyJsonSelect_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AutoCopyJsonSelect_Button.Location = new System.Drawing.Point(185, 291);
+            this.AutoCopyJsonSelect_Button.Margin = new System.Windows.Forms.Padding(2);
+            this.AutoCopyJsonSelect_Button.Name = "AutoCopyJsonSelect_Button";
+            this.AutoCopyJsonSelect_Button.Size = new System.Drawing.Size(48, 19);
+            this.AutoCopyJsonSelect_Button.TabIndex = 82;
+            this.AutoCopyJsonSelect_Button.Text = "Select";
+            this.AutoCopyJsonSelect_Button.UseVisualStyleBackColor = true;
+            this.AutoCopyJsonSelect_Button.Click += new System.EventHandler(this.AutoCopyJsonSelect_Button_Click);
+            //
+            // AutoCopyJsonPath_TextBox
+            //
+            this.AutoCopyJsonPath_TextBox.BackColor = System.Drawing.Color.White;
+            this.AutoCopyJsonPath_TextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::InventoryKamera.Properties.Settings.Default, "AutoCopyJsonPath", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.AutoCopyJsonPath_TextBox.Enabled = false;
+            this.AutoCopyJsonPath_TextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AutoCopyJsonPath_TextBox.Location = new System.Drawing.Point(235, 291);
+            this.AutoCopyJsonPath_TextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.AutoCopyJsonPath_TextBox.Name = "AutoCopyJsonPath_TextBox";
+            this.AutoCopyJsonPath_TextBox.Size = new System.Drawing.Size(353, 18);
+            this.AutoCopyJsonPath_TextBox.TabIndex = 83;
+            this.AutoCopyJsonPath_TextBox.Text = global::InventoryKamera.Properties.Settings.Default.AutoCopyJsonPath;
+            //
+            // AutoCopyLogLabel
+            //
+            this.AutoCopyLogLabel.AutoSize = true;
+            this.AutoCopyLogLabel.Enabled = false;
+            this.AutoCopyLogLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AutoCopyLogLabel.Location = new System.Drawing.Point(153, 315);
+            this.AutoCopyLogLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.AutoCopyLogLabel.Name = "AutoCopyLogLabel";
+            this.AutoCopyLogLabel.TabIndex = 84;
+            this.AutoCopyLogLabel.Text = "Log:";
+            //
+            // AutoCopyLogSelect_Button
+            //
+            this.AutoCopyLogSelect_Button.Enabled = false;
+            this.AutoCopyLogSelect_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AutoCopyLogSelect_Button.Location = new System.Drawing.Point(185, 311);
+            this.AutoCopyLogSelect_Button.Margin = new System.Windows.Forms.Padding(2);
+            this.AutoCopyLogSelect_Button.Name = "AutoCopyLogSelect_Button";
+            this.AutoCopyLogSelect_Button.Size = new System.Drawing.Size(48, 19);
+            this.AutoCopyLogSelect_Button.TabIndex = 85;
+            this.AutoCopyLogSelect_Button.Text = "Select";
+            this.AutoCopyLogSelect_Button.UseVisualStyleBackColor = true;
+            this.AutoCopyLogSelect_Button.Click += new System.EventHandler(this.AutoCopyLogSelect_Button_Click);
+            //
+            // AutoCopyLogPath_TextBox
+            //
+            this.AutoCopyLogPath_TextBox.BackColor = System.Drawing.Color.White;
+            this.AutoCopyLogPath_TextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::InventoryKamera.Properties.Settings.Default, "AutoCopyLogPath", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.AutoCopyLogPath_TextBox.Enabled = false;
+            this.AutoCopyLogPath_TextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AutoCopyLogPath_TextBox.Location = new System.Drawing.Point(235, 311);
+            this.AutoCopyLogPath_TextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.AutoCopyLogPath_TextBox.Name = "AutoCopyLogPath_TextBox";
+            this.AutoCopyLogPath_TextBox.Size = new System.Drawing.Size(353, 18);
+            this.AutoCopyLogPath_TextBox.TabIndex = 86;
+            this.AutoCopyLogPath_TextBox.Text = global::InventoryKamera.Properties.Settings.Default.AutoCopyLogPath;
             //
             // ScannerDelay_TrackBar
             // 
@@ -1148,7 +1200,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(234)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
-            this.ClientSize = new System.Drawing.Size(595, 587);
+            this.ClientSize = new System.Drawing.Size(595, 630);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.manekinaNameTextBox);
             this.Controls.Add(this.label5);
@@ -1178,8 +1230,12 @@
             this.Controls.Add(this.Language_Label);
             this.Controls.Add(this.OutputPath_TextBox);
             this.Controls.Add(this.AutoCopy_CheckBox);
-            this.Controls.Add(this.AutoCopySelect_Button);
-            this.Controls.Add(this.AutoCopyPath_TextBox);
+            this.Controls.Add(this.AutoCopyJsonLabel);
+            this.Controls.Add(this.AutoCopyJsonSelect_Button);
+            this.Controls.Add(this.AutoCopyJsonPath_TextBox);
+            this.Controls.Add(this.AutoCopyLogLabel);
+            this.Controls.Add(this.AutoCopyLogSelect_Button);
+            this.Controls.Add(this.AutoCopyLogPath_TextBox);
             this.Controls.Add(this.FileLocation_Label);
             this.Controls.Add(this.FileSelectButton);
             this.Controls.Add(this.SlowScannerDelay_Label);
@@ -1288,8 +1344,12 @@
         private System.Windows.Forms.Label FileLocation_Label;
         private System.Windows.Forms.TextBox OutputPath_TextBox;
         private System.Windows.Forms.CheckBox AutoCopy_CheckBox;
-        private System.Windows.Forms.Button AutoCopySelect_Button;
-        private System.Windows.Forms.TextBox AutoCopyPath_TextBox;
+        private System.Windows.Forms.Label AutoCopyJsonLabel;
+        private System.Windows.Forms.Button AutoCopyJsonSelect_Button;
+        private System.Windows.Forms.TextBox AutoCopyJsonPath_TextBox;
+        private System.Windows.Forms.Label AutoCopyLogLabel;
+        private System.Windows.Forms.Button AutoCopyLogSelect_Button;
+        private System.Windows.Forms.TextBox AutoCopyLogPath_TextBox;
         private System.Windows.Forms.Label Language_Label;
         private System.Windows.Forms.CheckBox CharDevItems_CheckBox;
 		private System.Windows.Forms.MenuStrip menuStrip1;

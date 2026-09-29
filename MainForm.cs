@@ -144,8 +144,13 @@ namespace InventoryKamera
             }
 
             AutoCopy_CheckBox.Checked = Properties.Settings.Default.AutoCopyEnabled;
-            AutoCopySelect_Button.Enabled = AutoCopy_CheckBox.Checked;
-            AutoCopyPath_TextBox.Enabled = AutoCopy_CheckBox.Checked;
+            bool autoCopyOn = AutoCopy_CheckBox.Checked;
+            AutoCopyJsonLabel.Enabled = autoCopyOn;
+            AutoCopyJsonSelect_Button.Enabled = autoCopyOn;
+            AutoCopyJsonPath_TextBox.Enabled = autoCopyOn;
+            AutoCopyLogLabel.Enabled = autoCopyOn;
+            AutoCopyLogSelect_Button.Enabled = autoCopyOn;
+            AutoCopyLogPath_TextBox.Enabled = autoCopyOn;
 
             // Check for game data updates in the background so the UI loads immediately.
             new Thread(StartupGameDataCheck) { IsBackground = true, Name = "StartupUpdateCheck" }.Start();
@@ -339,28 +344,33 @@ namespace InventoryKamera
                         good.WriteToJSON(OutputPath_TextBox.Text);
                         Logger.Info("Exported data");
 
-                        // Auto-copy JSON and logging folder to selected folder
-                        if (AutoCopy_CheckBox.Checked && !string.IsNullOrWhiteSpace(AutoCopyPath_TextBox.Text))
+                        // Auto-copy JSON and logging to their respective folders
+                        if (AutoCopy_CheckBox.Checked)
                         {
                             try
                             {
-                                string destPath = AutoCopyPath_TextBox.Text;
-                                Directory.CreateDirectory(destPath);
+                                if (!string.IsNullOrWhiteSpace(AutoCopyJsonPath_TextBox.Text))
+                                {
+                                    string jsonDest = AutoCopyJsonPath_TextBox.Text;
+                                    Directory.CreateDirectory(jsonDest);
+                                    var jsonFile = Directory.GetFiles(OutputPath_TextBox.Text, "genshinData_GOOD_*.json")
+                                                            .OrderByDescending(File.GetLastWriteTime)
+                                                            .FirstOrDefault();
+                                    if (jsonFile != null)
+                                        File.Copy(jsonFile, Path.Combine(jsonDest, Path.GetFileName(jsonFile)), overwrite: true);
+                                    Logger.Info("Auto-copied JSON to {0}", jsonDest);
+                                }
 
-                                var jsonFile = Directory.GetFiles(OutputPath_TextBox.Text, "genshinData_GOOD_*.json")
-                                                        .OrderByDescending(File.GetLastWriteTime)
-                                                        .FirstOrDefault();
-                                if (jsonFile != null)
-                                    File.Copy(jsonFile, Path.Combine(destPath, Path.GetFileName(jsonFile)), overwrite: true);
-
-                                string srcLog = Path.GetFullPath("./logging");
-                                string destLog = Path.Combine(destPath, "log");
-                                if (Directory.Exists(destLog))
-                                    Directory.Delete(destLog, recursive: true);
-                                if (Directory.Exists(srcLog))
-                                    CopyDirectory(srcLog, destLog);
-
-                                Logger.Info("Auto-copied to {0}", destPath);
+                                if (!string.IsNullOrWhiteSpace(AutoCopyLogPath_TextBox.Text))
+                                {
+                                    string logDest = AutoCopyLogPath_TextBox.Text;
+                                    if (Directory.Exists(logDest))
+                                        Directory.Delete(logDest, recursive: true);
+                                    string srcLog = Path.GetFullPath("./logging");
+                                    if (Directory.Exists(srcLog))
+                                        CopyDirectory(srcLog, logDest);
+                                    Logger.Info("Auto-copied log to {0}", logDest);
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -463,22 +473,38 @@ namespace InventoryKamera
             }
         }
 
-        private void AutoCopySelect_Button_Click(object sender, EventArgs e)
+        private void AutoCopyJsonSelect_Button_Click(object sender, EventArgs e)
         {
             CommonOpenFileDialog d = new CommonOpenFileDialog
             {
-                InitialDirectory = !Directory.Exists(AutoCopyPath_TextBox.Text) ? Directory.GetCurrentDirectory() : AutoCopyPath_TextBox.Text,
+                InitialDirectory = !Directory.Exists(AutoCopyJsonPath_TextBox.Text) ? Directory.GetCurrentDirectory() : AutoCopyJsonPath_TextBox.Text,
                 IsFolderPicker = true
             };
             if (d.ShowDialog() == CommonFileDialogResult.Ok)
-                AutoCopyPath_TextBox.Text = d.FileName;
+                AutoCopyJsonPath_TextBox.Text = d.FileName;
+        }
+
+        private void AutoCopyLogSelect_Button_Click(object sender, EventArgs e)
+        {
+            CommonOpenFileDialog d = new CommonOpenFileDialog
+            {
+                InitialDirectory = !Directory.Exists(AutoCopyLogPath_TextBox.Text) ? Directory.GetCurrentDirectory() : AutoCopyLogPath_TextBox.Text,
+                IsFolderPicker = true
+            };
+            if (d.ShowDialog() == CommonFileDialogResult.Ok)
+                AutoCopyLogPath_TextBox.Text = d.FileName;
         }
 
         private void AutoCopy_CheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            AutoCopySelect_Button.Enabled = AutoCopy_CheckBox.Checked;
-            AutoCopyPath_TextBox.Enabled = AutoCopy_CheckBox.Checked;
-            Properties.Settings.Default.AutoCopyEnabled = AutoCopy_CheckBox.Checked;
+            bool on = AutoCopy_CheckBox.Checked;
+            AutoCopyJsonLabel.Enabled = on;
+            AutoCopyJsonSelect_Button.Enabled = on;
+            AutoCopyJsonPath_TextBox.Enabled = on;
+            AutoCopyLogLabel.Enabled = on;
+            AutoCopyLogSelect_Button.Enabled = on;
+            AutoCopyLogPath_TextBox.Enabled = on;
+            Properties.Settings.Default.AutoCopyEnabled = on;
             Properties.Settings.Default.Save();
         }
 

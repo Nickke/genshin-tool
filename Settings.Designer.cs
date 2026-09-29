@@ -340,12 +340,24 @@ namespace InventoryKamera.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string AutoCopyPath {
+        public string AutoCopyJsonPath {
             get {
-                return ((string)(this["AutoCopyPath"]));
+                return ((string)(this["AutoCopyJsonPath"]));
             }
             set {
-                this["AutoCopyPath"] = value;
+                this["AutoCopyJsonPath"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AutoCopyLogPath {
+            get {
+                return ((string)(this["AutoCopyLogPath"]));
+            }
+            set {
+                this["AutoCopyLogPath"] = value;
             }
         }
     }

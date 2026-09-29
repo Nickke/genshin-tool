@@ -84,7 +84,10 @@
     <Setting Name="AutoCopyEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AutoCopyPath" Type="System.String" Scope="User">
+    <Setting Name="AutoCopyJsonPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AutoCopyLogPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>
