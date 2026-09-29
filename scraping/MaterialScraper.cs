@@ -122,6 +122,7 @@ namespace InventoryKamera
 								SaveInventoryBitmap(quantity, $"{material.name}_Quantity.png");
                             }
 							inventory.Materials.Add(material);
+							if (material.count > 0) UserInterface.IncrementMaterialCount();
 							UserInterface.ResetCharacterDisplay();
 							UserInterface.SetMaterial(nameplate, quantity, material.name, material.count);
 
@@ -211,6 +212,7 @@ namespace InventoryKamera
 							SaveInventoryBitmap(quantity, $"{material.name}_Quantity.png");
 						}
 						inventory.Materials.Add(material);
+						if (material.count > 0) UserInterface.IncrementMaterialCount();
 						UserInterface.ResetCharacterDisplay();
 						UserInterface.SetMaterial(nameplate, quantity, material.name, material.count);
 						passby = false; // New material found so break on next old material

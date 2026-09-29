@@ -126,6 +126,11 @@
             this.AutoCopyLogSelect_Button = new System.Windows.Forms.Button();
             this.AutoCopyLogPath_TextBox = new System.Windows.Forms.TextBox();
             this.ScannerDelay_TrackBar = new System.Windows.Forms.TrackBar();
+            this.SpeedToggle_Button = new System.Windows.Forms.Button();
+            this.Materials_Label = new System.Windows.Forms.Label();
+            this.MaterialsScanned_Label = new System.Windows.Forms.Label();
+            this.CharDev_Label = new System.Windows.Forms.Label();
+            this.CharDevScanned_Label = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.CharacterTalent3_PictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CharacterTalent2_PictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CharacterTalent1_PictureBox)).BeginInit();
@@ -417,13 +422,13 @@
             // 
             this.Github_Label.AutoSize = true;
             this.Github_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Github_Label.Location = new System.Drawing.Point(500, 26);
+            this.Github_Label.Location = new System.Drawing.Point(497, 40);
             this.Github_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Github_Label.Name = "Github_Label";
             this.Github_Label.Size = new System.Drawing.Size(88, 13);
             this.Github_Label.TabIndex = 52;
             this.Github_Label.TabStop = true;
-            this.Github_Label.Text = "Github Mainpage";
+            this.Github_Label.Text = "Original IK version";
             this.Github_Label.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.Github_Label_LinkClicked);
             // 
             // ErrorLog_TextBox
@@ -482,18 +487,18 @@
             // 
             this.Releases_Label.AutoSize = true;
             this.Releases_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Releases_Label.Location = new System.Drawing.Point(500, 45);
+            this.Releases_Label.Location = new System.Drawing.Point(497, 57);
             this.Releases_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Releases_Label.Name = "Releases_Label";
             this.Releases_Label.Size = new System.Drawing.Size(85, 13);
             this.Releases_Label.TabIndex = 62;
             this.Releases_Label.TabStop = true;
-            this.Releases_Label.Text = "Latest_Releases";
+            this.Releases_Label.Text = "Latest Releases";
             this.Releases_Label.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.Releases_Label_LinkClicked);
             // 
             // Navigation_Image
             // 
-            this.Navigation_Image.Location = new System.Drawing.Point(502, 83);
+            this.Navigation_Image.Location = new System.Drawing.Point(502, 74);
             this.Navigation_Image.Margin = new System.Windows.Forms.Padding(2);
             this.Navigation_Image.Name = "Navigation_Image";
             this.Navigation_Image.Size = new System.Drawing.Size(80, 40);
@@ -504,7 +509,7 @@
             // Navigation_Label
             // 
             this.Navigation_Label.AutoSize = true;
-            this.Navigation_Label.Location = new System.Drawing.Point(499, 67);
+            this.Navigation_Label.Location = new System.Drawing.Point(497, 24);
             this.Navigation_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Navigation_Label.Name = "Navigation_Label";
             this.Navigation_Label.Size = new System.Drawing.Size(61, 13);
@@ -554,7 +559,7 @@
             this.ScannerDelay_Label.Name = "ScannerDelay_Label";
             this.ScannerDelay_Label.Size = new System.Drawing.Size(77, 13);
             this.ScannerDelay_Label.TabIndex = 69;
-            this.ScannerDelay_Label.Text = "Scanner Delay";
+            this.ScannerDelay_Label.Text = "Speed:";
             // 
             // ScanItemsList_Label
             // 
@@ -577,6 +582,7 @@
             this.FastScannerDelay_Label.Size = new System.Drawing.Size(20, 9);
             this.FastScannerDelay_Label.TabIndex = 74;
             this.FastScannerDelay_Label.Text = "Fast";
+            this.FastScannerDelay_Label.Visible = false;
             // 
             // MidScannerDelay_Label
             // 
@@ -588,6 +594,7 @@
             this.MidScannerDelay_Label.Size = new System.Drawing.Size(29, 9);
             this.MidScannerDelay_Label.TabIndex = 75;
             this.MidScannerDelay_Label.Text = "Slower";
+            this.MidScannerDelay_Label.Visible = false;
             // 
             // SlowScannerDelay_Label
             // 
@@ -599,6 +606,7 @@
             this.SlowScannerDelay_Label.Size = new System.Drawing.Size(22, 9);
             this.SlowScannerDelay_Label.TabIndex = 76;
             this.SlowScannerDelay_Label.Text = "Slow";
+            this.SlowScannerDelay_Label.Visible = false;
             // 
             // FileSelectButton
             // 
@@ -803,6 +811,7 @@
             // ManualExportButton
             // 
             this.ManualExportButton.Enabled = false;
+            this.ManualExportButton.Visible = false;
             this.ManualExportButton.Location = new System.Drawing.Point(6, 594);
             this.ManualExportButton.Name = "ManualExportButton";
             this.ManualExportButton.Size = new System.Drawing.Size(144, 23);
@@ -813,7 +822,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(7, 618);
+            this.button1.Location = new System.Drawing.Point(7, 594);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(143, 23);
             this.button1.TabIndex = 100;
@@ -1134,13 +1143,16 @@
             //
             this.AutoCopyJsonSelect_Button.Enabled = false;
             this.AutoCopyJsonSelect_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AutoCopyJsonSelect_Button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.AutoCopyJsonSelect_Button.BackColor = System.Drawing.Color.FromArgb(0, 120, 212);
+            this.AutoCopyJsonSelect_Button.ForeColor = System.Drawing.Color.White;
             this.AutoCopyJsonSelect_Button.Location = new System.Drawing.Point(185, 291);
             this.AutoCopyJsonSelect_Button.Margin = new System.Windows.Forms.Padding(2);
             this.AutoCopyJsonSelect_Button.Name = "AutoCopyJsonSelect_Button";
-            this.AutoCopyJsonSelect_Button.Size = new System.Drawing.Size(48, 19);
+            this.AutoCopyJsonSelect_Button.Size = new System.Drawing.Size(55, 22);
             this.AutoCopyJsonSelect_Button.TabIndex = 82;
             this.AutoCopyJsonSelect_Button.Text = "Select";
-            this.AutoCopyJsonSelect_Button.UseVisualStyleBackColor = true;
+            this.AutoCopyJsonSelect_Button.UseVisualStyleBackColor = false;
             this.AutoCopyJsonSelect_Button.Click += new System.EventHandler(this.AutoCopyJsonSelect_Button_Click);
             //
             // AutoCopyJsonPath_TextBox
@@ -1152,7 +1164,7 @@
             this.AutoCopyJsonPath_TextBox.Location = new System.Drawing.Point(235, 291);
             this.AutoCopyJsonPath_TextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.AutoCopyJsonPath_TextBox.Name = "AutoCopyJsonPath_TextBox";
-            this.AutoCopyJsonPath_TextBox.Size = new System.Drawing.Size(353, 18);
+            this.AutoCopyJsonPath_TextBox.Size = new System.Drawing.Size(416, 18);
             this.AutoCopyJsonPath_TextBox.TabIndex = 83;
             this.AutoCopyJsonPath_TextBox.Text = global::InventoryKamera.Properties.Settings.Default.AutoCopyJsonPath;
             //
@@ -1171,13 +1183,16 @@
             //
             this.AutoCopyLogSelect_Button.Enabled = false;
             this.AutoCopyLogSelect_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AutoCopyLogSelect_Button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.AutoCopyLogSelect_Button.BackColor = System.Drawing.Color.FromArgb(0, 120, 212);
+            this.AutoCopyLogSelect_Button.ForeColor = System.Drawing.Color.White;
             this.AutoCopyLogSelect_Button.Location = new System.Drawing.Point(185, 311);
             this.AutoCopyLogSelect_Button.Margin = new System.Windows.Forms.Padding(2);
             this.AutoCopyLogSelect_Button.Name = "AutoCopyLogSelect_Button";
-            this.AutoCopyLogSelect_Button.Size = new System.Drawing.Size(48, 19);
+            this.AutoCopyLogSelect_Button.Size = new System.Drawing.Size(55, 22);
             this.AutoCopyLogSelect_Button.TabIndex = 85;
             this.AutoCopyLogSelect_Button.Text = "Select";
-            this.AutoCopyLogSelect_Button.UseVisualStyleBackColor = true;
+            this.AutoCopyLogSelect_Button.UseVisualStyleBackColor = false;
             this.AutoCopyLogSelect_Button.Click += new System.EventHandler(this.AutoCopyLogSelect_Button_Click);
             //
             // AutoCopyLogPath_TextBox
@@ -1189,7 +1204,7 @@
             this.AutoCopyLogPath_TextBox.Location = new System.Drawing.Point(235, 311);
             this.AutoCopyLogPath_TextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.AutoCopyLogPath_TextBox.Name = "AutoCopyLogPath_TextBox";
-            this.AutoCopyLogPath_TextBox.Size = new System.Drawing.Size(353, 18);
+            this.AutoCopyLogPath_TextBox.Size = new System.Drawing.Size(416, 18);
             this.AutoCopyLogPath_TextBox.TabIndex = 86;
             this.AutoCopyLogPath_TextBox.Text = global::InventoryKamera.Properties.Settings.Default.AutoCopyLogPath;
             //
@@ -1203,14 +1218,63 @@
             this.ScannerDelay_TrackBar.Size = new System.Drawing.Size(129, 45);
             this.ScannerDelay_TrackBar.TabIndex = 68;
             this.ScannerDelay_TrackBar.Value = global::InventoryKamera.Properties.Settings.Default.ScannerDelay;
+            this.ScannerDelay_TrackBar.Visible = false;
             this.ScannerDelay_TrackBar.ValueChanged += new System.EventHandler(this.ScannerDelay_TrackBar_ValueChanged);
-            // 
+            //
+            // SpeedToggle_Button
+            //
+            this.SpeedToggle_Button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SpeedToggle_Button.Location = new System.Drawing.Point(10, 408);
+            this.SpeedToggle_Button.Margin = new System.Windows.Forms.Padding(2);
+            this.SpeedToggle_Button.Name = "SpeedToggle_Button";
+            this.SpeedToggle_Button.Size = new System.Drawing.Size(129, 26);
+            this.SpeedToggle_Button.TabIndex = 124;
+            this.SpeedToggle_Button.Text = "Fast";
+            this.SpeedToggle_Button.UseVisualStyleBackColor = true;
+            this.SpeedToggle_Button.Click += new System.EventHandler(this.SpeedToggle_Button_Click);
+            //
+            // Materials_Label
+            //
+            this.Materials_Label.AutoSize = true;
+            this.Materials_Label.Location = new System.Drawing.Point(7, 591);
+            this.Materials_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.Materials_Label.Name = "Materials_Label";
+            this.Materials_Label.TabIndex = 120;
+            this.Materials_Label.Text = "Materials: ";
+            //
+            // MaterialsScanned_Label
+            //
+            this.MaterialsScanned_Label.AutoSize = true;
+            this.MaterialsScanned_Label.Location = new System.Drawing.Point(80, 591);
+            this.MaterialsScanned_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.MaterialsScanned_Label.Name = "MaterialsScanned_Label";
+            this.MaterialsScanned_Label.TabIndex = 121;
+            this.MaterialsScanned_Label.Text = "0";
+            //
+            // CharDev_Label
+            //
+            this.CharDev_Label.AutoSize = true;
+            this.CharDev_Label.Location = new System.Drawing.Point(7, 604);
+            this.CharDev_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.CharDev_Label.Name = "CharDev_Label";
+            this.CharDev_Label.TabIndex = 122;
+            this.CharDev_Label.Text = "Dev Items: ";
+            //
+            // CharDevScanned_Label
+            //
+            this.CharDevScanned_Label.AutoSize = true;
+            this.CharDevScanned_Label.Location = new System.Drawing.Point(80, 604);
+            this.CharDevScanned_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.CharDevScanned_Label.Name = "CharDevScanned_Label";
+            this.CharDevScanned_Label.TabIndex = 123;
+            this.CharDevScanned_Label.Text = "0";
+            //
             // MainForm
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(234)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
-            this.ClientSize = new System.Drawing.Size(595, 660);
+            this.ClientSize = new System.Drawing.Size(660, 660);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.manekinaNameTextBox);
             this.Controls.Add(this.label5);
@@ -1254,6 +1318,11 @@
             this.Controls.Add(this.ScanItemsList_Label);
             this.Controls.Add(this.ScannerDelay_Label);
             this.Controls.Add(this.ScannerDelay_TrackBar);
+            this.Controls.Add(this.SpeedToggle_Button);
+            this.Controls.Add(this.Materials_Label);
+            this.Controls.Add(this.MaterialsScanned_Label);
+            this.Controls.Add(this.CharDev_Label);
+            this.Controls.Add(this.CharDevScanned_Label);
             this.Controls.Add(this.ScannerOutput_Panel);
             this.Controls.Add(this.Navigation_Label);
             this.Controls.Add(this.Navigation_Image);
@@ -1403,6 +1472,11 @@
         private System.Windows.Forms.ToolStripMenuItem darkModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem characterSlot1KeyToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox slot1StripTextBox;
+        private System.Windows.Forms.Button SpeedToggle_Button;
+        private System.Windows.Forms.Label Materials_Label;
+        private System.Windows.Forms.Label MaterialsScanned_Label;
+        private System.Windows.Forms.Label CharDev_Label;
+        private System.Windows.Forms.Label CharDevScanned_Label;
     }
 }
 

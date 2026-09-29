@@ -60,7 +60,9 @@ namespace InventoryKamera
                 CharactersScanned_Label,
                 ProgramStatus_Label,
                 ErrorLog_TextBox,
-                Navigation_Image);
+                Navigation_Image,
+                MaterialsScanned_Label,
+                CharDevScanned_Label);
         }
 
         private double ScannerDelayValue(int value)
@@ -136,6 +138,7 @@ namespace InventoryKamera
             UpdateKeyTextBoxes();
 
             Delay = ScannerDelay_TrackBar.Value;
+            SpeedToggle_Button.Text = Properties.Settings.Default.ScannerDelay == 2 ? "Slow" : "Fast";
 
             ProgramStatus_Label.Text = "";
             if (string.IsNullOrWhiteSpace(OutputPath_TextBox.Text))
@@ -446,6 +449,15 @@ namespace InventoryKamera
 
         }
 
+        private void SpeedToggle_Button_Click(object sender, EventArgs e)
+        {
+            int next = Properties.Settings.Default.ScannerDelay == 0 ? 2 : 0;
+            Properties.Settings.Default.ScannerDelay = next;
+            Properties.Settings.Default.Save();
+            Delay = next;
+            SpeedToggle_Button.Text = next == 0 ? "Fast" : "Slow";
+        }
+
         private void Github_Label_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://github.com/Andrewthe13th/Inventory_Kamera/");
@@ -453,7 +465,7 @@ namespace InventoryKamera
 
         private void Releases_Label_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("https://github.com/Andrewthe13th/Inventory_Kamera/releases");
+            Process.Start("https://github.com/Nickke/genshin-tool");
         }
 
         private void IssuesPage_Label_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
