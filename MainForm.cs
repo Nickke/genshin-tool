@@ -519,27 +519,29 @@ namespace InventoryKamera
             ApplyTheme(dark);
         }
 
-        // ─── Fluent / Windows 11 theme ───────────────────────────────────────
-        private static readonly Color Accent = Color.FromArgb(200, 170, 110); // gold accent
+        // ─── Windows 10 layout + Genshin palette ─────────────────────────────
+        private static readonly Color Accent = Color.FromArgb(200, 170, 110); // Genshin gold
 
         private void ApplyTheme(bool dark)
         {
-            Color bg      = dark ? Color.FromArgb(32, 32, 32)  : Color.FromArgb(243, 243, 243);
-            Color surface = dark ? Color.FromArgb(44, 44, 44)  : Color.White;
-            Color btnBg   = dark ? Color.FromArgb(62, 62, 62)  : Color.FromArgb(229, 229, 229);
-            Color btnFg   = dark ? Color.White                 : Color.FromArgb(28, 28, 28);
-            Color text    = dark ? Color.White                 : Color.FromArgb(28, 28, 28);
-            Color inputBg = dark ? Color.FromArgb(50, 50, 50)  : Color.White;
-            Color inputFg = dark ? Color.White                 : Color.FromArgb(28, 28, 28);
-            Color menuBg  = dark ? Color.FromArgb(31, 31, 31)  : Color.FromArgb(249, 249, 249);
-            Color border  = dark ? Color.FromArgb(80, 80, 80)  : Color.FromArgb(200, 200, 200);
+            // Dark: deep Genshin navy  |  Light: warm Genshin parchment
+            Color bg      = dark ? Color.FromArgb(13,  21,  32)  : Color.FromArgb(245, 232, 208);
+            Color surface = dark ? Color.FromArgb(22,  34,  58)  : Color.FromArgb(255, 252, 245);
+            Color btnBg   = dark ? Color.FromArgb(26,  42,  72)  : Color.FromArgb(27,  42,  85);
+            Color btnFg   = dark ? Color.FromArgb(232, 213, 176) : Color.FromArgb(200, 170, 110);
+            Color text    = dark ? Color.FromArgb(232, 213, 176) : Color.FromArgb(26,  31,  53);
+            Color inputBg = dark ? Color.FromArgb(18,  28,  48)  : Color.White;
+            Color inputFg = dark ? Color.FromArgb(232, 213, 176) : Color.FromArgb(26,  31,  53);
+            Color menuBg  = dark ? Color.FromArgb(9,   14,  24)  : Color.FromArgb(27,  42,  85);
+            Color menuFg  = Color.FromArgb(200, 170, 110); // gold always
+            Color border  = dark ? Color.FromArgb(200, 170, 110) : Color.FromArgb(180, 148,  90);
 
             BackColor = bg;
 
             menuStrip1.BackColor = menuBg;
-            menuStrip1.ForeColor = text;
+            menuStrip1.ForeColor = menuFg;
             menuStrip1.Renderer  = new ToolStripProfessionalRenderer(new FluentMenuColors(dark));
-            ApplyMenuItemColors(menuStrip1.Items, text, menuBg);
+            ApplyMenuItemColors(menuStrip1.Items, menuFg, menuBg);
 
             ApplyToControls(Controls, bg, surface, btnBg, btnFg, text, inputBg, inputFg, border, dark);
 
@@ -642,12 +644,13 @@ namespace InventoryKamera
         private class FluentMenuColors : ProfessionalColorTable
         {
             private readonly bool _dark;
+            private static readonly Color Gold = Color.FromArgb(200, 170, 110);
             public FluentMenuColors(bool dark) { _dark = dark; }
-            private Color Bg    => _dark ? Color.FromArgb(40, 40, 40)  : Color.FromArgb(249, 249, 249);
-            private Color Hover => _dark ? Color.FromArgb(68, 68, 68)  : Color.FromArgb(229, 229, 229);
+            private Color Bg    => _dark ? Color.FromArgb(9,  14, 24) : Color.FromArgb(27, 42, 85);
+            private Color Hover => _dark ? Color.FromArgb(26, 42, 72) : Color.FromArgb(45, 65, 115);
             public override Color MenuItemSelected              => Hover;
-            public override Color MenuItemBorder                => Color.Transparent;
-            public override Color MenuBorder                    => _dark ? Color.FromArgb(68, 68, 68) : Color.FromArgb(200, 200, 200);
+            public override Color MenuItemBorder                => Gold;
+            public override Color MenuBorder                    => Gold;
             public override Color ToolStripDropDownBackground   => Bg;
             public override Color ImageMarginGradientBegin      => Bg;
             public override Color ImageMarginGradientMiddle     => Bg;
