@@ -138,7 +138,12 @@ namespace InventoryKamera
             UpdateKeyTextBoxes();
 
             Delay = ScannerDelay_TrackBar.Value;
-            SpeedToggle_Button.Text = Properties.Settings.Default.ScannerDelay == 2 ? "Slow" : "Fast";
+            SpeedToggle_CheckBox.Checked = Properties.Settings.Default.ScannerDelay == 2;
+            SpeedToggle_CheckBox.Text = SpeedToggle_CheckBox.Checked ? "Slow" : "Fast";
+            SpeedToggle_CheckBox.BackColor = SpeedToggle_CheckBox.Checked
+                ? System.Drawing.Color.FromArgb(0, 78, 140)
+                : System.Drawing.Color.FromArgb(0, 120, 212);
+            SpeedToggle_CheckBox.ForeColor = System.Drawing.Color.White;
 
             ProgramStatus_Label.Text = "";
             if (string.IsNullOrWhiteSpace(OutputPath_TextBox.Text))
@@ -449,13 +454,17 @@ namespace InventoryKamera
 
         }
 
-        private void SpeedToggle_Button_Click(object sender, EventArgs e)
+        private void SpeedToggle_CheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            int next = Properties.Settings.Default.ScannerDelay == 0 ? 2 : 0;
+            int next = SpeedToggle_CheckBox.Checked ? 2 : 0;
             Properties.Settings.Default.ScannerDelay = next;
             Properties.Settings.Default.Save();
             Delay = next;
-            SpeedToggle_Button.Text = next == 0 ? "Fast" : "Slow";
+            SpeedToggle_CheckBox.Text = SpeedToggle_CheckBox.Checked ? "Slow" : "Fast";
+            SpeedToggle_CheckBox.BackColor = SpeedToggle_CheckBox.Checked
+                ? System.Drawing.Color.FromArgb(0, 78, 140)   // dark blue = slow
+                : System.Drawing.Color.FromArgb(0, 120, 212);  // windows blue = fast
+            SpeedToggle_CheckBox.ForeColor = System.Drawing.Color.White;
         }
 
         private void Github_Label_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -642,6 +651,10 @@ namespace InventoryKamera
                         tb.BackColor = inputBg;
                         if (tb.Name != "ErrorLog_TextBox")
                             tb.ForeColor = inputFg;
+                        break;
+
+                    case CheckBox cb when cb.Name == "SpeedToggle_CheckBox":
+                        // colours managed by SpeedToggle_CheckBox_CheckedChanged, skip
                         break;
 
                     case CheckBox cb:
