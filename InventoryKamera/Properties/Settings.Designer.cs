@@ -274,7 +274,31 @@ namespace InventoryKamera.Properties {
                 this["WandererName"] = value;
             }
         }
-        
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("bruce")]
+        public string ManekinName {
+            get {
+                return ((string)(this["ManekinName"]));
+            }
+            set {
+                this["ManekinName"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("saphire")]
+        public string ManekinaName {
+            get {
+                return ((string)(this["ManekinaName"]));
+            }
+            set {
+                this["ManekinaName"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsd=\"http://www.w3." +
@@ -298,6 +322,54 @@ namespace InventoryKamera.Properties {
             }
             set {
                 this["Slot1Key"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DarkMode {
+            get {
+                return ((bool)(this["DarkMode"]));
+            }
+            set {
+                this["DarkMode"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoCopyEnabled {
+            get {
+                return ((bool)(this["AutoCopyEnabled"]));
+            }
+            set {
+                this["AutoCopyEnabled"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AutoCopyJsonPath {
+            get {
+                return ((string)(this["AutoCopyJsonPath"]));
+            }
+            set {
+                this["AutoCopyJsonPath"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AutoCopyLogPath {
+            get {
+                return ((string)(this["AutoCopyLogPath"]));
+            }
+            set {
+                this["AutoCopyLogPath"] = value;
             }
         }
     }

@@ -101,6 +101,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Item_Special_Kamera.ico</ApplicationIcon>
+    <RuntimeIdentifiers>win</RuntimeIdentifiers>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>InventoryKamera.Program</StartupObject>
@@ -161,6 +162,7 @@
     <Compile Include="ui\main\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ui\main\ToggleSwitchControl.cs" />
     <Compile Include="data\InventoryKamera.cs" />
     <Compile Include="data\OCRImageCollection.cs" />
     <Compile Include="data\Inventory.cs" />

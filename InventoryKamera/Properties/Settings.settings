@@ -65,6 +65,12 @@
     <Setting Name="WandererName" Type="System.String" Scope="User">
       <Value Profile="(Default)">wanderer</Value>
     </Setting>
+    <Setting Name="ManekinName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">bruce</Value>
+    </Setting>
+    <Setting Name="ManekinaName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">saphire</Value>
+    </Setting>
     <Setting Name="Executables" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
@@ -74,6 +80,18 @@
     </Setting>
     <Setting Name="Slot1Key" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="DarkMode" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AutoCopyEnabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AutoCopyJsonPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AutoCopyLogPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

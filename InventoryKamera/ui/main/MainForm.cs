@@ -60,7 +60,9 @@ namespace InventoryKamera
                 CharactersScanned_Label,
                 ProgramStatus_Label,
                 ErrorLog_TextBox,
-                Navigation_Image);
+                Navigation_Image,
+                MaterialsScanned_Label,
+                CharDevScanned_Label);
         }
 
         private double ScannerDelayValue(int value)
@@ -136,13 +138,88 @@ namespace InventoryKamera
             UpdateKeyTextBoxes();
 
             Delay = ScannerDelay_TrackBar.Value;
+            SpeedToggle.Checked = Properties.Settings.Default.ScannerDelay == 2;
 
             ProgramStatus_Label.Text = "";
             if (string.IsNullOrWhiteSpace(OutputPath_TextBox.Text))
             {
                 OutputPath_TextBox.Text = Directory.GetCurrentDirectory() + @"\GenshinData";
             }
-            
+
+            darkModeToolStripMenuItem.Checked = Properties.Settings.Default.DarkMode;
+            ApplyTheme(Properties.Settings.Default.DarkMode);
+
+            AutoCopy_CheckBox.Checked = Properties.Settings.Default.AutoCopyEnabled;
+            bool autoCopyOn = AutoCopy_CheckBox.Checked;
+            var activeColor   = System.Drawing.Color.FromArgb(0, 120, 212);
+            var inactiveColor = System.Drawing.Color.FromArgb(160, 160, 160);
+            var activeText    = System.Drawing.Color.White;
+            AutoCopyJsonLabel.Enabled            = autoCopyOn;
+            AutoCopyLogLabel.Enabled             = autoCopyOn;
+            AutoCopyJsonSelect_Button.BackColor  = autoCopyOn ? activeColor : inactiveColor;
+            AutoCopyJsonSelect_Button.ForeColor  = activeText;
+            AutoCopyLogSelect_Button.BackColor   = autoCopyOn ? activeColor : inactiveColor;
+            AutoCopyLogSelect_Button.ForeColor   = activeText;
+            AutoCopyJsonPath_TextBox.Enabled     = autoCopyOn;
+            AutoCopyLogPath_TextBox.Enabled      = autoCopyOn;
+
+            // Check for game data updates in the background so the UI loads immediately.
+            new Thread(StartupGameDataCheck) { IsBackground = true, Name = "StartupUpdateCheck" }.Start();
+        }
+
+        private void StartupGameDataCheck()
+        {
+            var dbm = new DatabaseManager();
+            bool updateAvailable;
+            try
+            {
+                updateAvailable = dbm.UpdateAvailable();
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex, "Could not check for game data updates on startup");
+                return;
+            }
+
+            if (!updateAvailable)
+            {
+                Logger.Info("Game data is up to date ({0})", dbm.LocalVersion.ToString(2));
+                return;
+            }
+
+            // Ask the user on the UI thread so the dialog is properly parented.
+            Invoke(new Action(() =>
+            {
+                var result = MessageBox.Show(
+                    $"A new version of Genshin Impact data (v{dbm.RemoteVersion.ToString(2)}) is available.\n" +
+                    "Would you like to update the lookup tables now? (Recommended)",
+                    "Game Data Update",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Information);
+
+                if (result == DialogResult.Yes)
+                {
+                    var status = dbm.UpdateGameData();
+                    switch (status)
+                    {
+                        case UpdateStatus.Fail:
+                            MessageBox.Show("Update failed. Check the log for details.", "Update failed",
+                                MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                            break;
+                        case UpdateStatus.Success:
+                            MessageBox.Show(
+                                $"Game data updated to version {dbm.LocalVersion.ToString(2)}.",
+                                "Update successful",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            Logger.Info("Game data updated to {0}", dbm.LocalVersion.ToString(2));
+                            break;
+                    }
+                }
+                else
+                {
+                    Logger.Info("User declined startup game data update");
+                }
+            }));
         }
 
         private void UpdateKeyTextBoxes()
@@ -278,6 +355,41 @@ namespace InventoryKamera
                         good.WriteToJSON(OutputPath_TextBox.Text);
                         Logger.Info("Exported data");
 
+                        // Auto-copy JSON and logging to their respective folders
+                        if (AutoCopy_CheckBox.Checked)
+                        {
+                            try
+                            {
+                                if (!string.IsNullOrWhiteSpace(AutoCopyJsonPath_TextBox.Text))
+                                {
+                                    string jsonDest = AutoCopyJsonPath_TextBox.Text;
+                                    Directory.CreateDirectory(jsonDest);
+                                    var jsonFile = Directory.GetFiles(OutputPath_TextBox.Text, "genshinData_GOOD_*.json")
+                                                            .OrderByDescending(File.GetLastWriteTime)
+                                                            .FirstOrDefault();
+                                    if (jsonFile != null)
+                                        File.Copy(jsonFile, Path.Combine(jsonDest, Path.GetFileName(jsonFile)), overwrite: true);
+                                    Logger.Info("Auto-copied JSON to {0}", jsonDest);
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(AutoCopyLogPath_TextBox.Text))
+                                {
+                                    string logDest = AutoCopyLogPath_TextBox.Text;
+                                    if (Directory.Exists(logDest))
+                                        Directory.Delete(logDest, recursive: true);
+                                    string srcLog = Path.GetFullPath("./logging");
+                                    if (Directory.Exists(srcLog))
+                                        CopyDirectory(srcLog, logDest);
+                                    Logger.Info("Auto-copied log to {0}", logDest);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex, "Auto-copy failed");
+                                UserInterface.AddError($"Auto-copy failed: {ex.Message}");
+                            }
+                        }
+
                         UserInterface.SetProgramStatus("Finished");
                         OpenOptimizerDialog(good);
                     }
@@ -342,6 +454,14 @@ namespace InventoryKamera
 
         }
 
+        private void SpeedToggle_CheckedChanged(object sender, EventArgs e)
+        {
+            int next = SpeedToggle.Checked ? 2 : 0;
+            Properties.Settings.Default.ScannerDelay = next;
+            Properties.Settings.Default.Save();
+            Delay = next;
+        }
+
         private void Github_Label_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://github.com/Andrewthe13th/Inventory_Kamera/");
@@ -349,7 +469,7 @@ namespace InventoryKamera
 
         private void Releases_Label_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("https://github.com/Andrewthe13th/Inventory_Kamera/releases");
+            Process.Start("https://github.com/Nickke/genshin-tool");
         }
 
         private void IssuesPage_Label_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -370,6 +490,226 @@ namespace InventoryKamera
             {
                 OutputPath_TextBox.Text = d.FileName;
             }
+        }
+
+        private void AutoCopyJsonSelect_Button_Click(object sender, EventArgs e)
+        {
+            CommonOpenFileDialog d = new CommonOpenFileDialog
+            {
+                InitialDirectory = !Directory.Exists(AutoCopyJsonPath_TextBox.Text) ? Directory.GetCurrentDirectory() : AutoCopyJsonPath_TextBox.Text,
+                IsFolderPicker = true
+            };
+            if (d.ShowDialog() == CommonFileDialogResult.Ok)
+                AutoCopyJsonPath_TextBox.Text = d.FileName;
+        }
+
+        private void AutoCopyLogSelect_Button_Click(object sender, EventArgs e)
+        {
+            CommonOpenFileDialog d = new CommonOpenFileDialog
+            {
+                InitialDirectory = !Directory.Exists(AutoCopyLogPath_TextBox.Text) ? Directory.GetCurrentDirectory() : AutoCopyLogPath_TextBox.Text,
+                IsFolderPicker = true
+            };
+            if (d.ShowDialog() == CommonFileDialogResult.Ok)
+                AutoCopyLogPath_TextBox.Text = d.FileName;
+        }
+
+        private void AutoCopy_CheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            bool on = AutoCopy_CheckBox.Checked;
+            var activeColor  = System.Drawing.Color.FromArgb(0, 120, 212);
+            var inactiveColor = System.Drawing.Color.FromArgb(160, 160, 160);
+            var activeText   = System.Drawing.Color.White;
+
+            AutoCopyJsonLabel.Enabled            = on;
+            AutoCopyLogLabel.Enabled             = on;
+            AutoCopyJsonSelect_Button.BackColor  = on ? activeColor : inactiveColor;
+            AutoCopyJsonSelect_Button.ForeColor  = activeText;
+            AutoCopyLogSelect_Button.BackColor   = on ? activeColor : inactiveColor;
+            AutoCopyLogSelect_Button.ForeColor   = activeText;
+            AutoCopyJsonPath_TextBox.Enabled     = on;
+            AutoCopyLogPath_TextBox.Enabled      = on;
+
+            Properties.Settings.Default.AutoCopyEnabled = on;
+            Properties.Settings.Default.Save();
+        }
+
+        private void darkModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool dark = darkModeToolStripMenuItem.Checked;
+            Properties.Settings.Default.DarkMode = dark;
+            Properties.Settings.Default.Save();
+            ApplyTheme(dark);
+        }
+
+        // ─── Windows 11 palette ───────────────────────────────────────────────
+        private static readonly Color Accent = Color.FromArgb(0, 120, 212); // Windows 11 blue
+
+        private void ApplyTheme(bool dark)
+        {
+            // Windows 11 light / dark
+            Color bg      = dark ? Color.FromArgb(32,  32,  32)  : Color.FromArgb(243, 243, 243);
+            Color surface = dark ? Color.FromArgb(45,  45,  45)  : Color.FromArgb(255, 255, 255);
+            Color btnBg   = dark ? Color.FromArgb(0,   120, 212) : Color.FromArgb(0,   120, 212);
+            Color btnFg   = Color.White;
+            Color text    = dark ? Color.FromArgb(255, 255, 255) : Color.FromArgb(30,  30,  30);
+            Color inputBg = dark ? Color.FromArgb(61,  61,  61)  : Color.White;
+            Color inputFg = dark ? Color.FromArgb(255, 255, 255) : Color.FromArgb(30,  30,  30);
+            Color menuBg  = dark ? Color.FromArgb(44,  44,  44)  : Color.FromArgb(249, 249, 249);
+            Color menuFg  = dark ? Color.FromArgb(255, 255, 255) : Color.FromArgb(30,  30,  30);
+            Color border  = dark ? Color.FromArgb(69,  69,  69)  : Color.FromArgb(209, 209, 209);
+
+            Font baseFont = new Font("Segoe UI", 9F);
+            ApplyFont(baseFont);
+
+            BackColor = bg;
+
+            menuStrip1.BackColor = menuBg;
+            menuStrip1.ForeColor = menuFg;
+            menuStrip1.Font      = baseFont;
+            menuStrip1.Renderer  = new ToolStripProfessionalRenderer(new FluentMenuColors(dark));
+            ApplyMenuItemColors(menuStrip1.Items, menuFg, menuBg);
+
+            ApplyToControls(Controls, bg, surface, btnBg, btnFg, text, inputBg, inputFg, border, dark);
+
+            // Primary action button — Windows 11 blue, rounded
+            StartScan_Button.FlatStyle = FlatStyle.Flat;
+            StartScan_Button.BackColor = Accent;
+            StartScan_Button.ForeColor = Color.White;
+            StartScan_Button.FlatAppearance.BorderSize = 0;
+            StartScan_Button.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            RoundButton(StartScan_Button, 6);
+        }
+
+        private void ApplyFont(Font f)
+        {
+            foreach (Control c in Controls)
+                SetFont(c, f);
+        }
+
+        private static void SetFont(Control c, Font f)
+        {
+            if (c is MenuStrip || c is ToolStrip) return;
+            if (!(c is PictureBox) && !(c is TrackBar))
+                c.Font = f;
+            foreach (Control child in c.Controls)
+                SetFont(child, f);
+        }
+
+        private static void ApplyMenuItemColors(ToolStripItemCollection items, Color fg, Color bg)
+        {
+            foreach (ToolStripItem item in items)
+            {
+                item.ForeColor = fg;
+                item.BackColor = bg;
+                if (item is ToolStripMenuItem mi)
+                    ApplyMenuItemColors(mi.DropDownItems, fg, bg);
+            }
+        }
+
+        private static void RoundButton(Button btn, int radius)
+        {
+            var gp = new System.Drawing.Drawing2D.GraphicsPath();
+            int d = radius * 2;
+            Rectangle r = btn.ClientRectangle;
+            gp.AddArc(r.X, r.Y, d, d, 180, 90);
+            gp.AddArc(r.Right - d - 1, r.Y, d, d, 270, 90);
+            gp.AddArc(r.Right - d - 1, r.Bottom - d - 1, d, d, 0, 90);
+            gp.AddArc(r.X, r.Bottom - d - 1, d, d, 90, 90);
+            gp.CloseFigure();
+            btn.Region = new Region(gp);
+        }
+
+        private void ApplyToControls(Control.ControlCollection controls,
+            Color bg, Color surface, Color btnBg, Color btnFg,
+            Color text, Color inputBg, Color inputFg, Color border, bool dark)
+        {
+            foreach (Control c in controls)
+            {
+                switch (c)
+                {
+                    case Button btn when btn.Name != "StartScan_Button":
+                        btn.FlatStyle = FlatStyle.Flat;
+                        btn.BackColor = btnBg;
+                        btn.ForeColor = btnFg;
+                        btn.FlatAppearance.BorderSize  = 1;
+                        btn.FlatAppearance.BorderColor = border;
+                        RoundButton(btn, 5);
+                        break;
+
+                    case System.Windows.Forms.Label lbl when lbl.Name != "ProgramStatus_Label":
+                        lbl.BackColor = Color.Transparent;
+                        lbl.ForeColor = text;
+                        break;
+
+                    case System.Windows.Forms.LinkLabel ll:
+                        ll.BackColor       = Color.Transparent;
+                        ll.ForeColor       = Accent;
+                        ll.LinkColor       = Accent;
+                        ll.ActiveLinkColor = Color.FromArgb(0, 90, 180);
+                        break;
+
+                    case TextBox tb:
+                        tb.BackColor = inputBg;
+                        if (tb.Name != "ErrorLog_TextBox")
+                            tb.ForeColor = inputFg;
+                        break;
+
+                    case CheckBox cb:
+                        cb.BackColor = Color.Transparent;
+                        cb.ForeColor = text;
+                        break;
+
+                    case Panel panel:
+                        panel.BackColor = surface;
+                        break;
+
+                    case NumericUpDown nud:
+                        nud.BackColor = inputBg;
+                        nud.ForeColor = inputFg;
+                        break;
+
+                    case TrackBar tr:
+                        tr.BackColor = bg;
+                        break;
+
+                    case PictureBox pb:
+                        pb.BackColor = Color.Transparent;
+                        break;
+                }
+
+                if (c.Controls.Count > 0)
+                    ApplyToControls(c.Controls, bg, surface, btnBg, btnFg, text, inputBg, inputFg, border, dark);
+            }
+        }
+
+        private class FluentMenuColors : ProfessionalColorTable
+        {
+            private readonly bool _dark;
+            private static readonly Color Blue = Color.FromArgb(0, 120, 212);
+            public FluentMenuColors(bool dark) { _dark = dark; }
+            private Color Bg    => _dark ? Color.FromArgb(44,  44,  44) : Color.FromArgb(249, 249, 249);
+            private Color Hover => _dark ? Color.FromArgb(61,  61,  61) : Color.FromArgb(227, 241, 255);
+            public override Color MenuItemSelected              => Hover;
+            public override Color MenuItemBorder                => Blue;
+            public override Color MenuBorder                    => Color.FromArgb(209, 209, 209);
+            public override Color ToolStripDropDownBackground   => Bg;
+            public override Color ImageMarginGradientBegin      => Bg;
+            public override Color ImageMarginGradientMiddle     => Bg;
+            public override Color ImageMarginGradientEnd        => Bg;
+            public override Color MenuItemSelectedGradientBegin => Hover;
+            public override Color MenuItemSelectedGradientEnd   => Hover;
+            public override Color MenuItemPressedGradientBegin  => Hover;
+            public override Color MenuItemPressedGradientEnd    => Hover;
+        }
+
+        private static void CopyDirectory(string source, string dest)
+        {
+            Directory.CreateDirectory(dest);
+            foreach (var file in Directory.GetFiles(source))
+                File.Copy(file, Path.Combine(dest, Path.GetFileName(file)), overwrite: true);
+            foreach (var dir in Directory.GetDirectories(source))
+                CopyDirectory(dir, Path.Combine(dest, Path.GetFileName(dir)));
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)

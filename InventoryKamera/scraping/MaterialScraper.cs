@@ -84,6 +84,12 @@ namespace InventoryKamera
 				Logger.Debug("Scanning material page {0}", page);
 				Logger.Debug("Located {0} possible item locations on page.", rectangles.Count);
 
+				if (!r.Any())
+				{
+					Logger.Warn("Scan_Materials: page {0} returned no scannable items; aborting scan.", page);
+					return;
+				}
+
 				foreach (var rectangle in r)
 				{
 					// Select Material
@@ -116,6 +122,7 @@ namespace InventoryKamera
 								SaveInventoryBitmap(quantity, $"{material.name}_Quantity.png");
                             }
 							inventory.Materials.Add(material);
+							if (material.count > 0) UserInterface.IncrementMaterialCount();
 							UserInterface.ResetCharacterDisplay();
 							UserInterface.SetMaterial(nameplate, quantity, material.name, material.count);
 
@@ -205,6 +212,7 @@ namespace InventoryKamera
 							SaveInventoryBitmap(quantity, $"{material.name}_Quantity.png");
 						}
 						inventory.Materials.Add(material);
+						if (material.count > 0) UserInterface.IncrementMaterialCount();
 						UserInterface.ResetCharacterDisplay();
 						UserInterface.SetMaterial(nameplate, quantity, material.name, material.count);
 						passby = false; // New material found so break on next old material
@@ -356,6 +364,10 @@ namespace InventoryKamera
                         var cleaned = original;
 
                         cleaned = cleaned.Replace("M", "111");
+                        cleaned = cleaned.Replace("l", "1").Replace("I", "1")
+                                         .Replace("O", "0").Replace("o", "0")
+                                         .Replace("S", "5").Replace("B", "8")
+                                         .Replace("G", "6").Replace("Z", "2");
 
                         cleaned = Regex.Replace(cleaned, @"[^0-9]", string.Empty);
 
@@ -374,8 +386,38 @@ namespace InventoryKamera
                         }
                     }
                 }
+
+				// Fallback: dark-pixel filter discards white text on high-rarity (gold-star) backgrounds.
+				// Re-scan keeping only light/white pixels so the number itself is captured.
+				var lightRange = new Accord.IntRange(180, 255);
+				for (var fallbackScale = 1.5; fallbackScale <= 3.0; fallbackScale += 0.5)
+				{
+					using (Bitmap rescaled = GenshinProcesor.ResizeImage(bm, (int)(bm.Width * fallbackScale), (int)(bm.Height * fallbackScale)))
+					{
+						Bitmap copy = (Bitmap)rescaled.Clone();
+						GenshinProcesor.FilterColors(ref copy, lightRange, lightRange, lightRange);
+
+						for (int i = 0; i < copy.Width; i++)
+							for (int j = 0; j < copy.Height * 0.25; j++)
+								copy.SetPixel(i, j, Color.White);
+
+						Bitmap n = GenshinProcesor.ConvertToGrayscale(copy);
+						GenshinProcesor.SetInvert(ref n);
+						n = new Threshold(50).Apply(n);
+
+						string original = GenshinProcesor.AnalyzeText(n).Trim();
+						n.Dispose();
+						copy.Dispose();
+
+						string cleaned = Regex.Replace(original, @"[^0-9]", string.Empty);
+						Logger.Debug($"White-text fallback scanned: {original} -> {cleaned}");
+
+						if (int.TryParse(cleaned, out int val) && val > 0)
+							return val;
+					}
+				}
 			}
-			
+
 			var nullableMode = SafeExtractMaxCounter(counts);
 			if (nullableMode == null)
 				return 0;
@@ -385,7 +427,7 @@ namespace InventoryKamera
 				return 0;
 			
 			counts.Remove(mode.Key);
-			return SafeExtractMaxCounter(counts)?.Value ?? 0;
+			return SafeExtractMaxCounter(counts)?.Key ?? 0;
 		}
 
 		private static KeyValuePair<int, int>? SafeExtractMaxCounter(Dictionary<int, int> counts)

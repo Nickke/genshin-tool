@@ -31,6 +31,9 @@ namespace InventoryKamera
 
 		private static Label characterCount_Label;
 
+		private static Label materialCount_Label;
+		private static Label charDevCount_Label;
+
 		// Status
 		private static Label programStatus_Label;
 
@@ -40,7 +43,7 @@ namespace InventoryKamera
 		// Current Images
 		private static PictureBox navigation_PictureBox;
 
-		public static void Init(PictureBox _gear_PictureBox, TextBox _a_textbox, PictureBox _c_name, PictureBox _c_level, PictureBox[] _c_talent, TextBox _c_textbox, Label _weaponCount, Label _weaponMax, Label _artifactCount, Label _artifactMax, Label _characterCount, Label _programStatus, TextBox _error_textBox, PictureBox _navigation_Image)
+		public static void Init(PictureBox _gear_PictureBox, TextBox _a_textbox, PictureBox _c_name, PictureBox _c_level, PictureBox[] _c_talent, TextBox _c_textbox, Label _weaponCount, Label _weaponMax, Label _artifactCount, Label _artifactMax, Label _characterCount, Label _programStatus, TextBox _error_textBox, PictureBox _navigation_Image, Label _materialCount, Label _charDevCount)
 		{
 			// Artifacts and Weapons
 			gear_PictureBox = _gear_PictureBox;
@@ -67,6 +70,10 @@ namespace InventoryKamera
 
 			// Navigation Image
 			navigation_PictureBox = _navigation_Image;
+
+			// Material/CharDev counters
+			materialCount_Label = _materialCount;
+			charDevCount_Label = _charDevCount;
 		}
 
 		private static void UpdateElements(Bitmap bm, string text, PictureBox pictureBox, TextBox textBox)
@@ -234,6 +241,25 @@ namespace InventoryKamera
 			}
 		}
 
+		public static void IncrementMaterialCount()
+		{
+			lock (materialCount_Label)
+			{
+				UpdateLabel($"{Int32.Parse(materialCount_Label.Text) + 1}", materialCount_Label);
+			}
+		}
+
+		public static void IncrementCharDevCount()
+		{
+			lock (charDevCount_Label)
+			{
+				UpdateLabel($"{Int32.Parse(charDevCount_Label.Text) + 1}", charDevCount_Label);
+			}
+		}
+
+		public static void ResetMaterialCount() => UpdateLabel("0", materialCount_Label);
+		public static void ResetCharDevCount() => UpdateLabel("0", charDevCount_Label);
+
 		public static void SetProgramStatus(string status, bool ok = true)
 		{
 			MethodInvoker statusAction = delegate
@@ -298,6 +324,8 @@ namespace InventoryKamera
 			weaponMax_Label.Invoke(weaponMaxAction);
 			artifactCount_Label.Invoke(artifactCountAction);
 			artifactMax_Label.Invoke(artifactMaxAction);
+			ResetMaterialCount();
+			ResetCharDevCount();
 		}
 
 		public static void ResetErrors()

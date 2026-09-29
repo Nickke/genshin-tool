@@ -171,11 +171,12 @@ namespace InventoryKamera
 
 			name = GetItemNameBitmap(card);
 			locked = GetLockedBitmap(card);
-			equipped = GetEquippedBitmap(card);
+			bool isElixir = IsElixirArtifact(card);
+			equipped = GetEquippedBitmap(card, isElixir);
 			gearSlot = GetGearSlotBitmap(card);
 			mainStat = GetMainStatBitmap(card);
-			level = GetLevelBitmap(card);
-			subStats = GetSubstatsBitmap(card);
+			level = GetLevelBitmap(card, isElixir);
+			subStats = GetSubstatsBitmap(card, isElixir);
 
 
 			//Navigation.DisplayBitmap(name);
@@ -211,11 +212,37 @@ namespace InventoryKamera
             InventoryKamera.workerQueue.Enqueue(new OCRImageCollection(artifactImages, "artifact", id));
         }
 
-        private Bitmap GetSubstatsBitmap(Bitmap card)
+        /// <summary>
+        /// Detects the purple "Sanctifying Elixir Definition" banner on the artifact card.
+        /// When present, the level and substat regions are shifted down by ~6.5% of card height.
+        /// </summary>
+        private static bool IsElixirArtifact(Bitmap card)
         {
+            // The banner sits between the star rarity area and the level box,
+            // approximately at y=22-32% of card height. Sample a vertical strip
+            // at the horizontal center for the distinctive purple color.
+            int x = card.Width / 2;
+            int yStart = (int)(card.Height * 0.22);
+            int yEnd   = (int)(card.Height * 0.32);
+            for (int y = yStart; y <= yEnd; y++)
+            {
+                Color c = card.GetPixel(x, y);
+                // Purple: B and R both elevated, G notably lower
+                if (c.B > 140 && c.R > 90 && c.G < c.B - 40 && c.G < c.R + 30)
+                    return true;
+            }
+            return false;
+        }
+
+        // Elixir artifacts have a purple banner that shifts level/substats/equipped down ~6.5%
+        private const double ElixirYOffset = 0.065;
+
+        private Bitmap GetSubstatsBitmap(Bitmap card, bool isElixir = false)
+        {
+            double yo = isElixir ? ElixirYOffset : 0.0;
             return GenshinProcesor.CopyBitmap(card,new Rectangle(
 				x:(int)(card.Width * 0.0911),
-				y:(int)(card.Height * (Navigation.IsNormal ? 0.4216 : 0.3682)),
+				y:(int)(card.Height * (Navigation.IsNormal ? 0.4216 + yo : 0.3682 + yo)),
 				width:(int)(card.Width * 0.8097),
 				height:(int)(card.Height * (Navigation.IsNormal ? 0.1841 : 0.1573))));
         }
@@ -229,11 +256,12 @@ namespace InventoryKamera
 				height: (int)(card.Height * (Navigation.IsNormal ? 0.0416 : 0.0416))));
         }
 
-        private Bitmap GetLevelBitmap(Bitmap card)
+        private Bitmap GetLevelBitmap(Bitmap card, bool isElixir = false)
         {
+            double yo = isElixir ? ElixirYOffset : 0.0;
             return GenshinProcesor.CopyBitmap(card, new Rectangle(
                 x: (int)(card.Width * 0.0506),
-                y: (int)(card.Height * (Navigation.IsNormal ? 0.3634 : 0.3197)),
+                y: (int)(card.Height * (Navigation.IsNormal ? 0.3634 + yo : 0.3197 + yo)),
                 width: (int)(card.Width * 0.1417),
                 height: (int)(card.Height * (Navigation.IsNormal ? 0.0416 : 0.0347))));
         }
@@ -290,10 +318,7 @@ namespace InventoryKamera
 				tasks.Add(taskLevel);
 				tasks.Add(taskSubs);
 				tasks.Add(taskName);
-				if (b_equipped)
-				{
-					tasks.Add(taskEquip);
-				}
+				tasks.Add(taskEquip);
 
 				await Task.WhenAll(tasks.ToArray());
 			}
@@ -414,7 +439,7 @@ namespace InventoryKamera
 			// Get rid of all non digits
 			text = Regex.Replace(text, @"[\D]", string.Empty);
 
-			return int.TryParse(text, out int level) ? level : -1;
+			return int.TryParse(text, out int level) ? Math.Min(20, Math.Max(0, level)) : 0;
 		}
 
 		private static List<SubStat> ScanArtifactSubStats(Bitmap artifactImage)
@@ -478,7 +503,7 @@ namespace InventoryKamera
 						Logger.Debug("Failed to parse stat from: {0}", line);
 					}
 
-					substats.Insert(i, substat);
+					substats.Add(substat);
 				}
             }
             return substats;
