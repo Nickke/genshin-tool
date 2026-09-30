@@ -1420,7 +1420,8 @@ function loadF(file,part){
       document.getElementById("btnP").disabled=false;
       document.getElementById("hLv").textContent=G.lv90.length;
       document.getElementById("hCr").textContent=G.mats.CrownOfInsight||0;
-      document.getElementById("hMo").textContent=((G.mats.Mora||0)/1e6).toFixed(1)+"M";
+      var mora=G.mats.Mora||0;
+      document.getElementById("hMo").textContent=mora>=1e6?(mora/1e6).toFixed(1)+"M":mora>=1000?Math.round(mora/1000)+"K":mora>0?mora+"":"—";
       renderAll();
       if(!part){
         var uid = d.uid || (d.playerInfo && d.playerInfo.uid) || d.player_uid || d.account_uid || IK_PLAYER_UID || "";
@@ -1467,7 +1468,8 @@ function loadFromUrl(url,part){
       document.getElementById("btnP").disabled=false;
       document.getElementById("hLv").textContent=G.lv90.length;
       document.getElementById("hCr").textContent=G.mats.CrownOfInsight||0;
-      document.getElementById("hMo").textContent=((G.mats.Mora||0)/1e6).toFixed(1)+"M";
+      var mora2=G.mats.Mora||0;
+      document.getElementById("hMo").textContent=mora2>=1e6?(mora2/1e6).toFixed(1)+"M":mora2>=1000?Math.round(mora2/1000)+"K":mora2>0?mora2+"":"—";
       renderAll();
       if(!part){
         var uid=d.uid||(d.playerInfo&&d.playerInfo.uid)||d.player_uid||d.account_uid||IK_PLAYER_UID||"";
@@ -8335,7 +8337,7 @@ function renderGuide(cont){
     ap(cont,empty);return;
   }
   var lv90=G.lv90.length;var perfect=G.lv90.filter(function(c){return !c.issues.length;}).length;
-  var crowns=G.mats.CrownOfInsight||0;var mora=(G.mats.Mora||0)/1e6;
+  var crowns=G.mats.CrownOfInsight||0;var moraRaw=G.mats.Mora||0;var mora=moraRaw/1e6;
 
   // Banner stato account
   var banner=div("card");banner.style.cssText+="background:linear-gradient(135deg,#1e3a5f,#1e293b);border-color:#3b82f644;margin-top:4px";ap(cont,banner);
@@ -8395,28 +8397,29 @@ var GENSHIN_EVENTS = {
   version: "7.1",
   lastUpdated: "2026-10-01",
   bannerPhase1: [
-    {type:"char", chars5:["Vesna","Vodyanitsa"], chars4:["Faruzan","Chongyun","Diona"], start:"2026-09-23", end:"2026-10-13", note:"Ver 7.1 Fase 1 — in corso"},
-    {type:"weapon", weapons:["BeyondTheChrysalis","HymnOfTheMaelstrom"], start:"2026-09-23", end:"2026-10-13"}
+    {type:"char", chars5:["Flins","Ineffa"], chars4:["Aino","Iansan","LanYan"], start:"2026-09-01", end:"2026-09-22", note:"Ver 7.0 Fase 2 (terminata)"},
+    {type:"weapon", weapons:["BloodsoakedRuins","FracturedHalo"], start:"2026-09-01", end:"2026-09-22"}
   ],
   bannerCurrent: [
-    {type:"char", chars5:["Vesna","Vodyanitsa"], chars4:["Faruzan","Chongyun","Diona"], start:"2026-09-23", end:"2026-10-13", note:"Ver 7.1 Fase 1 — in corso fino al 13/10"},
+    {type:"char", chars5:["Vesna","Vodyanitsa"], chars4:["Faruzan","Chongyun","Diona"], start:"2026-09-23", end:"2026-10-13", note:"Ver 7.1 Fase 1 — attiva fino al 13/10"},
     {type:"weapon", weapons:["BeyondTheChrysalis","HymnOfTheMaelstrom"], start:"2026-09-23", end:"2026-10-13"}
   ],
   bannerNext: [
     {type:"char", chars5:["Skirk","Escoffier"], chars4:[], start:"2026-10-13", end:"2026-11-03", note:"Ver 7.1 Fase 2 — Skirk (new) + Escoffier rerun. 4★ da confermare."}
   ],
   events: [
-    {name:"Rainbow's End — Login +10 Fates", start:"2026-09-23", end:"2026-11-03", type:"login"},
-    {name:"Silverwing in Pursuit of the Moon", start:"2026-09-23", end:"2026-10-13", type:"exploration"},
-    {name:"Carefree Snowball Fight", start:"2026-09-23", end:"2026-10-13", type:"combat"},
-    {name:"Predictive Victory Dynamics", start:"2026-09-23", end:"2026-10-13", type:"combat"},
-    {name:"Overflowing Favor — Artefatti 2x drop", start:"2026-09-23", end:"2026-11-03", type:"resin"},
-    {name:"Miliastra Wonderland (Anniversario 6°)", start:"2026-09-23", end:"2026-10-13", type:"exploration"},
-    {name:"Sinfonia della Dissoluzione", start:"2026-10-13", end:"2026-11-03", type:"combat"},
-    {name:"Teatro Spettrale (ritorno)", start:"2026-10-13", end:"2026-11-03", type:"combat"},
+    {name:"Rainbow's End — Login +10 Fates", start:"2026-09-23", end:"2026-11-03", type:"login", url:"https://www.hoyolab.com/topicDetail?id=271740"},
+    {name:"Silverwing in Pursuit of the Moon", start:"2026-09-23", end:"2026-10-13", type:"exploration", url:"https://genshin-impact.fandom.com/wiki/Silverwing_in_Pursuit_of_the_Moon"},
+    {name:"Carefree Snowball Fight", start:"2026-09-23", end:"2026-10-13", type:"combat", url:"https://genshin-impact.fandom.com/wiki/Events"},
+    {name:"Predictive Victory Dynamics", start:"2026-09-23", end:"2026-10-13", type:"combat", url:"https://genshin-impact.fandom.com/wiki/Events"},
+    {name:"Overflowing Favor — Artefatti 2x drop", start:"2026-09-23", end:"2026-11-03", type:"resin", url:"https://genshin-impact.fandom.com/wiki/Overflowing_Favor"},
+    {name:"Miliastra Wonderland (Anniversario 6°)", start:"2026-09-23", end:"2026-10-13", type:"exploration", url:"https://genshin-impact.fandom.com/wiki/Events"},
+    {name:"Sinfonia della Dissoluzione", start:"2026-10-13", end:"2026-11-03", type:"combat", url:"https://genshin-impact.fandom.com/wiki/Events"},
+    {name:"Teatro Spettrale (ritorno)", start:"2026-10-13", end:"2026-11-03", type:"combat", url:"https://genshin-impact.fandom.com/wiki/Imaginarium_Theater"},
     {
       name:"Selettore 5★ Standard — Natura congelata",
       start:"2026-09-23", end:"2026-11-03", type:"freechar",
+      url:"https://genshin-impact.fandom.com/wiki/Events",
       selectorType:"standard",
       chars:["Jean","Diluc","Qiqi","Mona","Keqing","Tighnari","Dehya","YumemizukiMizuki"],
       note:"Selettore 5★ Standard — disponibile subito al login dopo l'aggiornamento."
@@ -8424,6 +8427,7 @@ var GENSHIN_EVENTS = {
     {
       name:"Selettore 5★ Limited — Compagnia del Gdr",
       start:"2026-09-23", end:"2026-11-03", type:"freechar",
+      url:"https://genshin-impact.fandom.com/wiki/Events",
       selectorType:"limited",
       chars:["Tartaglia","Nilou","Baizhu","Chiori","Clorinde","Varesa"],
       note:"Selettore 5★ Limited — richiede il completamento del Capitolo 7 Atto 4."
@@ -8447,7 +8451,7 @@ function openBannerMod(key){
   ap(mi,epill);
   if(meta){var rp=span("b bwarn",meta.role||"");rp.style.marginTop="4px";ap(mi,rp);}
   if(ownedChar){
-    var conN=ownedChar.constellation||0;
+    var conN=ownedChar.con||0;
     ap(mi,div("","✓ Nel roster — C"+conN)).style.cssText="font-size:11px;color:#22c55e;margin-top:4px;font-weight:700";
   } else {
     ap(mi,div("","Non ancora ottenuto")).style.cssText="font-size:11px;color:var(--muted);margin-top:4px";
@@ -8464,13 +8468,16 @@ function openBannerMod(key){
     var bestCon=meta.bestCon||0;var conNote=meta.conNote||"";
     var role2=(meta.role||"").toLowerCase();var recText;var recIcon;var recCol;
     if(ownedChar){
-      var conN=ownedChar.constellation||0;
-      if(bestCon>0&&conN<bestCon){
+      var conN=ownedChar.con||0;var nextPull=conN<6?conN+1:6;
+      if(conN>=6){
+        recCol="#22c55e";recIcon="✓";
+        recText="Già a C6 — costellazione massima raggiunta. Non serve pullare.";
+      } else if(bestCon>0&&conN<bestCon){
         recCol="#f59e0b";recIcon="★";
-        recText="Hai già "+fmtName(key)+" a C"+conN+". La C"+bestCon+" è considerata un salto di potenza significativo."+(conNote?" "+conNote:"")+" Vale la pena investire se usi spesso questo personaggio.";
+        recText="Hai già "+fmtName(key)+" a C"+conN+" — pullando lo porti a C"+nextPull+". La C"+bestCon+" è un salto di potenza significativo."+(conNote?" "+conNote:"");
       } else {
         recCol="#22c55e";recIcon="✓";
-        recText="Hai già "+fmtName(key)+" a C"+conN+"."+(bestCon>0?" Hai già raggiunto le costellazioni più utili.":"La C0 è ottima per questo personaggio, non serve investire ulteriormente.")+(conNote?" "+conNote:"");
+        recText="Hai già "+fmtName(key)+" a C"+conN+" — pullando lo porti a C"+nextPull+"."+(bestCon>0?" Hai già raggiunto le costellazioni chiave.":"La C0 è già ottima per questo personaggio.")+(conNote?" "+conNote:"");
       }
     } else if(tier>=9){
       recCol="#f59e0b";recIcon="★";
@@ -8540,8 +8547,9 @@ function rEvents(){
     ap(awrap,ava);
     var ownedC=G&&G.chars.find(function(c){return c.key===k;});
     if(ownedC){
-      var conN=ownedC.constellation||0;
-      var ob=div("","C"+conN);ob.style.cssText="position:absolute;top:-2px;right:-2px;background:#22c55e;border-radius:10px;padding:0 4px;height:14px;line-height:14px;font-size:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;z-index:2;border:1px solid #000";ap(awrap,ob);
+      var conN=ownedC.con||0;
+      var nextCon=conN<6?conN+1:6;
+      var ob=div("","C"+conN+"→"+nextCon);ob.style.cssText="position:absolute;top:-2px;right:-2px;background:#22c55e;border-radius:10px;padding:0 4px;height:14px;line-height:14px;font-size:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;z-index:2;border:1px solid #000";ap(awrap,ob);
     }
     ap(cw,awrap);
     var nsp=span("",fmtName(k));nsp.style.cssText="font-size:9px;color:var(--text);text-align:center;line-height:1.3;width:"+(isFive?"80px":"68px")+";overflow:hidden;text-overflow:ellipsis;white-space:nowrap";if(isFive)nsp.style.fontWeight="700";ap(cw,nsp);
@@ -8551,10 +8559,11 @@ function rEvents(){
     var meta2=MD[k]||{};var tier2=meta2.tier||0;var bestCon2=meta2.bestCon||0;
     var btxt,bcol;
     if(ownedC){
-      var conN2=ownedC.constellation||0;
-      if(bestCon2>0&&conN2<bestCon2){btxt="★ C"+bestCon2+" utile";bcol="#f59e0b";}
-      else{btxt="✓ C"+conN2+" ok";bcol="#22c55e";}
-    }else if(tier2>=9){btxt="★ Top";bcol="#f59e0b";}else if(tier2>=7){btxt="◎ Utile";bcol="#60a5fa";}else if(tier2>0){btxt="– Skip";bcol="#94a3b8";}else{btxt="? Nuovo";bcol="#a855f7";}
+      var conN2=ownedC.con||0;var nextC2=conN2<6?conN2+1:6;
+      if(conN2>=6){btxt="C6 ✓";bcol="#22c55e";}
+      else if(bestCon2>0&&conN2<bestCon2){btxt="→ C"+nextC2+" utile";bcol="#f59e0b";}
+      else{btxt="→ C"+nextC2;bcol="#22c55e";}
+    }else if(tier2>=9){btxt="★ Nuovo Top";bcol="#f59e0b";}else if(tier2>=7){btxt="◎ Nuovo";bcol="#60a5fa";}else if(tier2>0){btxt="Nuovo";bcol="#94a3b8";}else{btxt="Nuovo";bcol="#a855f7";}
     var bdg=span("",btxt);bdg.style.cssText="font-size:7.5px;font-weight:700;color:"+bcol+";padding:1px 6px;border-radius:8px;background:"+bcol+"22;border:1px solid "+bcol+"55";
     ap(cw,bdg);ap(bf,cw);
   }
@@ -8808,7 +8817,8 @@ function rEvents(){
           +"background:"+col2+"44;border-left:3px solid "+col2+";border-radius:"+rndL+" "+rndR+" "+rndR+" "+rndL+";"
           +"font-size:9px;color:var(--text);padding:0 5px;display:flex;align-items:center;"
           +"overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:default;box-sizing:border-box";
-        bar.title=ev.name+" · "+ev.start+" → "+ev.end;
+        bar.title=ev.name+" · "+ev.start+" → "+ev.end+(ev.url?" (clicca per aprire)":"");
+        if(ev.url){bar.style.cursor="pointer";bar.onclick=(function(u){return function(){window.open(u,"_blank","noopener");};})(ev.url);}
         ap(evRowInner,bar);
       });
 
@@ -8852,7 +8862,9 @@ function rEvents(){
       dayEvs.forEach(function(ev){
         var col2=evTypeColor[ev.type]||evTypeColor["default"];
         var eb=div("",ev.name);eb.style.cssText="background:"+col2+"33;border-left:3px solid "+col2+";border-radius:0 4px 4px 0;font-size:9px;color:var(--text);padding:3px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:default;flex-shrink:0";
-        eb.title=ev.name+" · "+ev.start+" → "+ev.end;ap(dc,eb);
+        eb.title=ev.name+" · "+ev.start+" → "+ev.end+(ev.url?" (clicca per aprire)":"");
+        if(ev.url){eb.style.cursor="pointer";eb.onclick=(function(u){return function(){window.open(u,"_blank","noopener");};})(ev.url);}
+        ap(dc,eb);
       });
     });
   }
