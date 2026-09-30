@@ -34,6 +34,7 @@ namespace InventoryKamera
         private const string ArtifactsJson = "artifacts.json";
         private const string CharactersJson = "characters.json";
         private const string MaterialsJson = "materials.json";
+        private const string MaterialIconsJson = "materialIcons.json";
 
         private readonly string NewVersion = "version.txt";
 
@@ -138,6 +139,17 @@ namespace InventoryKamera
         public Dictionary<string, string> LoadMaterials()
         {
             return GetList(ListType.Materials).ToObject<Dictionary<string, string>>();
+        }
+
+        public Dictionary<string, string> LoadMaterialIcons()
+        {
+            try
+            {
+                var path = ListsDir + MaterialIconsJson;
+                if (!File.Exists(path)) return null;
+                return JToken.Parse(File.ReadAllText(path)).ToObject<Dictionary<string, string>>();
+            }
+            catch { return null; }
         }
 
         public Dictionary<string, string> LoadDevItems()
@@ -383,7 +395,8 @@ namespace InventoryKamera
                                     { "Grass", "dendro" },
                                     { "Rock", "geo"},
                                     { "Water", "hydro"},
-                                    { "Wind", "anemo"}
+                                    { "Wind", "anemo"},
+                                    { "Ice", "cryo"}
                                 };
 
                                 value.Add("Element", new JArray(playerElements.Values));
@@ -527,7 +540,7 @@ namespace InventoryKamera
                         var setNameNormalized = setName;
                         var setID = (int)artifactDisplay["param"];
 
-                        if (!data.ContainsKey(setNameKey))
+                        if (!data.ContainsKey(setNameKey) || !data[setNameKey].ContainsKey("setId"))
                         {
                             foreach (var set in codex)
                             {
@@ -543,7 +556,7 @@ namespace InventoryKamera
                                         { "goblet", set["cupId"] },
                                         { "circlet", set["capId"] },
                                     };
-                                    
+
                                     foreach (var artifact in sets.Where(s => artifactIDs.Values.Contains((int)s["id"])))
                                     {
                                         var slot = artifactIDs.First(x => x.Value != null && (int)x.Value == (int)artifact["id"]).Key;
@@ -551,12 +564,14 @@ namespace InventoryKamera
                                         string artifactNamePascalCase = CultureInfo.GetCultureInfo("en").TextInfo.ToTitleCase(artifactName);  // Goblet Of The Sojourner
                                         string artifactNameGOOD = Regex.Replace(artifactNamePascalCase, @"[\W]", string.Empty);               // GobletOfTheSojourner
                                         string artifactNormalized = artifactNameGOOD.ToLower();                                               // gobletofthesojourner
+                                        string artifactIcon = artifact.ContainsKey("icon") ? artifact["icon"].ToString() : "";
 
                                         artifacts.Add(slot, new JObject
                                         {
                                             { "artifactName", artifactName },
                                             { "GOOD", artifactNameGOOD },
                                             { "normalizedName", artifactNormalized },
+                                            { "icon", artifactIcon },
                                         });
                                     }
                                 }
@@ -564,12 +579,18 @@ namespace InventoryKamera
                                 if (artifacts.Count < 1) continue;
                                 var value = new JObject
                                 {
+                                    { "setId", setID },
                                     { "setName", setName },
                                     { "GOOD", setNameGOOD },
                                     { "normalizedName", setNameGOOD.ToLower() },
                                     { "artifacts", artifacts }
                                 };
-                                if (data.TryAdd(setNameKey, value) && status != UpdateStatus.Fail) status = UpdateStatus.Success;
+                                if (data.ContainsKey(setNameKey))
+                                {
+                                    data[setNameKey] = value;
+                                    if (status != UpdateStatus.Fail) status = UpdateStatus.Success;
+                                }
+                                else if (data.TryAdd(setNameKey, value) && status != UpdateStatus.Fail) status = UpdateStatus.Success;
                             }
                         }
                     }
@@ -633,6 +654,7 @@ namespace InventoryKamera
         private UpdateStatus UpdateMaterials(bool force)
         {
             if (force) File.Delete(ListsDir + MaterialsJson);
+            if (force) { try { File.Delete(ListsDir + MaterialIconsJson); } catch { } }
 
             var status = UpdateStatus.Skipped;
 
@@ -647,6 +669,7 @@ namespace InventoryKamera
             };
 
             var data = JToken.Parse(LoadJsonFromFile(MaterialsJson)).ToObject<ConcurrentDictionary<string, string>>();
+            var iconData = new ConcurrentDictionary<string, string>();
 
             var materials = JArray.Parse(LoadJsonFromURLAsync(MaterialsURL)).ToObject<List<JObject>>();
             materials.RemoveAll(material => !(material.TryGetValue("materialType", out var materialType) && materialCategories.Contains(materialType.ToString())));
@@ -663,6 +686,10 @@ namespace InventoryKamera
                         var nameKey = nameGood.ToLower();
 
                         if (data.TryAdd(nameKey, nameGood) && status != UpdateStatus.Fail) status = UpdateStatus.Success;
+
+                        // Save icon filename for external tools
+                        if (material.TryGetValue("icon", out var iconToken) && !string.IsNullOrEmpty(iconToken.ToString()))
+                            iconData.TryAdd(nameGood, iconToken.ToString());
                     }
                     else
                     {
@@ -673,7 +700,11 @@ namespace InventoryKamera
             });
 
             if (status == UpdateStatus.Success)
+            {
                 SaveJsonToFile(JsonConvert.SerializeObject(new SortedDictionary<string, string>(data)), MaterialsJson);
+                if (iconData.Count > 0)
+                    SaveJsonToFile(JsonConvert.SerializeObject(new SortedDictionary<string, string>(iconData)), MaterialIconsJson);
+            }
 
             return status;
         }

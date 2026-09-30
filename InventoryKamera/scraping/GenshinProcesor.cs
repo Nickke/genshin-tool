@@ -12,6 +12,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.ExceptionServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Tesseract;
@@ -187,26 +188,37 @@ namespace InventoryKamera
 		}
 
 		/// <summary> Use Tesseract OCR to find words on picture to string </summary>
+		[HandleProcessCorruptedStateExceptions]
 		internal static string AnalyzeText(Bitmap bitmap, PageSegMode pageMode = PageSegMode.SingleLine, bool numbersOnly = false)
 		{
 			string text = "";
 			TesseractEngine e;
 			while (!engines.TryTake(out e)) { Thread.Sleep(10); }
 
-			if (numbersOnly) e.SetVariable("tessedit_char_whitelist", "0123456789");
-			using (var page = e.Process(bitmap, pageMode))
+			try
 			{
-				using (var iter = page.GetIterator())
+				if (numbersOnly) e.SetVariable("tessedit_char_whitelist", "0123456789");
+				using (var page = e.Process(bitmap, pageMode))
 				{
-					iter.Begin();
-					do
+					using (var iter = page.GetIterator())
 					{
-						text += iter.GetText(PageIteratorLevel.TextLine);
+						iter.Begin();
+						do
+						{
+							text += iter.GetText(PageIteratorLevel.TextLine);
+						}
+						while (iter.Next(PageIteratorLevel.TextLine));
 					}
-					while (iter.Next(PageIteratorLevel.TextLine));
 				}
+				engines.Add(e);
 			}
-			engines.Add(e);
+			catch (Exception ex)
+			{
+				Logger.Error(ex, "AnalyzeText: OCR engine crash, restarting engine and returning empty string.");
+				// Engine in bad state — dispose it and replace with a fresh one
+				try { e.Dispose(); } catch { }
+				try { engines.Add(new TesseractEngine(tesseractDatapath, tesseractLanguage, EngineMode.LstmOnly)); } catch { }
+			}
 
 			return text;
 		}
@@ -286,7 +298,7 @@ namespace InventoryKamera
 			return FindClosestInDict(source: name, targets: Elements, minConfidence: minConfidence);
 		}
 
-		internal static string FindClosestWeapon(string name, int maxEdits = 90)
+		internal static string FindClosestWeapon(string name, int maxEdits = 70)
 		{
 			return FindClosestInDict(source: name, targets: Weapons, minConfidence: maxEdits);
 		}
@@ -325,16 +337,37 @@ namespace InventoryKamera
             return closestMatch;
 		}
 
-		internal static string FindClosestCharacterName(string name, int minConfidence = 90)
+		internal static string FindClosestCharacterName(string name, int minConfidence = 80)
 		{
 			var temp = new Dictionary<string, JObject>();
 			foreach (var character in Characters)
 			{
-				if (character.Value.TryGetValue("CustomName", out var CustomName)) temp.Add(((string)CustomName), character.Value);
-				else temp.Add(character.Key, character.Value);
+				string key;
+				if (character.Value.TryGetValue("CustomName", out var CustomName))
+					key = (string)CustomName;
+				else
+					key = character.Key;
+
+				if (!temp.ContainsKey(key))
+					temp.Add(key, character.Value);
+
+				// Always register the original key as well — some characters (e.g. training dummies)
+				// may display their own name rather than their constellation title or custom name.
+				if (!temp.ContainsKey(character.Key))
+					temp.Add(character.Key, character.Value);
+
+				// Some characters display their constellation title instead of their name.
+				if (character.Value.TryGetValue("ConstellationName", out var constellationNames))
+				{
+					foreach (var cName in constellationNames)
+					{
+						string constellationKey = ((string)cName).ToLower();
+						if (!temp.ContainsKey(constellationKey))
+							temp.Add(constellationKey, character.Value);
+					}
+				}
 			}
 			var n = FindClosestInDict(source: name, targets: temp, minConfidence: minConfidence);
-
             return n;
 		}
 

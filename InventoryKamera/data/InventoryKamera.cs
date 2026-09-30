@@ -115,6 +115,11 @@ namespace InventoryKamera
 			// Assign Wanderer's custom name
 			GenshinProcesor.UpdateCharacterName("wanderer", Properties.Settings.Default.WandererName);
 
+			// Assign Manekin's custom name
+			GenshinProcesor.UpdateCharacterName("manekin", Properties.Settings.Default.ManekinName);
+			// Assign Manekina's custom name
+			GenshinProcesor.UpdateCharacterName("manekina", Properties.Settings.Default.ManekinaName);
+
 
 			if (Properties.Settings.Default.ScanWeapons)
 			{
@@ -258,6 +263,8 @@ namespace InventoryKamera
 
 				if (workerQueue.TryDequeue(out OCRImageCollection imageCollection))
 				{
+					try
+					{
 					switch (imageCollection.Type)
 					{
 						case "weapon":
@@ -403,6 +410,13 @@ namespace InventoryKamera
 						default:
 							MainForm.UnexpectedError("Unknown Image type for Image Processor");
 							break;
+					}
+					}
+					catch (Exception ex)
+					{
+						Logger.Error(ex, "ImageProcessorWorker: unhandled exception processing item #{id}", imageCollection.Id);
+						UserInterface.AddError($"Error processing item #{imageCollection.Id}: {ex.GetBaseException().Message}");
+						imageCollection.Bitmaps?.ForEach(b => b?.Dispose());
 					}
 				}
 				else

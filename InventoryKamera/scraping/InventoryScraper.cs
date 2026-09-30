@@ -264,6 +264,12 @@ namespace InventoryKamera
                 List<Rectangle> rectangles = new List<Rectangle>();
                 List<Rectangle> blobRects = blobCounter.GetObjectsRectangles().ToList();
 
+                if (!blobRects.Any())
+                {
+                    Logger.Warn("ProcessScreenshot: no blobs detected in screenshot, returning empty page.");
+                    return (rectangles, 0, 0);
+                }
+
                 int minWidth = blobRects[0].Width;
                 int minHeight = blobRects[0].Height;
                 foreach (var rect in blobRects)
@@ -537,12 +543,17 @@ namespace InventoryKamera
         /// <param name="card">Bitmap of the item card</param>
         /// <remarks>Note: This method is only useful for equippable items (artifacts and weapons)</remarks>
         /// <returns>A bitmap copy of the item card's equipped character status.</returns>
-        internal static Bitmap GetEquippedBitmap(Bitmap card)
+        internal static Bitmap GetEquippedBitmap(Bitmap card, bool isElixir = false)
         {
+            double baseY = Navigation.IsNormal ? 0.938 : 0.943;
+            // For Elixir artifacts the banner shifts content down ~6.5%.
+            // The equipped strip would land at ~100%+ which is out of bounds;
+            // cap at 93% so we still attempt OCR on the bottom area.
+            double y = isElixir ? 0.93 : baseY;
             return GenshinProcesor.CopyBitmap(card,
                 new Rectangle(
                     x: (int)(card.Width * 0.15),
-                    y: (int)(double)(card.Height * (double)(Navigation.IsNormal ? 0.938 : 0.943)),
+                    y: (int)(card.Height * y),
                     width: card.Width,
                     height: card.Height));
         }

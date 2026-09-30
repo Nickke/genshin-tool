@@ -268,13 +268,13 @@ namespace InventoryKamera
 				tasks.Add(taskName);
 				tasks.Add(taskLevel);
 				tasks.Add(taskRefinement);
-
-				if (b_equipped)
-				{
-					tasks.Add(taskEquipped);
-				}
+				tasks.Add(taskEquipped);
 
 				await Task.WhenAll(tasks.ToArray());
+
+				// If refinement OCR failed, default to R1 rather than dropping the weapon
+				if (refinementLevel < 1 || refinementLevel > 5)
+					refinementLevel = 1;
 			}
 			return new Weapon(name, level, ascended, refinementLevel, locked, equippedCharacter, id, rarity);
 		}
@@ -354,23 +354,20 @@ namespace InventoryKamera
 			Bitmap n = GenshinProcesor.ConvertToGrayscale(bm);
 			GenshinProcesor.SetContrast(60.0, ref n);
 
-			string extractedString = GenshinProcesor.AnalyzeText(n);
+			string extractedString = GenshinProcesor.AnalyzeText(n).Trim();
 			n.Dispose();
 
-			if (extractedString != "")
+			if (!string.IsNullOrEmpty(extractedString))
 			{
-				var regexItem = new Regex("Equipped:");
+				var regexItem = new Regex(@"Equipped\s*:", RegexOptions.IgnoreCase);
 				if (regexItem.IsMatch(extractedString))
 				{
-					var name = extractedString.Split(':')[1];
-
+					var name = regexItem.Split(extractedString)[1];
 					name = Regex.Replace(name, @"[\W]", string.Empty).ToLower();
 					name = GenshinProcesor.FindClosestCharacterName(name);
-
 					return name;
 				}
 			}
-			// artifact has no equipped character
 			return null;
 		}
 

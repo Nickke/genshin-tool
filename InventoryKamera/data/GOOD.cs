@@ -34,6 +34,12 @@ namespace InventoryKamera
         [JsonProperty("materials", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public Dictionary<string, int> Materials { get; private set; }
 
+        [JsonProperty("kamera_artifact_icons", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public Dictionary<string, Dictionary<string, string>> KameraArtifactIcons { get; private set; }
+
+        [JsonProperty("kamera_material_icons", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public Dictionary<string, string> KameraMaterialIcons { get; private set; }
+
         public GOOD()
         {
             Format = "EMPTY";
@@ -85,8 +91,50 @@ namespace InventoryKamera
             }
 
             // Assign materials
-            if (genshinData.Inventory.AllMaterials.Count > 0) Materials = new Dictionary<string, int>();
-            genshinData.Inventory.AllMaterials.ToList().ForEach(material => Materials.Add(material.name, material.count));
+            if (genshinData.Inventory.AllMaterials.Count > 0)
+            {
+                Materials = new Dictionary<string, int>();
+                foreach (var material in genshinData.Inventory.AllMaterials)
+                {
+                    if (!string.IsNullOrEmpty(material.name) && !Materials.ContainsKey(material.name))
+                        Materials[material.name] = material.count;
+                }
+            }
+
+            // Embed artifact icon data from local database for use by external tools
+            try
+            {
+                var db = new DatabaseManager();
+                var artifactDb = db.LoadArtifacts();
+                if (artifactDb != null && artifactDb.Count > 0)
+                {
+                    var iconMap = new Dictionary<string, Dictionary<string, string>>();
+                    foreach (var kvp in artifactDb)
+                    {
+                        if (kvp.Value.TryGetValue("GOOD", out var goodKey) &&
+                            kvp.Value.TryGetValue("artifacts", out var piecesToken) &&
+                            piecesToken is Newtonsoft.Json.Linq.JObject pieces)
+                        {
+                            var slotIcons = new Dictionary<string, string>();
+                            foreach (var piece in pieces.Properties())
+                            {
+                                var iconVal = piece.Value["icon"]?.ToString();
+                                if (!string.IsNullOrEmpty(iconVal))
+                                    slotIcons[piece.Name] = iconVal;
+                            }
+                            if (slotIcons.Count > 0)
+                                iconMap[goodKey.ToString()] = slotIcons;
+                        }
+                    }
+                    if (iconMap.Count > 0) KameraArtifactIcons = iconMap;
+                }
+
+                // Embed material icon data from local database
+                var materialIcons = db.LoadMaterialIcons();
+                if (materialIcons != null && materialIcons.Count > 0)
+                    KameraMaterialIcons = materialIcons;
+            }
+            catch { /* Non-critical, skip if database unavailable */ }
         }
 
         internal void WriteToJSON(string outputDirectory)

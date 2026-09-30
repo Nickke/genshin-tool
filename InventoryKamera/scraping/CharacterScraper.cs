@@ -16,6 +16,8 @@ namespace InventoryKamera
 		public static void ScanCharacters(ref List<Character> Characters)
 		{
 			int viewed = 0;
+			int consecutiveFailures = 0;
+			bool wrappedOnce = false;
 			string first = null;
 			HashSet<string> scanned = new HashSet<string>();
 
@@ -24,11 +26,31 @@ namespace InventoryKamera
 			while (true)
 			{
 				var character = ScanCharacter(first);
-				if (Characters.Count > 0 && character.NameGOOD == Characters.ElementAt(0).NameGOOD) break;
+
+				// Wrap-around detection: we've seen the first character again.
+				if (Characters.Count > 0 && !string.IsNullOrEmpty(character.NameGOOD)
+					&& character.NameGOOD == Characters.ElementAt(0).NameGOOD)
+				{
+					if (consecutiveFailures == 0 || wrappedOnce)
+					{
+						// Clean wrap (no failures before this) OR already gave one retry pass → done.
+						break;
+					}
+					// Had scan failures before reaching the first character again, which means one
+					// or more characters near the end of the list were skipped. Allow one more pass
+					// so those characters get a second scan attempt.
+					wrappedOnce = true;
+					consecutiveFailures = 0;
+					Logger.Info("Wrap-around detected with recent failures; allowing one retry pass for skipped characters.");
+					// Fall through without breaking — navigate past the first character.
+				}
+
 				if (character.IsValid())
 				{
+					consecutiveFailures = 0;
                     if (!scanned.Contains(character.NameGOOD))
 					{
+						scanned.Add(character.NameGOOD);
 						Characters.Add(character);
 						UserInterface.IncrementCharacterCount();
 						Logger.Info("Scanned {0} successfully", character.NameGOOD);
@@ -41,6 +63,7 @@ namespace InventoryKamera
 				}
                 else
 				{
+					consecutiveFailures++;
 					string error = "";
 					if (!character.HasValidName()) error += "Invalid character name\n";
 					if (!character.HasValidLevel()) error += "Invalid level\n";
@@ -54,6 +77,11 @@ namespace InventoryKamera
 				UserInterface.ResetCharacterDisplay();
 
 				if (++viewed > 3 && Characters.Count < 1) break;
+				if (consecutiveFailures > 5 && Characters.Count > 0)
+				{
+					Logger.Info("Stopping scan after {0} consecutive failures with {1} characters already scanned", consecutiveFailures, Characters.Count);
+					break;
+				}
 			}
 
 			// Childe passive buff fix
@@ -105,6 +133,14 @@ namespace InventoryKamera
 			// Check if character was first scanned
 			if (character.NameGOOD != firstCharacter)
 			{
+				// Manekin and Manekina have a non-standard constellation UI that corrupts
+				// game state when scanned — skip them entirely in the main scanner.
+				if (character.NameGOOD == "Manekin" || character.NameGOOD == "Manekina")
+				{
+					Logger.Info("Skipping {0}: no standard constellation UI", character.NameGOOD);
+					return character;
+				}
+
 				bool ascended = false;
 				// Scan Level and ascension
 				int level = ScanLevel(ref ascended);
@@ -136,36 +172,6 @@ namespace InventoryKamera
 				Logger.Info("{0} Talents: {1}", character.NameGOOD, "{" + string.Join(", ", character.Talents.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}");
 				Navigation.SystemWait(Navigation.Speed.Normal);
 
-				// Scale down talents due to constellations
-				if (character.Constellation >= 3)
-				{
-					if (GenshinProcesor.Characters.ContainsKey(name.ToLower()))
-					{
-						string talentLeveledAtConst3 = character.NameGOOD.Contains("Traveler")
-                            ? (string)GenshinProcesor.Characters[name.ToLower()]["ConstellationOrder"][character.Element.ToLower()][0]
-                            : (string)GenshinProcesor.Characters[name.ToLower()]["ConstellationOrder"][0];
-
-                        // Scale down talents
-                        if (character.Constellation >= 5)
-						{
-							Logger.Info("{0} constellation 5+, adjusting scanned skill and burst levels", character.NameGOOD);
-							character.Talents["skill"] -= 3;
-							character.Talents["burst"] -= 3;
-						}
-						else if (talentLeveledAtConst3 == "skill")
-						{
-							Logger.Info("{0} constellation 3+, adjusting scanned skill level", character.NameGOOD);
-							character.Talents["skill"] -= 3;
-						}
-						else
-						{
-							Logger.Info("{0} constellation 3+, adjusting scanned burst level", character.NameGOOD);
-							character.Talents["burst"] -= 3;
-						}
-					}
-					else
-						return character;
-				}
 
 
 				return character;
@@ -317,6 +323,9 @@ namespace InventoryKamera
 					var values = text.Split('/');
                     if (int.TryParse(values[0], out int level) && int.TryParse(values[1], out int maxLevel))
                     {
+                        // OCR sometimes reads "90" as "190" (spurious leading "1"). Correct by mod 100.
+                        if (level > 90 && level <= 190) level = level % 100;
+                        if (maxLevel > 90 && maxLevel <= 190) maxLevel = maxLevel % 100;
                         maxLevel = (int)Math.Round(maxLevel / 10.0, MidpointRounding.AwayFromZero) * 10;
                         ascended = 20 <= level && level < maxLevel;
                         UserInterface.SetCharacter_Level(bm, level, maxLevel);
