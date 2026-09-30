@@ -53,7 +53,7 @@ namespace InventoryKamera
             // Track colours
             Color trackOn  = Color.FromArgb(0, 120, 212);
             Color trackOff = Color.FromArgb(160, 160, 160);
-            Color trackCol = _checked ? trackOn : trackOff;
+            Color trackCol = _checked ? trackOff : trackOn;
 
             // Draw track (pill)
             using (var brush = new SolidBrush(trackCol))

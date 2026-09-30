@@ -319,7 +319,7 @@
             // Artifacts_Label
             // 
             this.Artifacts_Label.AutoSize = true;
-            this.Artifacts_Label.Location = new System.Drawing.Point(7, 618);
+            this.Artifacts_Label.Location = new System.Drawing.Point(7, 626);
             this.Artifacts_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Artifacts_Label.Name = "Artifacts_Label";
             this.Artifacts_Label.Size = new System.Drawing.Size(51, 13);
@@ -329,7 +329,7 @@
             // Characters_Label
             // 
             this.Characters_Label.AutoSize = true;
-            this.Characters_Label.Location = new System.Drawing.Point(7, 632);
+            this.Characters_Label.Location = new System.Drawing.Point(7, 647);
             this.Characters_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Characters_Label.Name = "Characters_Label";
             this.Characters_Label.Size = new System.Drawing.Size(64, 13);
@@ -339,7 +339,7 @@
             // CharactersScanned_Label
             // 
             this.CharactersScanned_Label.AutoSize = true;
-            this.CharactersScanned_Label.Location = new System.Drawing.Point(80, 632);
+            this.CharactersScanned_Label.Location = new System.Drawing.Point(80, 647);
             this.CharactersScanned_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.CharactersScanned_Label.Name = "CharactersScanned_Label";
             this.CharactersScanned_Label.Size = new System.Drawing.Size(13, 13);
@@ -349,7 +349,7 @@
             // ArtifactsScanned_Label
             // 
             this.ArtifactsScanned_Label.AutoSize = true;
-            this.ArtifactsScanned_Label.Location = new System.Drawing.Point(80, 618);
+            this.ArtifactsScanned_Label.Location = new System.Drawing.Point(80, 626);
             this.ArtifactsScanned_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ArtifactsScanned_Label.Name = "ArtifactsScanned_Label";
             this.ArtifactsScanned_Label.Size = new System.Drawing.Size(13, 13);
@@ -379,7 +379,7 @@
             // ArtifactsScannedSlash_Label
             // 
             this.ArtifactsScannedSlash_Label.AutoSize = true;
-            this.ArtifactsScannedSlash_Label.Location = new System.Drawing.Point(111, 618);
+            this.ArtifactsScannedSlash_Label.Location = new System.Drawing.Point(111, 626);
             this.ArtifactsScannedSlash_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ArtifactsScannedSlash_Label.Name = "ArtifactsScannedSlash_Label";
             this.ArtifactsScannedSlash_Label.Size = new System.Drawing.Size(12, 13);
@@ -399,7 +399,7 @@
             // ArtifactsMax_Label
             // 
             this.ArtifactsMax_Label.AutoSize = true;
-            this.ArtifactsMax_Label.Location = new System.Drawing.Point(126, 618);
+            this.ArtifactsMax_Label.Location = new System.Drawing.Point(126, 626);
             this.ArtifactsMax_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ArtifactsMax_Label.Name = "ArtifactsMax_Label";
             this.ArtifactsMax_Label.Size = new System.Drawing.Size(13, 13);
@@ -422,7 +422,7 @@
             // 
             this.Github_Label.AutoSize = true;
             this.Github_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Github_Label.Location = new System.Drawing.Point(497, 40);
+            this.Github_Label.Location = new System.Drawing.Point(635, 40);
             this.Github_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Github_Label.Name = "Github_Label";
             this.Github_Label.Size = new System.Drawing.Size(88, 13);
@@ -442,7 +442,7 @@
             this.ErrorLog_TextBox.Name = "ErrorLog_TextBox";
             this.ErrorLog_TextBox.ReadOnly = true;
             this.ErrorLog_TextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ErrorLog_TextBox.Size = new System.Drawing.Size(429, 60);
+            this.ErrorLog_TextBox.Size = new System.Drawing.Size(504, 60);
             this.ErrorLog_TextBox.TabIndex = 53;
             // 
             // ErrorLog_Label
@@ -487,7 +487,7 @@
             // 
             this.Releases_Label.AutoSize = true;
             this.Releases_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Releases_Label.Location = new System.Drawing.Point(497, 57);
+            this.Releases_Label.Location = new System.Drawing.Point(635, 57);
             this.Releases_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Releases_Label.Name = "Releases_Label";
             this.Releases_Label.Size = new System.Drawing.Size(85, 13);
@@ -509,7 +509,7 @@
             // Navigation_Label
             // 
             this.Navigation_Label.AutoSize = true;
-            this.Navigation_Label.Location = new System.Drawing.Point(497, 24);
+            this.Navigation_Label.Location = new System.Drawing.Point(635, 24);
             this.Navigation_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Navigation_Label.Name = "Navigation_Label";
             this.Navigation_Label.Size = new System.Drawing.Size(61, 13);
@@ -539,7 +539,7 @@
             this.ScannerOutput_Panel.Location = new System.Drawing.Point(153, 394);
             this.ScannerOutput_Panel.Margin = new System.Windows.Forms.Padding(0);
             this.ScannerOutput_Panel.Name = "ScannerOutput_Panel";
-            this.ScannerOutput_Panel.Size = new System.Drawing.Size(435, 304);
+            this.ScannerOutput_Panel.Size = new System.Drawing.Size(510, 304);
             this.ScannerOutput_Panel.TabIndex = 67;
             // 
             // GearPictureBox
@@ -784,7 +784,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(285, 33);
+            this.label3.Location = new System.Drawing.Point(370, 33);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(114, 13);
             this.label3.TabIndex = 91;
@@ -802,7 +802,7 @@
             // MinimumArtifactLevelLabel
             // 
             this.MinimumArtifactLevelLabel.AutoSize = true;
-            this.MinimumArtifactLevelLabel.Location = new System.Drawing.Point(286, 67);
+            this.MinimumArtifactLevelLabel.Location = new System.Drawing.Point(371, 67);
             this.MinimumArtifactLevelLabel.Name = "MinimumArtifactLevelLabel";
             this.MinimumArtifactLevelLabel.Size = new System.Drawing.Size(113, 13);
             this.MinimumArtifactLevelLabel.TabIndex = 93;
@@ -822,7 +822,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(7, 682);
+            this.button1.Location = new System.Drawing.Point(7, 712);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(143, 23);
             this.button1.TabIndex = 100;
@@ -868,7 +868,7 @@
             this.EquipArtifactsCheckBox.Checked = global::InventoryKamera.Properties.Settings.Default.EquipArtifacts;
             this.EquipArtifactsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.EquipArtifactsCheckBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::InventoryKamera.Properties.Settings.Default, "EquipArtifacts", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.EquipArtifactsCheckBox.Location = new System.Drawing.Point(328, 88);
+            this.EquipArtifactsCheckBox.Location = new System.Drawing.Point(410, 88);
             this.EquipArtifactsCheckBox.Name = "EquipArtifactsCheckBox";
             this.EquipArtifactsCheckBox.Size = new System.Drawing.Size(94, 17);
             this.EquipArtifactsCheckBox.TabIndex = 98;
@@ -963,7 +963,7 @@
             // numericUpDown1
             // 
             this.numericUpDown1.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::InventoryKamera.Properties.Settings.Default, "MinimumArtifactLevel", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.numericUpDown1.Location = new System.Drawing.Point(413, 62);
+            this.numericUpDown1.Location = new System.Drawing.Point(560, 62);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             20,
             0,
@@ -977,7 +977,7 @@
             // MinimumWeaponLevelControl
             // 
             this.MinimumWeaponLevelControl.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::InventoryKamera.Properties.Settings.Default, "MinimumWeaponLevel", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.MinimumWeaponLevelControl.Location = new System.Drawing.Point(224, 62);
+            this.MinimumWeaponLevelControl.Location = new System.Drawing.Point(300, 62);
             this.MinimumWeaponLevelControl.Maximum = new decimal(new int[] {
             90,
             0,
@@ -996,7 +996,7 @@
             // ArtifactRarityControl
             // 
             this.ArtifactRarityControl.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::InventoryKamera.Properties.Settings.Default, "MinimumArtifactRarity", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.ArtifactRarityControl.Location = new System.Drawing.Point(413, 26);
+            this.ArtifactRarityControl.Location = new System.Drawing.Point(560, 26);
             this.ArtifactRarityControl.Maximum = new decimal(new int[] {
             5,
             0,
@@ -1015,7 +1015,7 @@
             // WeaponRarityControl
             // 
             this.WeaponRarityControl.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::InventoryKamera.Properties.Settings.Default, "MinimumWeaponRarity", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.WeaponRarityControl.Location = new System.Drawing.Point(224, 27);
+            this.WeaponRarityControl.Location = new System.Drawing.Point(300, 27);
             this.WeaponRarityControl.Maximum = new decimal(new int[] {
             5,
             0,
@@ -1112,7 +1112,7 @@
             this.OutputPath_TextBox.Location = new System.Drawing.Point(202, 250);
             this.OutputPath_TextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.OutputPath_TextBox.Name = "OutputPath_TextBox";
-            this.OutputPath_TextBox.Size = new System.Drawing.Size(386, 18);
+            this.OutputPath_TextBox.Size = new System.Drawing.Size(466, 18);
             this.OutputPath_TextBox.TabIndex = 79;
             this.OutputPath_TextBox.Text = global::InventoryKamera.Properties.Settings.Default.OutputPath;
             //
@@ -1163,7 +1163,7 @@
             this.AutoCopyJsonPath_TextBox.Location = new System.Drawing.Point(213, 310);
             this.AutoCopyJsonPath_TextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.AutoCopyJsonPath_TextBox.Name = "AutoCopyJsonPath_TextBox";
-            this.AutoCopyJsonPath_TextBox.Size = new System.Drawing.Size(437, 22);
+            this.AutoCopyJsonPath_TextBox.Size = new System.Drawing.Size(517, 22);
             this.AutoCopyJsonPath_TextBox.TabIndex = 83;
             this.AutoCopyJsonPath_TextBox.Text = global::InventoryKamera.Properties.Settings.Default.AutoCopyJsonPath;
             //
@@ -1202,7 +1202,7 @@
             this.AutoCopyLogPath_TextBox.Location = new System.Drawing.Point(213, 358);
             this.AutoCopyLogPath_TextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.AutoCopyLogPath_TextBox.Name = "AutoCopyLogPath_TextBox";
-            this.AutoCopyLogPath_TextBox.Size = new System.Drawing.Size(437, 22);
+            this.AutoCopyLogPath_TextBox.Size = new System.Drawing.Size(517, 22);
             this.AutoCopyLogPath_TextBox.TabIndex = 86;
             this.AutoCopyLogPath_TextBox.Text = global::InventoryKamera.Properties.Settings.Default.AutoCopyLogPath;
             //
@@ -1231,7 +1231,7 @@
             // Materials_Label
             //
             this.Materials_Label.AutoSize = true;
-            this.Materials_Label.Location = new System.Drawing.Point(7, 646);
+            this.Materials_Label.Location = new System.Drawing.Point(7, 668);
             this.Materials_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Materials_Label.Name = "Materials_Label";
             this.Materials_Label.TabIndex = 120;
@@ -1240,7 +1240,7 @@
             // MaterialsScanned_Label
             //
             this.MaterialsScanned_Label.AutoSize = true;
-            this.MaterialsScanned_Label.Location = new System.Drawing.Point(80, 645);
+            this.MaterialsScanned_Label.Location = new System.Drawing.Point(80, 668);
             this.MaterialsScanned_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.MaterialsScanned_Label.Name = "MaterialsScanned_Label";
             this.MaterialsScanned_Label.TabIndex = 121;
@@ -1249,7 +1249,7 @@
             // CharDev_Label
             //
             this.CharDev_Label.AutoSize = true;
-            this.CharDev_Label.Location = new System.Drawing.Point(7, 658);
+            this.CharDev_Label.Location = new System.Drawing.Point(7, 689);
             this.CharDev_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.CharDev_Label.Name = "CharDev_Label";
             this.CharDev_Label.TabIndex = 122;
@@ -1258,7 +1258,7 @@
             // CharDevScanned_Label
             //
             this.CharDevScanned_Label.AutoSize = true;
-            this.CharDevScanned_Label.Location = new System.Drawing.Point(80, 658);
+            this.CharDevScanned_Label.Location = new System.Drawing.Point(80, 689);
             this.CharDevScanned_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.CharDevScanned_Label.Name = "CharDevScanned_Label";
             this.CharDevScanned_Label.TabIndex = 123;
@@ -1269,7 +1269,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(234)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
-            this.ClientSize = new System.Drawing.Size(660, 718);
+            this.ClientSize = new System.Drawing.Size(740, 748);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.manekinaNameTextBox);
             this.Controls.Add(this.label5);
