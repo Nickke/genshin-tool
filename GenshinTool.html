@@ -1480,7 +1480,10 @@ function loadFromUrl(url,part){
         firstLoadCheck();
       }
     }catch(err){msg.className="upmsg err";msg.textContent="Errore: "+err.message;}
-  }).catch(function(err){msg.className="upmsg err";msg.textContent="Errore caricamento URL: "+err.message;});
+  }).catch(function(err){
+    var hint=err.message.indexOf("404")>=0||err.message.indexOf("not found")>=0?"(Il repo potrebbe essere privato o il file non esiste a quell'URL)":"";
+    msg.className="upmsg err";msg.textContent="Errore: "+err.message+" "+hint;
+  });
 }
 
 function sw(id,btn){
@@ -3010,7 +3013,7 @@ function rTeatro(){
 }
 
 // ── CONFIG / IK ───────────────────────────────────────────────────────────────
-var IK_RAW_BASE = "https://raw.githubusercontent.com/Nickke/genshin-tool/master/InventoryKamera/game_data/";
+var IK_RAW_BASE = "https://raw.githubusercontent.com/Nickke/genshin-tool/main/inventorylists/";
 var IK_EXE_URL = "https://github.com/Nickke/genshin-tool/raw/main/InventoryKamera.exe";
 var IK_FILES = [
   {name:"characters.json", desc:"Personaggi: ConstellationOrder, elemento, tipo arma"},
@@ -8208,27 +8211,17 @@ function renderIKConfig(cont){
     var inp=document.createElement("input");inp.id=f[1];inp.value=f[2]();inp.style.cssText=INP_STYLE;
     inp.oninput=function(){f[3](this.value);};ap(nameCard,inp);
   });
-  // Traveler name — select + custom
+  // Traveler name
   var trlbl=document.createElement("label");trlbl.textContent="Nome Traveler (in gioco)";trlbl.style.cssText="font-size:11px;color:var(--muted);margin-bottom:3px;display:block";ap(nameCard,trlbl);
-  var trRow=div("");trRow.style.cssText="display:flex;gap:6px;margin-bottom:10px;align-items:center";ap(nameCard,trRow);
-  var trSel=document.createElement("select");trSel.id="ikTravSel";trSel.style.cssText="flex:1;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:12px;cursor:pointer";
-  [["Traveler","Traveler (default)"],["Aether","Aether — Manekino ♂"],["Lumine","Lumine — Manekina ♀"]].forEach(function(o){var opt=document.createElement("option");opt.value=o[0];opt.textContent=o[1];if(IK_TRAVELER_NAME===o[0])opt.selected=true;ap(trSel,opt);});
-  var trCustomOpt=document.createElement("option");trCustomOpt.value="__custom__";trCustomOpt.textContent="Altro (personalizzato)…";if(!["Traveler","Aether","Lumine"].includes(IK_TRAVELER_NAME))trCustomOpt.selected=true;ap(trSel,trCustomOpt);
-  trSel.onchange=function(){if(this.value!=="__custom__"){IK_TRAVELER_NAME=this.value;trInp.style.display="none";}else{trInp.style.display="";trInp.focus();}};ap(trRow,trSel);
-  var trInp=document.createElement("input");trInp.id="ikTravName";trInp.placeholder="Nome personalizzato";trInp.value=["Traveler","Aether","Lumine"].includes(IK_TRAVELER_NAME)?"":IK_TRAVELER_NAME;
-  trInp.style.cssText=INP_STYLE+"display:"+(!["Traveler","Aether","Lumine"].includes(IK_TRAVELER_NAME)?"":"none");
-  trInp.oninput=function(){IK_TRAVELER_NAME=this.value||"Traveler";};ap(trRow,trInp);
-  // Wanderer name — select + custom
+  var trInp=document.createElement("input");trInp.id="ikTravName";trInp.placeholder="es. Traveler, Aether, Lumine…";trInp.value=IK_TRAVELER_NAME;
+  trInp.style.cssText=INP_STYLE;
+  trInp.oninput=function(){IK_TRAVELER_NAME=this.value||"Traveler";};ap(nameCard,trInp);
+  // Wanderer name
   var wdlbl=document.createElement("label");wdlbl.textContent="Nome Wanderer (in gioco)";wdlbl.style.cssText="font-size:11px;color:var(--muted);margin-bottom:3px;display:block";ap(nameCard,wdlbl);
-  var wdRow=div("");wdRow.style.cssText="display:flex;gap:6px;margin-bottom:10px;align-items:center";ap(nameCard,wdRow);
-  var wdSel=document.createElement("select");wdSel.id="ikWandSel";wdSel.style.cssText="flex:1;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:12px;cursor:pointer";
-  [["Wanderer","Wanderer (default)"],["Scaramouche","Scaramouche"]].forEach(function(o){var opt=document.createElement("option");opt.value=o[0];opt.textContent=o[1];if(IK_WANDERER_NAME===o[0])opt.selected=true;ap(wdSel,opt);});
-  var wdCustomOpt=document.createElement("option");wdCustomOpt.value="__custom__";wdCustomOpt.textContent="Altro (personalizzato)…";if(!["Wanderer","Scaramouche"].includes(IK_WANDERER_NAME))wdCustomOpt.selected=true;ap(wdSel,wdCustomOpt);
-  wdSel.onchange=function(){if(this.value!=="__custom__"){IK_WANDERER_NAME=this.value;wdInp.style.display="none";}else{wdInp.style.display="";wdInp.focus();}};ap(wdRow,wdSel);
-  var wdInp=document.createElement("input");wdInp.id="ikWandName";wdInp.placeholder="Nome personalizzato";wdInp.value=["Wanderer","Scaramouche"].includes(IK_WANDERER_NAME)?"":IK_WANDERER_NAME;
-  wdInp.style.cssText=INP_STYLE+"display:"+(!["Wanderer","Scaramouche"].includes(IK_WANDERER_NAME)?"":"none");
-  wdInp.oninput=function(){IK_WANDERER_NAME=this.value||"Wanderer";};ap(wdRow,wdInp);
-  var nameInfo=div("","ℹ I nomi devono corrispondere esattamente a quanto appare in gioco (case-sensitive). Se usi un nome personalizzato scegli \"Altro\".");
+  var wdInp=document.createElement("input");wdInp.id="ikWandName";wdInp.placeholder="es. Wanderer, Scaramouche…";wdInp.value=IK_WANDERER_NAME;
+  wdInp.style.cssText=INP_STYLE;
+  wdInp.oninput=function(){IK_WANDERER_NAME=this.value||"Wanderer";};ap(nameCard,wdInp);
+  var nameInfo=div("","ℹ I nomi devono corrispondere esattamente a quanto appare in gioco (case-sensitive).");
   nameInfo.style.cssText="font-size:10px;color:#fbbf24;background:#78350f22;border-radius:6px;padding:7px 10px;border:1px solid #f59e0b33";ap(nameCard,nameInfo);
 
   // Card scan settings
@@ -8261,11 +8254,11 @@ function renderIKConfig(cont){
   var allFiles=[
     {name:"InventoryKamera.exe",desc:"Scanner — scarica l'ultima versione modificata",action:null,note:"Da Nickke/GitHub",isExe:true},
     {name:"InventoryKamera.exe.config",desc:"Config con nomi e impostazioni — accanto a IK.exe",action:generateIKConfig,note:"Generato dai tuoi dati"},
-    {name:"game_data/characters.json",desc:"Personaggi: ConstellationOrder, elemento",action:function(){downloadIKFile("characters.json");},note:"Da Nickke/GitHub",ghUrl:IK_RAW_BASE+"characters.json"},
-    {name:"game_data/artifacts.json",desc:"Set artefatti e chiavi GOOD per slot",action:function(){downloadIKFile("artifacts.json");},note:"Da Nickke/GitHub",ghUrl:IK_RAW_BASE+"artifacts.json"},
-    {name:"game_data/weapons.json",desc:"Armi con chiave GOOD (PascalCase)",action:function(){downloadIKFile("weapons.json");},note:"Da Nickke/GitHub",ghUrl:IK_RAW_BASE+"weapons.json"},
-    {name:"game_data/materials.json",desc:"Materiali con chiave GOOD",action:function(){downloadIKFile("materials.json");},note:"Da Nickke/GitHub",ghUrl:IK_RAW_BASE+"materials.json"},
-    {name:"game_data/version.txt",desc:"Versione patch di gioco",action:null,note:"Da Nickke/GitHub"}
+    {name:"inventorylists/characters.json",desc:"Personaggi: ConstellationOrder, elemento",action:function(){downloadIKFile("characters.json");},note:"Da Nickke/GitHub"},
+    {name:"inventorylists/artifacts.json",desc:"Set artefatti e chiavi GOOD per slot",action:function(){downloadIKFile("artifacts.json");},note:"Da Nickke/GitHub"},
+    {name:"inventorylists/weapons.json",desc:"Armi con chiave GOOD (PascalCase)",action:function(){downloadIKFile("weapons.json");},note:"Da Nickke/GitHub"},
+    {name:"inventorylists/materials.json",desc:"Materiali con chiave GOOD",action:function(){downloadIKFile("materials.json");},note:"Da Nickke/GitHub"},
+    {name:"inventorylists/version.txt",desc:"Versione patch di gioco",action:function(){downloadIKFile("version.txt");},note:"Da Nickke/GitHub"}
   ];
   allFiles.forEach(function(f){
     var fc=div("");fc.style.cssText="padding:10px 12px;border:1px solid "+(f.isExe?"#a855f744":"var(--border)")+";border-radius:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;background:"+(f.isExe?"#a855f711":"var(--surf)");ap(fileGrid,fc);
@@ -8400,34 +8393,36 @@ function renderGuide(cont){
 // ── EVENTS ────────────────────────────────────────────────────────────────────
 var GENSHIN_EVENTS = {
   version: "7.1",
-  lastUpdated: "2026-09-23",
+  lastUpdated: "2026-10-01",
   bannerPhase1: [
-    {type:"char", chars5:["Flins","Ineffa"], chars4:["Aino","Iansan","LanYan"], start:"2026-09-01", end:"2026-09-22", note:"Ver 7.0 Fase 2 (terminata)"},
-    {type:"weapon", weapons:["BloodsoakedRuins","FracturedHalo"], start:"2026-09-01", end:"2026-09-22"}
+    {type:"char", chars5:["Vesna","Vodyanitsa"], chars4:["Faruzan","Chongyun","Diona"], start:"2026-09-23", end:"2026-10-13", note:"Ver 7.1 Fase 1 — in corso"},
+    {type:"weapon", weapons:["BeyondTheChrysalis","HymnOfTheMaelstrom"], start:"2026-09-23", end:"2026-10-13"}
   ],
   bannerCurrent: [
-    {type:"char", chars5:["Vesna","Vodyanitsa"], chars4:["Faruzan","Chongyun","Diona"], start:"2026-09-23", end:"2026-10-13", note:"Ver 7.1 Fase 1 — attiva"},
+    {type:"char", chars5:["Vesna","Vodyanitsa"], chars4:["Faruzan","Chongyun","Diona"], start:"2026-09-23", end:"2026-10-13", note:"Ver 7.1 Fase 1 — in corso fino al 13/10"},
     {type:"weapon", weapons:["BeyondTheChrysalis","HymnOfTheMaelstrom"], start:"2026-09-23", end:"2026-10-13"}
   ],
   bannerNext: [
-    {type:"char", chars5:["Skirk","Escoffier"], chars4:[], start:"2026-10-13", end:"2026-11-03", note:"Ver 7.1 Fase 2 — Skirk + Escoffier rerun. 4★ da confermare."}
+    {type:"char", chars5:["Skirk","Escoffier"], chars4:[], start:"2026-10-13", end:"2026-11-03", note:"Ver 7.1 Fase 2 — Skirk (new) + Escoffier rerun. 4★ da confermare."}
   ],
   events: [
-    {name:"Rainbow's End (+10 Fates login)", start:"2026-09-23", end:"2026-11-03", type:"login"},
-    {name:"Silverwing in Pursuit of the Moon", start:"2026-09-23", end:"2026-11-03", type:"exploration"},
-    {name:"Carefree Snowball Fight", start:"2026-09-23", end:"2026-11-03", type:"combat"},
-    {name:"Predictive Victory Dynamics", start:"2026-09-23", end:"2026-11-03", type:"combat"},
-    {name:"Overflowing Favor (artefatti 2x)", start:"2026-09-23", end:"2026-11-03", type:"resin"},
-    {name:"Miliastra Wonderland (Anniversario)", start:"2026-09-23", end:"2026-11-03", type:"exploration"},
+    {name:"Rainbow's End — Login +10 Fates", start:"2026-09-23", end:"2026-11-03", type:"login"},
+    {name:"Silverwing in Pursuit of the Moon", start:"2026-09-23", end:"2026-10-13", type:"exploration"},
+    {name:"Carefree Snowball Fight", start:"2026-09-23", end:"2026-10-13", type:"combat"},
+    {name:"Predictive Victory Dynamics", start:"2026-09-23", end:"2026-10-13", type:"combat"},
+    {name:"Overflowing Favor — Artefatti 2x drop", start:"2026-09-23", end:"2026-11-03", type:"resin"},
+    {name:"Miliastra Wonderland (Anniversario 6°)", start:"2026-09-23", end:"2026-10-13", type:"exploration"},
+    {name:"Sinfonia della Dissoluzione", start:"2026-10-13", end:"2026-11-03", type:"combat"},
+    {name:"Teatro Spettrale (ritorno)", start:"2026-10-13", end:"2026-11-03", type:"combat"},
     {
-      name:"Attraverso la natura congelata, affilando il proprio spirito",
+      name:"Selettore 5★ Standard — Natura congelata",
       start:"2026-09-23", end:"2026-11-03", type:"freechar",
       selectorType:"standard",
       chars:["Jean","Diluc","Qiqi","Mona","Keqing","Tighnari","Dehya","YumemizukiMizuki"],
       note:"Selettore 5★ Standard — disponibile subito al login dopo l'aggiornamento."
     },
     {
-      name:"Compagnia del Gdr: Raduno alla vigilia dell'avventura",
+      name:"Selettore 5★ Limited — Compagnia del Gdr",
       start:"2026-09-23", end:"2026-11-03", type:"freechar",
       selectorType:"limited",
       chars:["Tartaglia","Nilou","Baizhu","Chiori","Clorinde","Varesa"],
@@ -8673,129 +8668,196 @@ function rEvents(){
     });
   }
 
-  // Calendario & Timeline
+  // ── Calendario Outlook-style ──
   var tlsec=div("card");ap(cont,tlsec);
-  var tlh=div("","📅 Calendario & Timeline");tlh.style.cssText="font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;text-transform:uppercase;letter-spacing:.7px";ap(tlsec,tlh);
-
   if(!GENSHIN_EVENTS.events||!GENSHIN_EVENTS.events.length){ap(tlsec,div("","Nessun evento disponibile")).style.cssText="font-size:12px;color:var(--muted)";return;}
 
-  var evTypeColor={"combat":"#ef4444","exploration":"#22c55e","resin":"#a855f7","login":"#3b82f6","freechar":"#f59e0b","default":"#94a3b8"};
   var today2=new Date();today2.setHours(0,0,0,0);
+  var evTypeColor={"combat":"#ef4444","exploration":"#22c55e","resin":"#a855f7","login":"#3b82f6","freechar":"#f59e0b","default":"#94a3b8"};
+  var MNAMES=["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+  var DNAMES=["Lu","Ma","Me","Gi","Ve","Sa","Do"];
 
-  if(!window._evCal){window._evCal={year:today2.getFullYear(),month:today2.getMonth(),selDay:null};}
+  if(!window._evCal3){window._evCal3={view:"month",ref:new Date(today2)};}
 
-  var calBox=div("");ap(tlsec,calBox);
-  var dayBox=div("");ap(tlsec,dayBox);
+  // ── Navigation bar ──
+  var nav=div("");nav.style.cssText="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap";ap(tlsec,nav);
+  var vWrap=div("");vWrap.style.cssText="display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--border)";ap(nav,vWrap);
+  function mkViewBtn(label,v){
+    var b=div("",label);b.style.cssText="padding:5px 14px;font-size:11px;font-weight:600;cursor:pointer;user-select:none;transition:background .15s";
+    function upd(){b.style.background=window._evCal3.view===v?"#3b82f6":"transparent";b.style.color=window._evCal3.view===v?"#fff":"var(--text)";}
+    upd();
+    b.onclick=function(){window._evCal3.view=v;renderCal3();};
+    b._upd=upd;ap(vWrap,b);return b;
+  }
+  var btnM=mkViewBtn("Mese","month");var btnW=mkViewBtn("Settimana","week");
+  var prevBtn=div("","◀");prevBtn.style.cssText="cursor:pointer;padding:5px 10px;border-radius:6px;background:#ffffff11;font-size:12px;color:var(--text);user-select:none";
+  var navLbl=div("");navLbl.style.cssText="flex:1;font-size:13px;font-weight:700;color:var(--text);text-align:center;min-width:150px";
+  var nextBtn=div("","▶");nextBtn.style.cssText="cursor:pointer;padding:5px 10px;border-radius:6px;background:#ffffff11;font-size:12px;color:var(--text);user-select:none";
+  var todayBtn2=div("","Oggi");todayBtn2.style.cssText="cursor:pointer;padding:5px 12px;border-radius:6px;background:#3b82f622;color:#60a5fa;font-size:11px;border:1px solid #3b82f644;font-weight:600;user-select:none";
+  ap(nav,prevBtn);ap(nav,navLbl);ap(nav,nextBtn);ap(nav,todayBtn2);
 
-  function eventsOnDay(d){
-    var ds=d.getTime();
-    return (GENSHIN_EVENTS.events||[]).filter(function(ev){
-      var s=new Date(ev.start);s.setHours(0,0,0,0);
-      var e=new Date(ev.end);e.setHours(23,59,59,999);
-      return ds>=s.getTime()&&ds<=e.getTime();
-    });
+  prevBtn.onclick=function(){navigate3(-1);};
+  nextBtn.onclick=function(){navigate3(1);};
+  todayBtn2.onclick=function(){window._evCal3.ref=new Date(today2);renderCal3();};
+
+  function navigate3(dir){
+    var r=window._evCal3.ref;
+    if(window._evCal3.view==="month"){r.setMonth(r.getMonth()+dir);}
+    else{r.setDate(r.getDate()+dir*7);}
+    renderCal3();
   }
 
-  function monthName(m){return["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"][m];}
+  function getWkStart(d){var r=new Date(d);r.setHours(0,0,0,0);r.setDate(r.getDate()-((r.getDay()+6)%7));return r;}
+  function evOverlap(ev,d1,d2){var es=new Date(ev.start);es.setHours(0,0,0,0);var ee=new Date(ev.end);ee.setHours(23,59,59,999);return es<=d2&&ee>=d1;}
 
-  function renderDayDetail(d){
-    clr(dayBox);
-    if(!d){
-      // Prossimi eventi
-      var upcoming=(GENSHIN_EVENTS.events||[]).filter(function(ev){return new Date(ev.end)>=today2;});
-      upcoming.sort(function(a,b){return new Date(a.start)-new Date(b.start);});
-      if(!upcoming.length){ap(dayBox,div("","Nessun evento prossimo")).style.cssText="font-size:11px;color:var(--muted);padding:8px 0";return;}
-      var uh=div("","Prossimi eventi");uh.style.cssText="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;margin-top:12px";ap(dayBox,uh);
-      upcoming.forEach(function(ev){
-        var er=div("");er.style.cssText="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #ffffff08";ap(dayBox,er);
-        var col=evTypeColor[ev.type]||evTypeColor["default"];
-        var dot=div("");dot.style.cssText="width:8px;height:8px;border-radius:50%;background:"+col+";flex-shrink:0";ap(er,dot);
-        var einfo=div("");ap(er,einfo);
-        ap(einfo,div("",ev.name)).style.cssText="font-size:11px;color:var(--text);font-weight:600";
-        var s=new Date(ev.start);var e=new Date(ev.end);
-        var sStr=(s.getDate())+"/"+(s.getMonth()+1)+"/"+s.getFullYear();
-        var eStr=(e.getDate())+"/"+(e.getMonth()+1)+"/"+e.getFullYear();
-        var daysLeft=Math.ceil((e-today2)/(1000*60*60*24));
-        var timeInfo=s>today2?"Dal "+sStr+" al "+eStr:"Fino al "+eStr+" ("+daysLeft+" giorni)";
-        ap(einfo,div("",timeInfo)).style.cssText="font-size:9.5px;color:var(--muted)";
-      });
-      return;
+  var calBody3=div("");ap(tlsec,calBody3);
+
+  // Legend
+  var leg3=div("");leg3.style.cssText="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)";ap(tlsec,leg3);
+  [["login","Login"],["combat","Combattimento"],["exploration","Esplorazione"],["resin","Resina"],["freechar","Pers. gratuito"]].forEach(function(lt){
+    var lr=div("");lr.style.cssText="display:flex;align-items:center;gap:5px";ap(leg3,lr);
+    var ld=div("");ld.style.cssText="width:12px;height:8px;border-radius:3px;background:"+(evTypeColor[lt[0]]||"#94a3b8");ap(lr,ld);
+    ap(lr,span("",lt[1])).style.cssText="font-size:9px;color:var(--muted)";
+  });
+
+  function renderCal3(){
+    clr(calBody3);
+    btnM._upd();btnW._upd();
+    var ref=window._evCal3.ref;
+    if(window._evCal3.view==="month"){
+      navLbl.textContent=MNAMES[ref.getMonth()]+" "+ref.getFullYear();
+      renderMonth3(ref);
+    } else {
+      var wks=getWkStart(ref);
+      var wke=new Date(wks);wke.setDate(wke.getDate()+6);
+      navLbl.textContent=(wks.getDate())+"/"+(wks.getMonth()+1)+" — "+(wke.getDate())+"/"+(wke.getMonth()+1)+"/"+wke.getFullYear();
+      renderWeek3(wks);
     }
-    var evs=eventsOnDay(d);
-    var dStr=(d.getDate())+"/"+(d.getMonth()+1)+"/"+d.getFullYear();
-    var dh=div("","📅 "+dStr);dh.style.cssText="font-size:11px;font-weight:700;color:var(--text);margin-top:12px;margin-bottom:8px";ap(dayBox,dh);
-    if(!evs.length){ap(dayBox,div("","Nessun evento in questo giorno")).style.cssText="font-size:11px;color:var(--muted);padding:4px 0";return;}
-    evs.forEach(function(ev){
-      var er=div("");er.style.cssText="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #ffffff08";ap(dayBox,er);
-      var col=evTypeColor[ev.type]||evTypeColor["default"];
-      var dot=div("");dot.style.cssText="width:8px;height:8px;border-radius:50%;background:"+col+";flex-shrink:0";ap(er,dot);
-      var einfo=div("");ap(er,einfo);
-      ap(einfo,div("",ev.name)).style.cssText="font-size:11px;color:var(--text);font-weight:600";
-      var e=new Date(ev.end);var eStr=(e.getDate())+"/"+(e.getMonth()+1)+"/"+e.getFullYear();
-      ap(einfo,div("","Fino al "+eStr)).style.cssText="font-size:9.5px;color:var(--muted)";
-    });
   }
 
-  function renderCalMonth(){
-    clr(calBox);
-    var yr=window._evCal.year;var mo=window._evCal.month;
-    // Header
-    var hdr=div("");hdr.style.cssText="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px";ap(calBox,hdr);
-    var prev=div("","◀");prev.style.cssText="cursor:pointer;padding:4px 10px;border-radius:6px;background:#ffffff11;font-size:13px;color:var(--text);user-select:none";
-    prev.onclick=function(){window._evCal.month--;if(window._evCal.month<0){window._evCal.month=11;window._evCal.year--;}renderCalMonth();};
-    ap(hdr,prev);
-    ap(hdr,div("",monthName(mo)+" "+yr)).style.cssText="font-size:13px;font-weight:700;color:var(--text)";
-    var next=div("","▶");next.style.cssText="cursor:pointer;padding:4px 10px;border-radius:6px;background:#ffffff11;font-size:13px;color:var(--text);user-select:none";
-    next.onclick=function(){window._evCal.month++;if(window._evCal.month>11){window._evCal.month=0;window._evCal.year++;}renderCalMonth();};
-    ap(hdr,next);
-    // Today button
-    var todayBtn=div("","Oggi");todayBtn.style.cssText="cursor:pointer;padding:4px 10px;border-radius:6px;background:#3b82f622;color:#60a5fa;font-size:11px;border:1px solid #3b82f644;font-weight:600";
-    todayBtn.onclick=function(){window._evCal.year=today2.getFullYear();window._evCal.month=today2.getMonth();window._evCal.selDay=null;renderCalMonth();renderDayDetail(null);};
-    ap(hdr,todayBtn);
-    // Grid
-    var grid=div("");grid.style.cssText="display:grid;grid-template-columns:repeat(7,1fr);gap:3px";ap(calBox,grid);
-    var dayNames=["Lu","Ma","Me","Gi","Ve","Sa","Do"];
-    dayNames.forEach(function(dn){
-      var dc=div("",dn);dc.style.cssText="text-align:center;font-size:9px;font-weight:700;color:var(--muted);padding:4px 0";ap(grid,dc);
-    });
-    // First day of month (0=Sun..6=Sat → convert to Mon-based)
+  function renderMonth3(ref){
+    var yr=ref.getFullYear();var mo=ref.getMonth();
     var firstDay=new Date(yr,mo,1);
-    var startCol=(firstDay.getDay()+6)%7; // 0=Mon
-    var daysInMonth=new Date(yr,mo+1,0).getDate();
-    for(var i=0;i<startCol;i++){ap(grid,div(""));}
-    for(var d2=1;d2<=daysInMonth;d2++){
-      var dt=new Date(yr,mo,d2);dt.setHours(0,0,0,0);
-      var dayEvs=eventsOnDay(dt);
-      var isToday=dt.getTime()===today2.getTime();
-      var isSel=window._evCal.selDay&&window._evCal.selDay.getTime()===dt.getTime();
-      var dc2=div("");
-      dc2.style.cssText="border-radius:6px;padding:4px 2px;cursor:pointer;text-align:center;background:"+(isSel?"#3b82f655":(isToday?"#f59e0b22":"transparent"))+";border:1px solid "+(isSel?"#3b82f6":(isToday?"#f59e0b55":"transparent"))+";min-height:40px;display:flex;flex-direction:column;align-items:center;gap:2px;transition:background .15s";
-      dc2.onmouseenter=function(el2){el2.style.background="#ffffff0a";};
-      dc2.onmouseleave=(function(el2,s2){return function(){el2.style.background=s2;};})(dc2,isSel?"#3b82f655":(isToday?"#f59e0b22":"transparent"));
-      var dnum=div("",""+d2);dnum.style.cssText="font-size:11px;color:"+(isToday?"#f59e0b":isSel?"#60a5fa":"var(--text)")+";font-weight:"+(isToday||isSel?"700":"400");ap(dc2,dnum);
-      if(dayEvs.length){
-        var dots=div("");dots.style.cssText="display:flex;gap:2px;flex-wrap:wrap;justify-content:center;max-width:30px";ap(dc2,dots);
-        dayEvs.slice(0,4).forEach(function(ev){
-          var dot2=div("");dot2.style.cssText="width:5px;height:5px;border-radius:50%;background:"+(evTypeColor[ev.type]||evTypeColor["default"]);ap(dots,dot2);
-        });
-      }
-      (function(dt3){
-        dc2.onclick=function(){window._evCal.selDay=dt3;renderCalMonth();renderDayDetail(dt3);};
-      })(dt);
-      ap(grid,dc2);
+    var daysInMo=new Date(yr,mo+1,0).getDate();
+    var startCol=(firstDay.getDay()+6)%7;
+
+    // Build weeks array
+    var weeks=[];var w=[];var col=0;
+    for(var i=0;i<startCol;i++){w.push(null);col++;}
+    for(var d=1;d<=daysInMo;d++){
+      w.push(new Date(yr,mo,d));col++;
+      if(col===7){weeks.push(w);w=[];col=0;}
     }
-    // Legend
-    var leg=div("");leg.style.cssText="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px";ap(calBox,leg);
-    var legTypes=[["combat","Combattimento"],["exploration","Esplorazione"],["resin","Resina"],["login","Login"],["freechar","Personaggio gratuito"]];
-    legTypes.forEach(function(lt){
-      var lrow=div("");lrow.style.cssText="display:flex;align-items:center;gap:4px";ap(leg,lrow);
-      var ldot=div("");ldot.style.cssText="width:7px;height:7px;border-radius:50%;background:"+(evTypeColor[lt[0]]||"#94a3b8");ap(lrow,ldot);
-      ap(lrow,span("",lt[1])).style.cssText="font-size:9px;color:var(--muted)";
+    if(w.length){while(w.length<7)w.push(null);weeks.push(w);}
+
+    // Wrapper with border
+    var wrap=div("");wrap.style.cssText="border:1px solid var(--border);border-radius:10px;overflow:hidden";ap(calBody3,wrap);
+
+    // Day-of-week header row
+    var hrow=div("");hrow.style.cssText="display:grid;grid-template-columns:repeat(7,1fr);background:#ffffff08;border-bottom:1px solid var(--border)";ap(wrap,hrow);
+    DNAMES.forEach(function(dn){ap(hrow,div("",dn)).style.cssText="text-align:center;font-size:10px;font-weight:700;color:var(--muted);padding:6px 0;";});
+
+    // Each week: events row + day number row
+    weeks.forEach(function(week,wi){
+      var weekStart=null;var weekEnd=null;
+      week.forEach(function(d){if(!d)return;var dt=new Date(d);dt.setHours(0,0,0,0);if(!weekStart||dt<weekStart)weekStart=dt;if(!weekEnd||dt>weekEnd)weekEnd=dt;});
+      if(!weekStart)return;
+      var weekEndDay=new Date(weekEnd);weekEndDay.setHours(23,59,59,999);
+
+      // Events overlapping this week
+      var wevs=(GENSHIN_EVENTS.events||[]).filter(function(ev){return evOverlap(ev,weekStart,weekEndDay);});
+      wevs.sort(function(a,b){return new Date(a.start)-new Date(b.start);});
+
+      // Assign lanes
+      var lanes=[];var evLanes=[];
+      wevs.forEach(function(ev){
+        var es=new Date(ev.start);es.setHours(0,0,0,0);
+        var lane=-1;
+        for(var li=0;li<lanes.length;li++){if(lanes[li]<es.getTime()){lane=li;break;}}
+        if(lane<0){lane=lanes.length;lanes.push(0);}
+        var ee=new Date(ev.end);ee.setHours(0,0,0,0);
+        lanes[lane]=ee.getTime();evLanes.push(lane);
+      });
+      var numL=Math.max(0,lanes.length);
+      var LHGT=18;var LGAP=2;
+      var evAreaH=numL>0?numL*(LHGT+LGAP)+4:4;
+
+      // Events row (spans all 7 cols via absolute positioning inside a relative container)
+      var evRowWrap=div("");evRowWrap.style.cssText="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border)";ap(wrap,evRowWrap);
+      var evRowInner=div("");evRowInner.style.cssText="grid-column:1/8;position:relative;height:"+evAreaH+"px;background:var(--bg)";ap(evRowWrap,evRowInner);
+
+      wevs.forEach(function(ev,idx){
+        var col2=evTypeColor[ev.type]||evTypeColor["default"];
+        var lane=evLanes[idx];
+        var es=new Date(ev.start);es.setHours(0,0,0,0);
+        var ee=new Date(ev.end);ee.setHours(0,0,0,0);
+        // Find first and last column this event occupies in this week
+        var cStart=-1;var cEnd=-1;
+        week.forEach(function(d,ci){
+          if(!d)return;
+          var dt=new Date(d);dt.setHours(0,0,0,0);
+          if(dt>=es&&dt<=ee){if(cStart<0)cStart=ci;cEnd=ci;}
+        });
+        if(cStart<0)return;
+        var leftPct=(cStart/7*100).toFixed(2)+"%";
+        var widthPct=((cEnd-cStart+1)/7*100).toFixed(2)+"%";
+        var rndL=es<=weekStart?"0px":"6px";
+        var rndR=ee>=weekEnd?"0px":"6px";
+        var bar=div("",ev.name);
+        bar.style.cssText="position:absolute;left:"+leftPct+";width:calc("+widthPct+" - 2px);top:"+(lane*(LHGT+LGAP)+2)+"px;height:"+LHGT+"px;"
+          +"background:"+col2+"44;border-left:3px solid "+col2+";border-radius:"+rndL+" "+rndR+" "+rndR+" "+rndL+";"
+          +"font-size:9px;color:var(--text);padding:0 5px;display:flex;align-items:center;"
+          +"overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:default;box-sizing:border-box";
+        bar.title=ev.name+" · "+ev.start+" → "+ev.end;
+        ap(evRowInner,bar);
+      });
+
+      // Day number row
+      var dayRow=div("");dayRow.style.cssText="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:"+(wi<weeks.length-1?"1px solid var(--border)":"none");ap(wrap,dayRow);
+      week.forEach(function(d){
+        if(!d){ap(dayRow,div("")).style.cssText="background:#ffffff04;min-height:28px";return;}
+        var dt=new Date(d);dt.setHours(0,0,0,0);
+        var isToday=dt.getTime()===today2.getTime();
+        var isOtherMo=dt.getMonth()!==mo;
+        var dc=div("");dc.style.cssText="min-height:28px;padding:4px 6px;background:"+(isToday?"#f59e0b0d":"var(--bg)");ap(dayRow,dc);
+        var dn=div("",""+dt.getDate());
+        dn.style.cssText="width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;"
+          +"font-size:11px;font-weight:"+(isToday?"700":"400")+";background:"+(isToday?"#f59e0b":"transparent")+";color:"+(isToday?"#000":isOtherMo?"var(--muted)":"var(--text)");
+        ap(dc,dn);
+      });
     });
   }
 
-  renderCalMonth();
-  renderDayDetail(null);
+  function renderWeek3(weekStart){
+    var days=[];for(var i=0;i<7;i++){var d=new Date(weekStart);d.setDate(d.getDate()+i);d.setHours(0,0,0,0);days.push(d);}
+
+    var wrap=div("");wrap.style.cssText="border:1px solid var(--border);border-radius:10px;overflow:hidden";ap(calBody3,wrap);
+
+    // Header
+    var hrow=div("");hrow.style.cssText="display:grid;grid-template-columns:repeat(7,1fr);background:#ffffff08;border-bottom:1px solid var(--border)";ap(wrap,hrow);
+    days.forEach(function(d){
+      var isToday=d.getTime()===today2.getTime();
+      var hc=div("");hc.style.cssText="text-align:center;padding:8px 4px;border-right:1px solid var(--border)";ap(hrow,hc);
+      ap(hc,div("",DNAMES[(d.getDay()+6)%7])).style.cssText="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:2px";
+      var dn2=div("",""+d.getDate());dn2.style.cssText="width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;background:"+(isToday?"#f59e0b":"transparent")+";color:"+(isToday?"#000":"var(--text)");
+      ap(hc,dn2);
+    });
+
+    // Event columns
+    var bodyRow=div("");bodyRow.style.cssText="display:grid;grid-template-columns:repeat(7,1fr)";ap(wrap,bodyRow);
+    days.forEach(function(d){
+      var dEnd=new Date(d);dEnd.setHours(23,59,59,999);
+      var dayEvs=(GENSHIN_EVENTS.events||[]).filter(function(ev){return evOverlap(ev,d,dEnd);});
+      var dc=div("");dc.style.cssText="min-height:100px;padding:4px;display:flex;flex-direction:column;gap:2px;border-right:1px solid var(--border)";ap(bodyRow,dc);
+      dayEvs.forEach(function(ev){
+        var col2=evTypeColor[ev.type]||evTypeColor["default"];
+        var eb=div("",ev.name);eb.style.cssText="background:"+col2+"33;border-left:3px solid "+col2+";border-radius:0 4px 4px 0;font-size:9px;color:var(--text);padding:3px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:default;flex-shrink:0";
+        eb.title=ev.name+" · "+ev.start+" → "+ev.end;ap(dc,eb);
+      });
+    });
+  }
+
+  renderCal3();
 }
 
 rIK();rEvents();
