@@ -155,6 +155,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="upbar">
   <input type="file" id="fi" accept=".json" style="display:none">
   <button class="btn btn-blue" onclick="document.getElementById('fi').click()">📂 JSON Completo</button>
+  <button class="btn" style="background:#1e3a5f;color:#60a5fa;border:1px solid #3b82f655" onclick="loadFromUrlPrompt()">🔗 URL</button>
   <button class="btn btn-green" id="btnP" onclick="loadP()" disabled>➕ JSON Parziale</button>
   <button class="btn" id="btnTG" style="background:#064e3b;color:#6ee7b7;border:1px solid #6ee7b755" onclick="toggleTravelerGender()" title="Genere Traveler">🧑 Traveler ♂</button>
   <span class="upmsg" id="umsg">Carica il JSON di Inventory Kamera per iniziare</span>
@@ -1434,6 +1435,52 @@ function loadF(file,part){
     }catch(err){alert("Errore: "+err.message);}
   };
   r.readAsText(file);
+}
+
+function loadFromUrlPrompt(){
+  var url=prompt("Inserisci l'URL del file JSON (es. link raw di GitHub):");
+  if(!url||!url.trim())return;
+  url=url.trim();
+  if(url.includes("github.com")&&!url.includes("raw.githubusercontent.com")&&url.includes("/blob/")){
+    url=url.replace("github.com","raw.githubusercontent.com").replace("/blob/","/");
+  }
+  loadFromUrl(url,false);
+}
+
+function loadFromUrl(url,part){
+  var msg=document.getElementById("umsg");
+  msg.className="upmsg";msg.textContent="Caricamento da URL…";
+  fetch(url).then(function(r){
+    if(!r.ok)throw new Error("HTTP "+r.status+" — "+r.statusText);
+    return r.text();
+  }).then(function(text){
+    try{
+      var d=JSON.parse(text);
+      if(part&&!RD){msg.className="upmsg err";msg.textContent="Carica prima il JSON completo, poi il parziale.";return;}
+      if(part&&RD)d=merge(RD,d);
+      if(!d.characters)throw new Error("File non valido: mancano i personaggi");
+      if(d.kamera_artifact_icons)KAMERA_ARTIFACT_ICONS=d.kamera_artifact_icons;
+      if(d.kamera_material_icons)KAMERA_MATERIAL_ICONS=d.kamera_material_icons;
+      RD=d;G=analyze(d);
+      msg.className="upmsg ok";
+      msg.textContent="OK (URL) · "+G.chars.length+" personaggi";
+      document.getElementById("btnP").disabled=false;
+      document.getElementById("hLv").textContent=G.lv90.length;
+      document.getElementById("hCr").textContent=G.mats.CrownOfInsight||0;
+      document.getElementById("hMo").textContent=((G.mats.Mora||0)/1e6).toFixed(1)+"M";
+      renderAll();
+      if(!part){
+        var uid=d.uid||(d.playerInfo&&d.playerInfo.uid)||d.player_uid||d.account_uid||IK_PLAYER_UID||"";
+        var pname=d.playerName||(d.playerInfo&&d.playerInfo.nickname)||d.nickname||d.player_name||d.account_name||IK_PLAYER_NAME||"";
+        var titleEl=document.getElementById("hTitle");
+        var subEl=document.getElementById("hSub");
+        if(titleEl)titleEl.textContent=pname?"Genshin Tool — "+pname:"Genshin Tool";
+        if(subEl)subEl.textContent=(uid?"UID "+uid+" · ":"")+"tool v3.1";
+        document.title=pname?"Genshin Tool — "+pname:"Genshin Tool";
+        firstLoadCheck();
+      }
+    }catch(err){msg.className="upmsg err";msg.textContent="Errore: "+err.message;}
+  }).catch(function(err){msg.className="upmsg err";msg.textContent="Errore caricamento URL: "+err.message;});
 }
 
 function sw(id,btn){
@@ -2963,7 +3010,8 @@ function rTeatro(){
 }
 
 // ── CONFIG / IK ───────────────────────────────────────────────────────────────
-var IK_RAW_BASE = "https://raw.githubusercontent.com/Andrewthe13th/Inventory_Kamera/master/InventoryKamera/game_data/";
+var IK_RAW_BASE = "https://raw.githubusercontent.com/Nickke/genshin-tool/master/InventoryKamera/game_data/";
+var IK_EXE_URL = "https://github.com/Nickke/genshin-tool/raw/main/InventoryKamera.exe";
 var IK_FILES = [
   {name:"characters.json", desc:"Personaggi: ConstellationOrder, elemento, tipo arma"},
   {name:"artifacts.json",  desc:"Set artefatti e chiavi GOOD per slot"},
@@ -2975,9 +3023,11 @@ var IK_TRAVELER_NAME = "Traveler";
 var IK_WANDERER_NAME = "Wanderer";
 var IK_MIN_ART_LV = "0";
 var IK_MIN_WEP_RARITY = "1";
+var IK_MIN_ART_RARITY = "1";
+var IK_MIN_WEP_LV = "1";
 
 function generateIKConfig(){
-  var cfg='<?xml version="1.0" encoding="utf-8"?>\n<configuration>\n  <configSections>\n    <sectionGroup name="userSettings" type="System.Configuration.UserSettingsGroup, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">\n      <section name="InventoryKamera.Properties.Settings" type="System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" allowExeDefinition="MachineToLocalUser" requirePermission="false" />\n    </sectionGroup>\n  </configSections>\n  <startup><supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.7.2" /></startup>\n  <userSettings>\n    <InventoryKamera.Properties.Settings>\n      <setting name="ScanWeapons" serializeAs="String"><value>True</value></setting>\n      <setting name="ScanArtifacts" serializeAs="String"><value>True</value></setting>\n      <setting name="ScanCharacters" serializeAs="String"><value>True</value></setting>\n      <setting name="ScanCharDevItems" serializeAs="String"><value>True</value></setting>\n      <setting name="ScanMaterials" serializeAs="String"><value>True</value></setting>\n      <setting name="ScannerDelay" serializeAs="String"><value>0</value></setting>\n      <setting name="OutputPath" serializeAs="String"><value /></setting>\n      <setting name="InventoryKey" serializeAs="String"><value>66</value></setting>\n      <setting name="CharacterKey" serializeAs="String"><value>67</value></setting>\n      <setting name="MinimumWeaponRarity" serializeAs="String"><value>'+IK_MIN_WEP_RARITY+'</value></setting>\n      <setting name="MinimumArtifactRarity" serializeAs="String"><value>1</value></setting>\n      <setting name="MinimumWeaponLevel" serializeAs="String"><value>1</value></setting>\n      <setting name="MinimumArtifactLevel" serializeAs="String"><value>'+IK_MIN_ART_LV+'</value></setting>\n      <setting name="UpgradeNeeded" serializeAs="String"><value>True</value></setting>\n      <setting name="LastUpdateCheck" serializeAs="String"><value>1000-01-01</value></setting>\n      <setting name="RemoteVersion" serializeAs="String"><value>0.0.0.0</value></setting>\n      <setting name="LogScreenshots" serializeAs="String"><value>False</value></setting>\n      <setting name="EquipWeapons" serializeAs="String"><value>True</value></setting>\n      <setting name="EquipArtifacts" serializeAs="String"><value>True</value></setting>\n      <setting name="TravelerName" serializeAs="String"><value>'+IK_TRAVELER_NAME+'</value></setting>\n      <setting name="WandererName" serializeAs="String"><value>'+IK_WANDERER_NAME+'</value></setting>\n      <setting name="Executables" serializeAs="Xml">\n        <value><ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><string>GenshinImpact</string><string>YuanShen</string></ArrayOfString></value>\n      </setting>\n      <setting name="Slot1Key" serializeAs="String"><value>1</value></setting>\n    </InventoryKamera.Properties.Settings>\n  </userSettings>\n  <runtime>\n    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">\n      <dependentAssembly><assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/><bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0"/></dependentAssembly>\n      <dependentAssembly><assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral"/><bindingRedirect oldVersion="0.0.0.0-13.0.0.0" newVersion="13.0.0.0"/></dependentAssembly>\n    </assemblyBinding>\n  </runtime>\n</configuration>';
+  var cfg='<?xml version="1.0" encoding="utf-8"?>\n<configuration>\n  <configSections>\n    <sectionGroup name="userSettings" type="System.Configuration.UserSettingsGroup, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">\n      <section name="InventoryKamera.Properties.Settings" type="System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" allowExeDefinition="MachineToLocalUser" requirePermission="false" />\n    </sectionGroup>\n  </configSections>\n  <startup><supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.7.2" /></startup>\n  <userSettings>\n    <InventoryKamera.Properties.Settings>\n      <setting name="ScanWeapons" serializeAs="String"><value>True</value></setting>\n      <setting name="ScanArtifacts" serializeAs="String"><value>True</value></setting>\n      <setting name="ScanCharacters" serializeAs="String"><value>True</value></setting>\n      <setting name="ScanCharDevItems" serializeAs="String"><value>True</value></setting>\n      <setting name="ScanMaterials" serializeAs="String"><value>True</value></setting>\n      <setting name="ScannerDelay" serializeAs="String"><value>0</value></setting>\n      <setting name="OutputPath" serializeAs="String"><value /></setting>\n      <setting name="InventoryKey" serializeAs="String"><value>66</value></setting>\n      <setting name="CharacterKey" serializeAs="String"><value>67</value></setting>\n      <setting name="MinimumWeaponRarity" serializeAs="String"><value>'+IK_MIN_WEP_RARITY+'</value></setting>\n      <setting name="MinimumArtifactRarity" serializeAs="String"><value>'+IK_MIN_ART_RARITY+'</value></setting>\n      <setting name="MinimumWeaponLevel" serializeAs="String"><value>'+IK_MIN_WEP_LV+'</value></setting>\n      <setting name="MinimumArtifactLevel" serializeAs="String"><value>'+IK_MIN_ART_LV+'</value></setting>\n      <setting name="UpgradeNeeded" serializeAs="String"><value>True</value></setting>\n      <setting name="LastUpdateCheck" serializeAs="String"><value>1000-01-01</value></setting>\n      <setting name="RemoteVersion" serializeAs="String"><value>0.0.0.0</value></setting>\n      <setting name="LogScreenshots" serializeAs="String"><value>False</value></setting>\n      <setting name="EquipWeapons" serializeAs="String"><value>True</value></setting>\n      <setting name="EquipArtifacts" serializeAs="String"><value>True</value></setting>\n      <setting name="TravelerName" serializeAs="String"><value>'+IK_TRAVELER_NAME+'</value></setting>\n      <setting name="WandererName" serializeAs="String"><value>'+IK_WANDERER_NAME+'</value></setting>\n      <setting name="Executables" serializeAs="Xml">\n        <value><ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><string>GenshinImpact</string><string>YuanShen</string></ArrayOfString></value>\n      </setting>\n      <setting name="Slot1Key" serializeAs="String"><value>1</value></setting>\n    </InventoryKamera.Properties.Settings>\n  </userSettings>\n  <runtime>\n    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">\n      <dependentAssembly><assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/><bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0"/></dependentAssembly>\n      <dependentAssembly><assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral"/><bindingRedirect oldVersion="0.0.0.0-13.0.0.0" newVersion="13.0.0.0"/></dependentAssembly>\n    </assemblyBinding>\n  </runtime>\n</configuration>';
   var blob=new Blob([cfg],{type:"text/xml"});
   var url=URL.createObjectURL(blob);
   var a=document.createElement("a");a.href=url;a.download="InventoryKamera.exe.config";a.click();
@@ -8152,30 +8202,56 @@ function renderIKConfig(cont){
   var nt=div("","Nomi account");nt.style.cssText="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px";ap(nameCard,nt);
   var INP_STYLE="width:100%;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:12px;margin-bottom:10px;outline:none";
   [["Nome giocatore (header tool)","ikPlayerName",function(){return IK_PLAYER_NAME;},function(v){IK_PLAYER_NAME=v;var t=document.getElementById("hTitle");if(t&&G)t.textContent=v?"Genshin Tool — "+v:"Genshin Tool";}],
-   ["UID giocatore","ikPlayerUID",function(){return IK_PLAYER_UID;},function(v){IK_PLAYER_UID=v;var s=document.getElementById("hSub");if(s&&G)s.textContent=(v?"UID "+v+" · ":"")+"tool v3.1";}],
-   ["Nome Traveler (in gioco)","ikTravName",function(){return IK_TRAVELER_NAME;},function(v){IK_TRAVELER_NAME=v;}],
-   ["Nome Wanderer","ikWandName",function(){return IK_WANDERER_NAME;},function(v){IK_WANDERER_NAME=v;}]
+   ["UID giocatore","ikPlayerUID",function(){return IK_PLAYER_UID;},function(v){IK_PLAYER_UID=v;var s=document.getElementById("hSub");if(s&&G)s.textContent=(v?"UID "+v+" · ":"")+"tool v3.1";}]
   ].forEach(function(f){
     var lbl=document.createElement("label");lbl.textContent=f[0];lbl.style.cssText="font-size:11px;color:var(--muted);margin-bottom:3px;display:block";ap(nameCard,lbl);
     var inp=document.createElement("input");inp.id=f[1];inp.value=f[2]();inp.style.cssText=INP_STYLE;
     inp.oninput=function(){f[3](this.value);};ap(nameCard,inp);
   });
-  var nameInfo=div("","ℹ I nomi devono corrispondere esattamente a quanto appare in gioco (case-sensitive).");
+  // Traveler name — select + custom
+  var trlbl=document.createElement("label");trlbl.textContent="Nome Traveler (in gioco)";trlbl.style.cssText="font-size:11px;color:var(--muted);margin-bottom:3px;display:block";ap(nameCard,trlbl);
+  var trRow=div("");trRow.style.cssText="display:flex;gap:6px;margin-bottom:10px;align-items:center";ap(nameCard,trRow);
+  var trSel=document.createElement("select");trSel.id="ikTravSel";trSel.style.cssText="flex:1;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:12px;cursor:pointer";
+  [["Traveler","Traveler (default)"],["Aether","Aether — Manekino ♂"],["Lumine","Lumine — Manekina ♀"]].forEach(function(o){var opt=document.createElement("option");opt.value=o[0];opt.textContent=o[1];if(IK_TRAVELER_NAME===o[0])opt.selected=true;ap(trSel,opt);});
+  var trCustomOpt=document.createElement("option");trCustomOpt.value="__custom__";trCustomOpt.textContent="Altro (personalizzato)…";if(!["Traveler","Aether","Lumine"].includes(IK_TRAVELER_NAME))trCustomOpt.selected=true;ap(trSel,trCustomOpt);
+  trSel.onchange=function(){if(this.value!=="__custom__"){IK_TRAVELER_NAME=this.value;trInp.style.display="none";}else{trInp.style.display="";trInp.focus();}};ap(trRow,trSel);
+  var trInp=document.createElement("input");trInp.id="ikTravName";trInp.placeholder="Nome personalizzato";trInp.value=["Traveler","Aether","Lumine"].includes(IK_TRAVELER_NAME)?"":IK_TRAVELER_NAME;
+  trInp.style.cssText=INP_STYLE+"display:"+(!["Traveler","Aether","Lumine"].includes(IK_TRAVELER_NAME)?"":"none");
+  trInp.oninput=function(){IK_TRAVELER_NAME=this.value||"Traveler";};ap(trRow,trInp);
+  // Wanderer name — select + custom
+  var wdlbl=document.createElement("label");wdlbl.textContent="Nome Wanderer (in gioco)";wdlbl.style.cssText="font-size:11px;color:var(--muted);margin-bottom:3px;display:block";ap(nameCard,wdlbl);
+  var wdRow=div("");wdRow.style.cssText="display:flex;gap:6px;margin-bottom:10px;align-items:center";ap(nameCard,wdRow);
+  var wdSel=document.createElement("select");wdSel.id="ikWandSel";wdSel.style.cssText="flex:1;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:12px;cursor:pointer";
+  [["Wanderer","Wanderer (default)"],["Scaramouche","Scaramouche"]].forEach(function(o){var opt=document.createElement("option");opt.value=o[0];opt.textContent=o[1];if(IK_WANDERER_NAME===o[0])opt.selected=true;ap(wdSel,opt);});
+  var wdCustomOpt=document.createElement("option");wdCustomOpt.value="__custom__";wdCustomOpt.textContent="Altro (personalizzato)…";if(!["Wanderer","Scaramouche"].includes(IK_WANDERER_NAME))wdCustomOpt.selected=true;ap(wdSel,wdCustomOpt);
+  wdSel.onchange=function(){if(this.value!=="__custom__"){IK_WANDERER_NAME=this.value;wdInp.style.display="none";}else{wdInp.style.display="";wdInp.focus();}};ap(wdRow,wdSel);
+  var wdInp=document.createElement("input");wdInp.id="ikWandName";wdInp.placeholder="Nome personalizzato";wdInp.value=["Wanderer","Scaramouche"].includes(IK_WANDERER_NAME)?"":IK_WANDERER_NAME;
+  wdInp.style.cssText=INP_STYLE+"display:"+(!["Wanderer","Scaramouche"].includes(IK_WANDERER_NAME)?"":"none");
+  wdInp.oninput=function(){IK_WANDERER_NAME=this.value||"Wanderer";};ap(wdRow,wdInp);
+  var nameInfo=div("","ℹ I nomi devono corrispondere esattamente a quanto appare in gioco (case-sensitive). Se usi un nome personalizzato scegli \"Altro\".");
   nameInfo.style.cssText="font-size:10px;color:#fbbf24;background:#78350f22;border-radius:6px;padding:7px 10px;border:1px solid #f59e0b33";ap(nameCard,nameInfo);
 
   // Card scan settings
   var scanCard=div("card");scanCard.style.cssText+="margin-bottom:0";ap(cfgGrid,scanCard);
   var st2=div("","Impostazioni scansione");st2.style.cssText="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px";ap(scanCard,st2);
   var SEL_STYLE="width:100%;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:12px;margin-bottom:10px;cursor:pointer";
-  var al=document.createElement("label");al.textContent="Livello minimo artefatto";al.style.cssText="font-size:11px;color:var(--muted);margin-bottom:3px;display:block";ap(scanCard,al);
-  var artSel=document.createElement("select");artSel.id="ikArtLv";artSel.style.cssText=SEL_STYLE;
-  [["0","0 — Includi tutti (anche +0 non potenziati)"],["1","1 — Escludi non potenziati"]].forEach(function(o){var opt=document.createElement("option");opt.value=o[0];opt.textContent=o[1];if(o[0]===IK_MIN_ART_LV)opt.selected=true;ap(artSel,opt);});
-  artSel.onchange=function(){IK_MIN_ART_LV=this.value;};ap(scanCard,artSel);
   var wl=document.createElement("label");wl.textContent="Rarità minima armi";wl.style.cssText="font-size:11px;color:var(--muted);margin-bottom:3px;display:block";ap(scanCard,wl);
   var wepSel=document.createElement("select");wepSel.id="ikWepRarity";wepSel.style.cssText=SEL_STYLE;
   [["1","1★ — Includi tutte (starter comprese)"],["3","3★ — Solo 3★ e superiori"],["4","4★ — Solo 4★ e 5★"]].forEach(function(o){var opt=document.createElement("option");opt.value=o[0];opt.textContent=o[1];if(o[0]===IK_MIN_WEP_RARITY)opt.selected=true;ap(wepSel,opt);});
   wepSel.onchange=function(){IK_MIN_WEP_RARITY=this.value;};ap(scanCard,wepSel);
-  var scanInfo=div("","ℹ Rarità artefatti: minimo sempre 1. Livello minimo armi: sempre 1.");
+  var wll=document.createElement("label");wll.textContent="Livello minimo armi";wll.style.cssText="font-size:11px;color:var(--muted);margin-bottom:3px;display:block";ap(scanCard,wll);
+  var wepLvSel=document.createElement("select");wepLvSel.id="ikWepLv";wepLvSel.style.cssText=SEL_STYLE;
+  [["1","1 — Includi tutte"],["20","20"],["40","40"],["60","60"],["70","70"],["80","80"]].forEach(function(o){var opt=document.createElement("option");opt.value=o[0];opt.textContent=o[1];if(o[0]===IK_MIN_WEP_LV)opt.selected=true;ap(wepLvSel,opt);});
+  wepLvSel.onchange=function(){IK_MIN_WEP_LV=this.value;};ap(scanCard,wepLvSel);
+  var al=document.createElement("label");al.textContent="Rarità minima artefatti";al.style.cssText="font-size:11px;color:var(--muted);margin-bottom:3px;display:block";ap(scanCard,al);
+  var artRarSel=document.createElement("select");artRarSel.id="ikArtRarity";artRarSel.style.cssText=SEL_STYLE;
+  [["1","1★ — Includi tutti"],["3","3★ — Solo 3★+"],["4","4★ — Solo 4★ e 5★"],["5","5★ — Solo 5★"]].forEach(function(o){var opt=document.createElement("option");opt.value=o[0];opt.textContent=o[1];if(o[0]===IK_MIN_ART_RARITY)opt.selected=true;ap(artRarSel,opt);});
+  artRarSel.onchange=function(){IK_MIN_ART_RARITY=this.value;};ap(scanCard,artRarSel);
+  var al2=document.createElement("label");al2.textContent="Livello minimo artefatti";al2.style.cssText="font-size:11px;color:var(--muted);margin-bottom:3px;display:block";ap(scanCard,al2);
+  var artSel=document.createElement("select");artSel.id="ikArtLv";artSel.style.cssText=SEL_STYLE;
+  [["0","0 — Includi tutti (anche +0 non potenziati)"],["1","1 — Escludi non potenziati"],["4","4"],["8","8"],["12","12"],["16","16"],["20","20 — Solo massimo"]].forEach(function(o){var opt=document.createElement("option");opt.value=o[0];opt.textContent=o[1];if(o[0]===IK_MIN_ART_LV)opt.selected=true;ap(artSel,opt);});
+  artSel.onchange=function(){IK_MIN_ART_LV=this.value;};ap(scanCard,artSel);
+  var scanInfo=div("","ℹ Tutti e 4 i valori vengono scritti nel file .config generato.");
   scanInfo.style.cssText="font-size:10px;color:#fbbf24;background:#78350f22;border-radius:6px;padding:7px 10px;border:1px solid #f59e0b33";ap(scanCard,scanInfo);
 
   // ── FILE IK ──
@@ -8183,21 +8259,25 @@ function renderIKConfig(cont){
   var fc2t=div("","File Inventory Kamera — scarica e sostituisci");fc2t.style.cssText="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px";ap(fc2,fc2t);
   var fileGrid=div("");fileGrid.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px";ap(fc2,fileGrid);
   var allFiles=[
+    {name:"InventoryKamera.exe",desc:"Scanner — scarica l'ultima versione modificata",action:null,note:"Da Nickke/GitHub",isExe:true},
     {name:"InventoryKamera.exe.config",desc:"Config con nomi e impostazioni — accanto a IK.exe",action:generateIKConfig,note:"Generato dai tuoi dati"},
-    {name:"game_data/characters.json",desc:"Personaggi: ConstellationOrder, elemento",action:function(){downloadIKData("characters.json",IK_DATA_CHARACTERS);},note:"Embedded"},
-    {name:"game_data/artifacts.json",desc:"Set artefatti e chiavi GOOD per slot",action:function(){downloadIKData("artifacts.json",IK_DATA_ARTIFACTS);},note:"Embedded"},
-    {name:"game_data/weapons.json",desc:"Armi con chiave GOOD (PascalCase)",action:function(){downloadIKData("weapons.json",IK_DATA_WEAPONS);},note:"Embedded"},
-    {name:"game_data/materials.json",desc:"Materiali con chiave GOOD",action:function(){downloadIKData("materials.json",IK_DATA_MATERIALS);},note:"Embedded"},
-    {name:"game_data/version.txt",desc:"Versione patch di gioco",action:null}
+    {name:"game_data/characters.json",desc:"Personaggi: ConstellationOrder, elemento",action:function(){downloadIKFile("characters.json");},note:"Da Nickke/GitHub",ghUrl:IK_RAW_BASE+"characters.json"},
+    {name:"game_data/artifacts.json",desc:"Set artefatti e chiavi GOOD per slot",action:function(){downloadIKFile("artifacts.json");},note:"Da Nickke/GitHub",ghUrl:IK_RAW_BASE+"artifacts.json"},
+    {name:"game_data/weapons.json",desc:"Armi con chiave GOOD (PascalCase)",action:function(){downloadIKFile("weapons.json");},note:"Da Nickke/GitHub",ghUrl:IK_RAW_BASE+"weapons.json"},
+    {name:"game_data/materials.json",desc:"Materiali con chiave GOOD",action:function(){downloadIKFile("materials.json");},note:"Da Nickke/GitHub",ghUrl:IK_RAW_BASE+"materials.json"},
+    {name:"game_data/version.txt",desc:"Versione patch di gioco",action:null,note:"Da Nickke/GitHub"}
   ];
   allFiles.forEach(function(f){
-    var fc=div("");fc.style.cssText="padding:10px 12px;border:1px solid var(--border);border-radius:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;background:var(--surf)";ap(fileGrid,fc);
+    var fc=div("");fc.style.cssText="padding:10px 12px;border:1px solid "+(f.isExe?"#a855f744":"var(--border)")+";border-radius:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;background:"+(f.isExe?"#a855f711":"var(--surf)");ap(fileGrid,fc);
     var info=div("");info.style.flex="1";ap(fc,info);
-    ap(info,div("",f.name)).style.cssText="font-size:11px;font-weight:600;font-family:monospace;margin-bottom:2px;color:var(--text)";
+    ap(info,div("",f.name)).style.cssText="font-size:11px;font-weight:600;font-family:monospace;margin-bottom:2px;color:"+(f.isExe?"#d8b4fe":"var(--text)");
     ap(info,div("",f.desc)).style.cssText="font-size:10px;color:var(--muted)";
     if(f.note){ap(info,div("",f.note)).style.cssText="font-size:10px;color:#60a5fa";}
     var dlb=document.createElement("button");dlb.className="btn";
-    if(f.action){
+    if(f.isExe){
+      dlb.style.cssText="padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;border:1px solid #a855f7;background:#3b0764;color:#d8b4fe;flex-shrink:0;white-space:nowrap";
+      dlb.textContent="⬇ Scarica EXE";dlb.onclick=function(){var a=document.createElement("a");a.href=IK_EXE_URL;a.target="_blank";a.click();};
+    }else if(f.action){
       dlb.style.cssText="padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;border:1px solid #3b82f6;background:#1e3a5f;color:#60a5fa;flex-shrink:0;white-space:nowrap";
       dlb.textContent="⬇ Scarica";dlb.onclick=f.action;
     }else{
@@ -8221,13 +8301,17 @@ function renderIKConfig(cont){
 
   // ── LINK GITHUB ──
   var ghCard=div("card");ap(cont,ghCard);
-  var ghHdr=div("","Repository Inventory Kamera");ghHdr.style.cssText="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px";ap(ghCard,ghHdr);
+  var ghHdr=div("","Repository GitHub");ghHdr.style.cssText="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px";ap(ghCard,ghHdr);
   var ghRow=div("");ghRow.style.cssText="display:flex;align-items:center;gap:12px;flex-wrap:wrap";ap(ghCard,ghRow);
-  var ghLink=document.createElement("a");ghLink.href="https://github.com/Andrewthe13th/Inventory_Kamera";ghLink.target="_blank";ghLink.rel="noopener noreferrer";
-  ghLink.style.cssText="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;border:1px solid #3b82f6;background:#1e3a5f;color:#60a5fa;font-size:12px;font-weight:600;text-decoration:none";
-  ghLink.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>Inventory Kamera — Repository Originale';
+  var ghLink=document.createElement("a");ghLink.href="https://github.com/Nickke/genshin-tool";ghLink.target="_blank";ghLink.rel="noopener noreferrer";
+  ghLink.style.cssText="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;border:1px solid #a855f7;background:#3b0764;color:#d8b4fe;font-size:12px;font-weight:600;text-decoration:none";
+  ghLink.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>Nickke/genshin-tool — Repository';
   ap(ghRow,ghLink);
-  var ghDesc=div("","Tool originale di Andrewthe13th. Questa versione include modifiche per supportare nuovi personaggi e migliore affidabilità di scansione.");
+  var ghLink2=document.createElement("a");ghLink2.href="https://github.com/Andrewthe13th/Inventory_Kamera";ghLink2.target="_blank";ghLink2.rel="noopener noreferrer";
+  ghLink2.style.cssText="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;border:1px solid #374151;background:transparent;color:var(--muted);font-size:11px;text-decoration:none";
+  ghLink2.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>Originale: Andrewthe13th';
+  ap(ghRow,ghLink2);
+  var ghDesc=div("","Versione modificata di Nickke con supporto per nuovi personaggi e maggiore affidabilità di scansione. Basata sull\'originale di Andrewthe13th.");
   ghDesc.style.cssText="font-size:11px;color:var(--muted);flex:1;min-width:200px";ap(ghRow,ghDesc);
 
   // ── PROCEDURA ──
@@ -8589,51 +8673,129 @@ function rEvents(){
     });
   }
 
-  // Timeline Gantt
+  // Calendario & Timeline
   var tlsec=div("card");ap(cont,tlsec);
-  var tlh=div("","📅 Timeline Eventi");tlh.style.cssText="font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;text-transform:uppercase;letter-spacing:.7px";ap(tlsec,tlh);
+  var tlh=div("","📅 Calendario & Timeline");tlh.style.cssText="font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;text-transform:uppercase;letter-spacing:.7px";ap(tlsec,tlh);
 
   if(!GENSHIN_EVENTS.events||!GENSHIN_EVENTS.events.length){ap(tlsec,div("","Nessun evento disponibile")).style.cssText="font-size:12px;color:var(--muted)";return;}
 
-  // Calcola range date
-  var today=new Date();
-  var rangeStart=new Date(today);rangeStart.setDate(rangeStart.getDate()-5);
-  var rangeEnd=new Date(today);rangeEnd.setDate(rangeEnd.getDate()+35);
-  var rangeDays=(rangeEnd-rangeStart)/(1000*60*60*24);
+  var evTypeColor={"combat":"#ef4444","exploration":"#22c55e","resin":"#a855f7","login":"#3b82f6","freechar":"#f59e0b","default":"#94a3b8"};
+  var today2=new Date();today2.setHours(0,0,0,0);
 
-  // Asse date
-  var axis=div("");axis.style.cssText="display:flex;margin-left:150px;margin-bottom:6px;position:relative;height:16px";ap(tlsec,axis);
-  for(var d=0;d<=rangeDays;d+=5){
-    var dd=new Date(rangeStart);dd.setDate(dd.getDate()+d);
-    var lbl=div("",(dd.getMonth()+1)+"/"+(dd.getDate()));
-    lbl.style.cssText="position:absolute;left:"+(d/rangeDays*100)+"%;font-size:9px;color:var(--muted);transform:translateX(-50%)";
-    ap(axis,lbl);
+  if(!window._evCal){window._evCal={year:today2.getFullYear(),month:today2.getMonth(),selDay:null};}
+
+  var calBox=div("");ap(tlsec,calBox);
+  var dayBox=div("");ap(tlsec,dayBox);
+
+  function eventsOnDay(d){
+    var ds=d.getTime();
+    return (GENSHIN_EVENTS.events||[]).filter(function(ev){
+      var s=new Date(ev.start);s.setHours(0,0,0,0);
+      var e=new Date(ev.end);e.setHours(23,59,59,999);
+      return ds>=s.getTime()&&ds<=e.getTime();
+    });
   }
 
-  // Oggi line pct
-  var todayPct=((today-rangeStart)/(1000*60*60*24))/rangeDays*100;
+  function monthName(m){return["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"][m];}
 
-  var evTypeColor={"combat":"#ef4444","exploration":"#22c55e","resin":"#a855f7","login":"#3b82f6","freechar":"#f59e0b","default":"#94a3b8"};
+  function renderDayDetail(d){
+    clr(dayBox);
+    if(!d){
+      // Prossimi eventi
+      var upcoming=(GENSHIN_EVENTS.events||[]).filter(function(ev){return new Date(ev.end)>=today2;});
+      upcoming.sort(function(a,b){return new Date(a.start)-new Date(b.start);});
+      if(!upcoming.length){ap(dayBox,div("","Nessun evento prossimo")).style.cssText="font-size:11px;color:var(--muted);padding:8px 0";return;}
+      var uh=div("","Prossimi eventi");uh.style.cssText="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;margin-top:12px";ap(dayBox,uh);
+      upcoming.forEach(function(ev){
+        var er=div("");er.style.cssText="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #ffffff08";ap(dayBox,er);
+        var col=evTypeColor[ev.type]||evTypeColor["default"];
+        var dot=div("");dot.style.cssText="width:8px;height:8px;border-radius:50%;background:"+col+";flex-shrink:0";ap(er,dot);
+        var einfo=div("");ap(er,einfo);
+        ap(einfo,div("",ev.name)).style.cssText="font-size:11px;color:var(--text);font-weight:600";
+        var s=new Date(ev.start);var e=new Date(ev.end);
+        var sStr=(s.getDate())+"/"+(s.getMonth()+1)+"/"+s.getFullYear();
+        var eStr=(e.getDate())+"/"+(e.getMonth()+1)+"/"+e.getFullYear();
+        var daysLeft=Math.ceil((e-today2)/(1000*60*60*24));
+        var timeInfo=s>today2?"Dal "+sStr+" al "+eStr:"Fino al "+eStr+" ("+daysLeft+" giorni)";
+        ap(einfo,div("",timeInfo)).style.cssText="font-size:9.5px;color:var(--muted)";
+      });
+      return;
+    }
+    var evs=eventsOnDay(d);
+    var dStr=(d.getDate())+"/"+(d.getMonth()+1)+"/"+d.getFullYear();
+    var dh=div("","📅 "+dStr);dh.style.cssText="font-size:11px;font-weight:700;color:var(--text);margin-top:12px;margin-bottom:8px";ap(dayBox,dh);
+    if(!evs.length){ap(dayBox,div("","Nessun evento in questo giorno")).style.cssText="font-size:11px;color:var(--muted);padding:4px 0";return;}
+    evs.forEach(function(ev){
+      var er=div("");er.style.cssText="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #ffffff08";ap(dayBox,er);
+      var col=evTypeColor[ev.type]||evTypeColor["default"];
+      var dot=div("");dot.style.cssText="width:8px;height:8px;border-radius:50%;background:"+col+";flex-shrink:0";ap(er,dot);
+      var einfo=div("");ap(er,einfo);
+      ap(einfo,div("",ev.name)).style.cssText="font-size:11px;color:var(--text);font-weight:600";
+      var e=new Date(ev.end);var eStr=(e.getDate())+"/"+(e.getMonth()+1)+"/"+e.getFullYear();
+      ap(einfo,div("","Fino al "+eStr)).style.cssText="font-size:9.5px;color:var(--muted)";
+    });
+  }
 
-  GENSHIN_EVENTS.events.forEach(function(ev){
-    var row=div("");row.style.cssText="display:flex;align-items:center;margin-bottom:6px;position:relative";ap(tlsec,row);
-    var nm=div("",ev.name);nm.style.cssText="width:150px;flex-shrink:0;font-size:10px;color:var(--text);padding-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";ap(row,nm);
+  function renderCalMonth(){
+    clr(calBox);
+    var yr=window._evCal.year;var mo=window._evCal.month;
+    // Header
+    var hdr=div("");hdr.style.cssText="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px";ap(calBox,hdr);
+    var prev=div("","◀");prev.style.cssText="cursor:pointer;padding:4px 10px;border-radius:6px;background:#ffffff11;font-size:13px;color:var(--text);user-select:none";
+    prev.onclick=function(){window._evCal.month--;if(window._evCal.month<0){window._evCal.month=11;window._evCal.year--;}renderCalMonth();};
+    ap(hdr,prev);
+    ap(hdr,div("",monthName(mo)+" "+yr)).style.cssText="font-size:13px;font-weight:700;color:var(--text)";
+    var next=div("","▶");next.style.cssText="cursor:pointer;padding:4px 10px;border-radius:6px;background:#ffffff11;font-size:13px;color:var(--text);user-select:none";
+    next.onclick=function(){window._evCal.month++;if(window._evCal.month>11){window._evCal.month=0;window._evCal.year++;}renderCalMonth();};
+    ap(hdr,next);
+    // Today button
+    var todayBtn=div("","Oggi");todayBtn.style.cssText="cursor:pointer;padding:4px 10px;border-radius:6px;background:#3b82f622;color:#60a5fa;font-size:11px;border:1px solid #3b82f644;font-weight:600";
+    todayBtn.onclick=function(){window._evCal.year=today2.getFullYear();window._evCal.month=today2.getMonth();window._evCal.selDay=null;renderCalMonth();renderDayDetail(null);};
+    ap(hdr,todayBtn);
+    // Grid
+    var grid=div("");grid.style.cssText="display:grid;grid-template-columns:repeat(7,1fr);gap:3px";ap(calBox,grid);
+    var dayNames=["Lu","Ma","Me","Gi","Ve","Sa","Do"];
+    dayNames.forEach(function(dn){
+      var dc=div("",dn);dc.style.cssText="text-align:center;font-size:9px;font-weight:700;color:var(--muted);padding:4px 0";ap(grid,dc);
+    });
+    // First day of month (0=Sun..6=Sat → convert to Mon-based)
+    var firstDay=new Date(yr,mo,1);
+    var startCol=(firstDay.getDay()+6)%7; // 0=Mon
+    var daysInMonth=new Date(yr,mo+1,0).getDate();
+    for(var i=0;i<startCol;i++){ap(grid,div(""));}
+    for(var d2=1;d2<=daysInMonth;d2++){
+      var dt=new Date(yr,mo,d2);dt.setHours(0,0,0,0);
+      var dayEvs=eventsOnDay(dt);
+      var isToday=dt.getTime()===today2.getTime();
+      var isSel=window._evCal.selDay&&window._evCal.selDay.getTime()===dt.getTime();
+      var dc2=div("");
+      dc2.style.cssText="border-radius:6px;padding:4px 2px;cursor:pointer;text-align:center;background:"+(isSel?"#3b82f655":(isToday?"#f59e0b22":"transparent"))+";border:1px solid "+(isSel?"#3b82f6":(isToday?"#f59e0b55":"transparent"))+";min-height:40px;display:flex;flex-direction:column;align-items:center;gap:2px;transition:background .15s";
+      dc2.onmouseenter=function(el2){el2.style.background="#ffffff0a";};
+      dc2.onmouseleave=(function(el2,s2){return function(){el2.style.background=s2;};})(dc2,isSel?"#3b82f655":(isToday?"#f59e0b22":"transparent"));
+      var dnum=div("",""+d2);dnum.style.cssText="font-size:11px;color:"+(isToday?"#f59e0b":isSel?"#60a5fa":"var(--text)")+";font-weight:"+(isToday||isSel?"700":"400");ap(dc2,dnum);
+      if(dayEvs.length){
+        var dots=div("");dots.style.cssText="display:flex;gap:2px;flex-wrap:wrap;justify-content:center;max-width:30px";ap(dc2,dots);
+        dayEvs.slice(0,4).forEach(function(ev){
+          var dot2=div("");dot2.style.cssText="width:5px;height:5px;border-radius:50%;background:"+(evTypeColor[ev.type]||evTypeColor["default"]);ap(dots,dot2);
+        });
+      }
+      (function(dt3){
+        dc2.onclick=function(){window._evCal.selDay=dt3;renderCalMonth();renderDayDetail(dt3);};
+      })(dt);
+      ap(grid,dc2);
+    }
+    // Legend
+    var leg=div("");leg.style.cssText="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px";ap(calBox,leg);
+    var legTypes=[["combat","Combattimento"],["exploration","Esplorazione"],["resin","Resina"],["login","Login"],["freechar","Personaggio gratuito"]];
+    legTypes.forEach(function(lt){
+      var lrow=div("");lrow.style.cssText="display:flex;align-items:center;gap:4px";ap(leg,lrow);
+      var ldot=div("");ldot.style.cssText="width:7px;height:7px;border-radius:50%;background:"+(evTypeColor[lt[0]]||"#94a3b8");ap(lrow,ldot);
+      ap(lrow,span("",lt[1])).style.cssText="font-size:9px;color:var(--muted)";
+    });
+  }
 
-    var track=div("");track.style.cssText="flex:1;height:20px;background:#ffffff08;border-radius:4px;position:relative;overflow:hidden";ap(row,track);
-
-    // Linea oggi
-    var todayLine=div("");todayLine.style.cssText="position:absolute;left:"+todayPct+"%;top:0;bottom:0;width:1px;background:#f59e0b88;z-index:1";ap(track,todayLine);
-
-    var evStart=new Date(ev.start);var evEnd=new Date(ev.end);
-    var startPct=((evStart-rangeStart)/(1000*60*60*24))/rangeDays*100;
-    var widthPct=((evEnd-evStart)/(1000*60*60*24))/rangeDays*100;
-    startPct=Math.max(0,Math.min(100,startPct));
-    widthPct=Math.max(1,Math.min(100-startPct,widthPct));
-
-    var col=evTypeColor[ev.type]||evTypeColor["default"];
-    var bar=div("",ev.name);bar.style.cssText="position:absolute;left:"+startPct+"%;width:"+widthPct+"%;top:2px;bottom:2px;background:"+col+"44;border-left:2px solid "+col+";border-radius:2px;font-size:9px;color:"+col+";padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center";
-    ap(track,bar);
-  });
+  renderCalMonth();
+  renderDayDetail(null);
 }
 
 rIK();rEvents();
