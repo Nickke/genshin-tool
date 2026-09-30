@@ -156,10 +156,11 @@ namespace InventoryKamera
             var activeText    = System.Drawing.Color.White;
             AutoCopyJsonLabel.Enabled            = autoCopyOn;
             AutoCopyLogLabel.Enabled             = autoCopyOn;
+            var inactiveText = System.Drawing.Color.FromArgb(40, 40, 40);
             AutoCopyJsonSelect_Button.BackColor  = autoCopyOn ? activeColor : inactiveColor;
-            AutoCopyJsonSelect_Button.ForeColor  = activeText;
+            AutoCopyJsonSelect_Button.ForeColor  = autoCopyOn ? activeText : inactiveText;
             AutoCopyLogSelect_Button.BackColor   = autoCopyOn ? activeColor : inactiveColor;
-            AutoCopyLogSelect_Button.ForeColor   = activeText;
+            AutoCopyLogSelect_Button.ForeColor   = autoCopyOn ? activeText : inactiveText;
             AutoCopyJsonPath_TextBox.Enabled     = autoCopyOn;
             AutoCopyLogPath_TextBox.Enabled      = autoCopyOn;
 
@@ -523,10 +524,11 @@ namespace InventoryKamera
 
             AutoCopyJsonLabel.Enabled            = on;
             AutoCopyLogLabel.Enabled             = on;
+            var inactiveText2 = System.Drawing.Color.FromArgb(40, 40, 40);
             AutoCopyJsonSelect_Button.BackColor  = on ? activeColor : inactiveColor;
-            AutoCopyJsonSelect_Button.ForeColor  = activeText;
+            AutoCopyJsonSelect_Button.ForeColor  = on ? activeText : inactiveText2;
             AutoCopyLogSelect_Button.BackColor   = on ? activeColor : inactiveColor;
-            AutoCopyLogSelect_Button.ForeColor   = activeText;
+            AutoCopyLogSelect_Button.ForeColor   = on ? activeText : inactiveText2;
             AutoCopyJsonPath_TextBox.Enabled     = on;
             AutoCopyLogPath_TextBox.Enabled      = on;
 
