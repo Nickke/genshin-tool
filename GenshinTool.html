@@ -28,7 +28,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:var(--blue-d)}
 .btn-green{background:var(--green-d);color:var(--green);border:1px solid var(--green)}
 .upmsg{color:var(--muted);font-size:12px}
-.upmsg.ok{color:var(--green)}.upmsg.warn{color:#f59e0b}.upmsg.err{color:#ef4444}
+.upmsg.ok{color:var(--green)}
 .tabs{display:flex;gap:3px;padding:10px 20px 0;background:var(--surf);border-bottom:1px solid var(--border)}
 .tab{padding:8px 16px;border-radius:7px 7px 0 0;border:none;cursor:pointer;font-size:12px;font-weight:600;background:transparent;color:var(--muted);transition:all .15s}
 .tab.on{background:var(--blue);color:#fff}
@@ -1415,12 +1415,11 @@ function loadF(file,part){
       if(d.kamera_artifact_icons)KAMERA_ARTIFACT_ICONS=d.kamera_artifact_icons;
       if(d.kamera_material_icons)KAMERA_MATERIAL_ICONS=d.kamera_material_icons;
       RD=d;G=analyze(d);
-      var missingDev=G.mats.CrownOfInsight===undefined&&G.mats.PhilosophiesOfBallad===undefined;
-      document.getElementById("umsg").className="upmsg "+(missingDev?"warn":"ok");
-      document.getElementById("umsg").textContent="OK "+file.name+" · "+G.chars.length+" personaggi"+(missingDev?" ⚠️ Dev Materials mancanti (Crown/libri talento) — re-scansiona Dev Items in IK":"");
+      document.getElementById("umsg").className="upmsg ok";
+      document.getElementById("umsg").textContent="OK "+file.name+" · "+G.chars.length+" personaggi";
       document.getElementById("btnP").disabled=false;
       document.getElementById("hLv").textContent=G.lv90.length;
-      document.getElementById("hCr").textContent=G.mats.CrownOfInsight!==undefined?G.mats.CrownOfInsight:"?";
+      document.getElementById("hCr").textContent=G.mats.CrownOfInsight||0;
       var mora=G.mats.Mora||0;
       document.getElementById("hMo").textContent=mora>=1e6?(mora/1e6).toFixed(1)+"M":mora>=1000?Math.round(mora/1000)+"K":mora>0?mora+"":"—";
       renderAll();
@@ -1464,12 +1463,11 @@ function loadFromUrl(url,part){
       if(d.kamera_artifact_icons)KAMERA_ARTIFACT_ICONS=d.kamera_artifact_icons;
       if(d.kamera_material_icons)KAMERA_MATERIAL_ICONS=d.kamera_material_icons;
       RD=d;G=analyze(d);
-      var missingDev2=G.mats.CrownOfInsight===undefined&&G.mats.PhilosophiesOfBallad===undefined;
-      msg.className="upmsg "+(missingDev2?"warn":"ok");
-      msg.textContent="OK (URL) · "+G.chars.length+" personaggi"+(missingDev2?" ⚠️ Dev Materials mancanti — re-scansiona Dev Items in IK":"");
+      msg.className="upmsg ok";
+      msg.textContent="OK (URL) · "+G.chars.length+" personaggi";
       document.getElementById("btnP").disabled=false;
       document.getElementById("hLv").textContent=G.lv90.length;
-      document.getElementById("hCr").textContent=G.mats.CrownOfInsight!==undefined?G.mats.CrownOfInsight:"?";
+      document.getElementById("hCr").textContent=G.mats.CrownOfInsight||0;
       var mora2=G.mats.Mora||0;
       document.getElementById("hMo").textContent=mora2>=1e6?(mora2/1e6).toFixed(1)+"M":mora2>=1000?Math.round(mora2/1000)+"K":mora2>0?mora2+"":"—";
       renderAll();
