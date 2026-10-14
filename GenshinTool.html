@@ -3139,11 +3139,11 @@ function rTP(cont){
 function rTC(cont){
   var elig=tEligible();
   var diffsDef=[
-    {id:"easy",name:"Facile",own:2,total:10,acts:3,color:"#60a5fa"},
-    {id:"normal",name:"Intermedia",own:6,total:14,acts:6,color:"#fbbf24"},
-    {id:"hard",name:"Difficile",own:10,total:18,acts:8,color:"#f87171"},
-    {id:"expert",name:"Superiore",own:14,total:22,acts:10,color:"#f97316"},
-    {id:"moon",name:"Luna",own:20,total:28,acts:12,color:"#a855f7"}
+    {id:"easy",name:"Facile",own:2,total:10,acts:3,minLv:0,color:"#60a5fa"},
+    {id:"normal",name:"Intermedia",own:6,total:14,acts:6,minLv:60,color:"#fbbf24"},
+    {id:"hard",name:"Difficile",own:10,total:18,acts:8,minLv:70,color:"#f87171"},
+    {id:"expert",name:"Superiore",own:14,total:22,acts:10,minLv:70,color:"#f97316"},
+    {id:"moon",name:"Luna",own:20,total:28,acts:12,minLv:70,color:"#a855f7"}
   ];
   var dRow=div("");dRow.style.cssText="display:flex;gap:4px;margin-bottom:10px";ap(cont,dRow);
   diffsDef.forEach(function(d){
@@ -3214,10 +3214,21 @@ function rTC(cont){
   var planOpening=[];
   TEATRO_SEASON.opening.forEach(function(k){
     var ownedC=G.chars.find(function(c){return c.key===k;});
-    planOpening.push({c:ownedC||{key:k,lv:90,con:0,issues:[]},score:ownedC?tScore(ownedC):100,isOpening:true,isTrial:!ownedC});
+    var isTrial=!ownedC;
+    var lv=ownedC?ownedC.lv:90;
+    var belowMinLv=!isTrial&&planMinLv>0&&lv<planMinLv;
+    var hasIssues=ownedC&&ownedC.issues&&ownedC.issues.length>0;
+    // Score penalizzato se sotto livello o ha issues (ma non escluso: sono apertura garantiti)
+    var sc=isTrial?100:(tScore(ownedC)-(belowMinLv?30:0)-(hasIssues?15:0));
+    planOpening.push({c:ownedC||{key:k,lv:90,con:0,issues:[]},score:sc,isOpening:true,isTrial:isTrial,belowMinLv:belowMinLv,hasIssues:hasIssues});
   });
   var standbySlots=Math.max(0,nTotal-6);
-  var planStandby=elig.slice(0,standbySlots+nSup).map(function(item){return {c:item.c,score:item.score,isGuest:item.isGuest};});
+  var planMinLv=diff.minLv||0;
+  // Filtra standby: solo personaggi pronti (livello minimo diff + nessuna issue)
+  var eligReady=elig.filter(function(item){return item.c.lv>=planMinLv&&!item.c.issues.length;});
+  var eligNotReady=elig.filter(function(item){return item.c.lv<planMinLv||item.c.issues.length;});
+  var planStandby=eligReady.slice(0,standbySlots+nSup).map(function(item){return {c:item.c,score:item.score,isGuest:item.isGuest};});
+  var excludedCount=eligNotReady.length;
 
   // Identifica char critici da conservare per il boss finale
   var lastBoss=TEATRO_SEASON.acts[TEATRO_SEASON.acts.length-1];
@@ -3306,9 +3317,23 @@ function rTC(cont){
     actPlan.push({act:an,teams:teams,boss:bossAct,poolSize:currentPool.length,standbyCount:standbyAvail.length});
   }
 
-  // Nota pool progressivo
-  var pnote=div("");pnote.style.cssText="font-size:9px;color:var(--muted);background:var(--surf);border-radius:6px;padding:4px 8px;margin-bottom:8px;line-height:1.4";ap(planSec,pnote);
-  pnote.textContent="ℹ️ Atto 1: solo i 6 apertura. Ogni battaglia vinta aggiunge +1 standby. La squadra Consigliata traccia i 2 usi per char; le alternative mostrano opzioni per lo stesso pool.";
+  // Nota pool progressivo + esclusi
+  var pnote=div("");pnote.style.cssText="font-size:9px;color:var(--muted);background:var(--surf);border-radius:6px;padding:4px 8px;margin-bottom:6px;line-height:1.4";ap(planSec,pnote);
+  pnote.textContent="ℹ️ Atto 1: solo i 6 apertura. Ogni battaglia vinta aggiunge +1 standby. La squadra Consigliata traccia i 2 usi per char.";
+  if(excludedCount>0||planMinLv>0){
+    var excNote=div("");excNote.style.cssText="font-size:9px;color:#f87171;background:#f8717111;border:1px solid #f8717133;border-radius:6px;padding:4px 8px;margin-bottom:8px;line-height:1.4";ap(planSec,excNote);
+    var excText="⚠ "+excludedCount+" personaggi esclusi dal planner";
+    if(planMinLv>0)excText+=" (livello minimo "+planMinLv+" per "+diff.name+")";
+    excText+=". Personaggi con issue (armi/artefatti mancanti) non vengono consigliati.";
+    if(eligNotReady.length){
+      var names=eligNotReady.slice(0,5).map(function(i){
+        var why=i.c.lv<planMinLv?"Lv"+i.c.lv:"⚠";
+        return fmtName(i.c.key).split(" ").pop()+" ("+why+")";
+      }).join(", ");
+      excText+=" Esclusi: "+names+(eligNotReady.length>5?" +altri":"");
+    }
+    excNote.textContent=excText;
+  }
 
   // Helper render squadra
   function renderTeam(container,members,saveForLast,actNum,lastBoss){
@@ -3316,13 +3341,14 @@ function rTC(cont){
     members.forEach(function(m){
       var c=m.c;var celem=el(c.key)||"anemo";
       var isSaved=!!saveForLast[c.key]&&lastBoss&&actNum<lastBoss.act;
-      var bCol=isSaved?"#fbbf24":(EC[celem]||"var(--border)");
+      var isWarn=!!(m.belowMinLv||m.hasIssues);
+      var bCol=isSaved?"#fbbf24":isWarn?"#f87171":(EC[celem]||"var(--border)");
       var cc=div("");cc.style.cssText="display:flex;align-items:center;gap:3px;background:var(--surf);border-radius:6px;padding:2px 6px 2px 2px;border:1px solid "+bCol+"33;cursor:pointer";
       if(!m.isTrial)cc.onclick=function(){openMod(c.key);};
       ap(cc,av(c.key,20));
       var ni=div("");ni.style.cssText="display:flex;flex-direction:column";ap(cc,ni);
       var nm=fmtName(c.key);var pts=nm.split(" ");
-      ap(ni,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:nm)).style.cssText="font-size:8px;font-weight:700;color:"+(m.isTrial?"var(--muted)":(EC[celem]||"var(--text)"));
+      ap(ni,div("",(pts.length>2?pts[0][0]+"."+pts[pts.length-1]:nm)+(isWarn?"⚠":""))).style.cssText="font-size:8px;font-weight:700;color:"+(m.isTrial?"var(--muted)":isWarn?"#f87171":(EC[celem]||"var(--text)"));
       ap(ni,div("",(m.useNum===1?"●○ 1/2":"●● 2/2")+(m.isTrial?" prova":""))).style.cssText="font-size:6px;color:"+(m.useNum===2?"#f87171":"#94a3b8");
       ap(container,cc);
     });
