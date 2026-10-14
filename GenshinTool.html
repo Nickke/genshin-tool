@@ -2977,7 +2977,7 @@ var TEATRO_SEASON={
     {name:"Frozen",elem:"cryo",desc:"Freeze (Cryo+Hydro): +CRIT DMG su Cryo e Hydro. Ottima con Neuvillette."},
     {name:"Frosquall",elem:"anemo",desc:"Cryo Swirl e Stellar Swirl: +CRIT DMG. Core per atti 6-10."}
   ],
-  totalActs:10,charsPerAct:4,maxUses:2,
+  charsPerAct:4,maxUses:2,
   acts:[
     {act:3,boss:"Perpetual Mechanical Array",elems:["hydro","anemo"],tip:"Usa Neuvillette o Wanderer — risparmia tutti i DPS Cryo per gli atti finali.",save:["cryo"]},
     {act:6,boss:"Chimeric Volkodlak Archer",elems:["cryo","anemo"],tip:"AoE + Stellar Swirl (Cryo+Anemo) ottimale. Usa Odette/Sandrone + Vesna/Mizuki.",save:["cryo"]},
@@ -3048,11 +3048,27 @@ function tEligible(){
 function rTP(cont){
   var openingSet={};TEATRO_SEASON.opening.forEach(function(k){openingSet[k]=1;});
   // Meccanica info box
-  var mBox=div("");mBox.style.cssText="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:9px 13px;margin-bottom:12px;display:flex;gap:12px;flex-wrap:wrap";ap(cont,mBox);
-  [{icon:"⚔️",val:TEATRO_SEASON.totalActs+" atti",label:"campagna"},{icon:"👥",val:TEATRO_SEASON.charsPerAct+" personaggi",label:"per atto"},{icon:"🔁",val:"max "+TEATRO_SEASON.maxUses+" usi",label:"per personaggio"},{icon:"🎲",val:"pool cresce",label:"con gli eventi"}].forEach(function(m){
-    var mc=div("");mc.style.cssText="text-align:center;min-width:70px";ap(mBox,mc);
+  var mBox=div("");mBox.style.cssText="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:9px 13px;margin-bottom:12px";ap(cont,mBox);
+  var mRow=div("");mRow.style.cssText="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px";ap(mBox,mRow);
+  [{icon:"👥",val:(TEATRO_SEASON.charsPerAct||4)+" char",label:"per battaglia"},{icon:"🔁",val:"max "+(TEATRO_SEASON.maxUses||2)+" usi",label:"Carica di Zelo"},{icon:"🎲",val:"pool cresce",label:"dopo ogni atto"},{icon:"🤝",val:"1 supporto",label:"da amico (opz.)"}].forEach(function(m){
+    var mc=div("");mc.style.cssText="text-align:center;min-width:70px";ap(mRow,mc);
     ap(mc,div("",m.icon+" "+m.val)).style.cssText="font-size:11px;font-weight:700;color:var(--text)";
     ap(mc,div("",m.label)).style.cssText="font-size:9px;color:var(--muted)";
+  });
+  // Tabella difficoltà
+  var diffs=[
+    {name:"Facile",standby:10,acts:3,minLv:"—",color:"#60a5fa"},
+    {name:"Intermedia",standby:14,acts:6,minLv:"60",color:"#fbbf24"},
+    {name:"Difficile",standby:18,acts:8,minLv:"70",color:"#f87171"},
+    {name:"Superiore",standby:22,acts:10,minLv:"70",color:"#f97316"},
+    {name:"Luna",standby:"28+",acts:12,minLv:"—",color:"#a855f7"}
+  ];
+  var dtRow=div("");dtRow.style.cssText="display:flex;gap:4px;flex-wrap:wrap";ap(mBox,dtRow);
+  diffs.forEach(function(d){
+    var dc=div("");dc.style.cssText="flex:1;min-width:80px;background:"+d.color+"11;border:1px solid "+d.color+"33;border-radius:6px;padding:4px 6px;text-align:center";ap(dtRow,dc);
+    ap(dc,div("",d.name)).style.cssText="font-size:9px;font-weight:700;color:"+d.color;
+    ap(dc,div("",d.standby+" standby")).style.cssText="font-size:8px;color:var(--muted)";
+    ap(dc,div("",d.acts+" battaglie")).style.cssText="font-size:8px;color:var(--muted)";
   });
   // Apertura
   var opSec=div("");opSec.style.cssText="margin-bottom:12px";ap(cont,opSec);
@@ -3123,9 +3139,11 @@ function rTP(cont){
 function rTC(cont){
   var elig=tEligible();
   var diffsDef=[
-    {id:"easy",name:"Facile",own:2,total:10,color:"#60a5fa"},
-    {id:"normal",name:"Normale",own:6,total:14,color:"#fbbf24"},
-    {id:"hard",name:"Difficile",own:10,total:18,color:"#f87171"}
+    {id:"easy",name:"Facile",own:2,total:10,acts:3,color:"#60a5fa"},
+    {id:"normal",name:"Intermedia",own:6,total:14,acts:6,color:"#fbbf24"},
+    {id:"hard",name:"Difficile",own:10,total:18,acts:8,color:"#f87171"},
+    {id:"expert",name:"Superiore",own:14,total:22,acts:10,color:"#f97316"},
+    {id:"moon",name:"Luna",own:20,total:28,acts:12,color:"#a855f7"}
   ];
   var dRow=div("");dRow.style.cssText="display:flex;gap:4px;margin-bottom:10px";ap(cont,dRow);
   diffsDef.forEach(function(d){
@@ -3146,7 +3164,7 @@ function rTC(cont){
   var nNeed=nOwn+nSup;
   ap(fBar,div("",elig.length>=nNeed?"✅ roster ok":"❌ "+elig.length+"/"+nNeed+" idonei")).style.cssText="font-size:10px;color:"+(elig.length>=nNeed?"#4ade80":"#f87171");
   // Usi disponibili vs necessari
-  var maxU=TEATRO_SEASON.maxUses||2;var totalActs=TEATRO_SEASON.totalActs||10;var cpa=TEATRO_SEASON.charsPerAct||4;
+  var maxU=TEATRO_SEASON.maxUses||2;var totalActs=diff.acts||10;var cpa=TEATRO_SEASON.charsPerAct||4;
   var usiDisp=(nTotal)*maxU;var usiNeed=totalActs*cpa;
   var uBar=div("");uBar.style.cssText="background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:6px 12px;margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap";ap(cont,uBar);
   ap(uBar,div("","♻️ Regola 2 usi/personaggio")).style.cssText="font-size:10px;font-weight:700;color:var(--text);flex-shrink:0";
