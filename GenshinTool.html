@@ -3230,64 +3230,93 @@ function rTC(cont){
     });
   }
 
-  // Costruisci piano con pool progressivo:
-  // Atto 1 = solo apertura; ogni atto successivo +1 standby (approssimazione — dipende dagli eventi)
+  // Helper: costruisce una lista squadra da un pool dato, con sorting personalizzato
+  function mkTeam(pool,uSnap,prefE,isLast,an){
+    var avl=pool.filter(function(i){return (uSnap[i.c.key]||0)<2;});
+    avl=avl.slice().sort(function(a,b){
+      var am=prefE.indexOf(el(a.c.key))>=0?3:0,bm=prefE.indexOf(el(b.c.key))>=0?3:0;
+      if(!isLast&&saveForLast[a.c.key]&&saveForLast[a.c.key]>an)am-=2;
+      if(!isLast&&saveForLast[b.c.key]&&saveForLast[b.c.key]>an)bm-=2;
+      return (bm-am)||b.score-a.score;
+    });
+    return avl.slice(0,4);
+  }
+  function mkTeamScore(pool,uSnap){
+    var avl=pool.filter(function(i){return (uSnap[i.c.key]||0)<2;});
+    return avl.slice().sort(function(a,b){return b.score-a.score;}).slice(0,4);
+  }
+  function toMembers(list,uRef){
+    return list.map(function(item){return {c:item.c,useNum:(uRef[item.c.key]||0)+1,isOpening:item.isOpening,isTrial:item.isTrial,isGuest:item.isGuest};});
+  }
+
+  // Piano: per ogni atto costruisci più opzioni, tracciando usi sulla squadra consigliata
   var uCnt={};
   var actPlan=[];
   for(var an=1;an<=diff.acts;an++){
     var bossAct=TEATRO_SEASON.acts.filter(function(a){return a.act===an;})[0];
     var prefE=bossAct?(bossAct.elems||TEATRO_SEASON.elems):TEATRO_SEASON.elems;
-    var isLastBossAct=bossAct&&lastBoss&&bossAct.act===lastBoss.act;
-    // pool cresce: atto 1 → solo apertura; atto N → apertura + min(N-1, standby totali)
+    var isLast=!!(bossAct&&lastBoss&&bossAct.act===lastBoss.act);
     var standbyAvail=planStandby.slice(0,Math.min(an-1,planStandby.length));
     var currentPool=planOpening.concat(standbyAvail);
-    var avail=currentPool.filter(function(item){return (uCnt[item.c.key]||0)<2;});
-    avail=avail.slice().sort(function(a,b){
-      var am=prefE.indexOf(el(a.c.key))>=0?3:0;
-      var bm=prefE.indexOf(el(b.c.key))>=0?3:0;
-      if(!isLastBossAct&&saveForLast[a.c.key]&&saveForLast[a.c.key]>an)am-=2;
-      if(!isLastBossAct&&saveForLast[b.c.key]&&saveForLast[b.c.key]>an)bm-=2;
-      return (bm-am)||b.score-a.score;
-    });
-    var team=avail.slice(0,4).map(function(item){
-      uCnt[item.c.key]=(uCnt[item.c.key]||0)+1;
-      return {c:item.c,useNum:uCnt[item.c.key],isOpening:item.isOpening,isTrial:item.isTrial,isGuest:item.isGuest};
-    });
-    actPlan.push({act:an,team:team,boss:bossAct,poolSize:currentPool.length,standbyCount:standbyAvail.length});
+    // Opzione A — boss ottimale (commette gli usi per gli atti successivi)
+    var teamARaw=mkTeam(currentPool,uCnt,prefE,isLast,an);
+    var uCntSnap=Object.assign({},uCnt);
+    teamARaw.forEach(function(item){uCnt[item.c.key]=(uCnt[item.c.key]||0)+1;});
+    // Opzione B — score puro (non commette usi, solo alternativa visiva)
+    var teamBRaw=mkTeamScore(currentPool,uCntSnap);
+    // Opzione C — Atto 1 con 1 evento/risorsa iniziale (standby[0] sbloccato)
+    var teams=[
+      {label:"🎯 Consigliata",sub:"boss ottimale",members:toMembers(teamARaw,uCntSnap),color:"#fbbf24"},
+      {label:"⚡ Alternativa",sub:"score puro",members:toMembers(teamBRaw,uCntSnap),color:"#60a5fa"}
+    ];
+    if(an===1&&planStandby.length>0){
+      var poolWith1=planOpening.concat(planStandby.slice(0,1));
+      var teamCRaw=mkTeam(poolWith1,uCntSnap,prefE,false,1);
+      teams.push({label:"🎲 Con 1 evento",sub:"+1 standby dall'inizio",members:toMembers(teamCRaw,uCntSnap),color:"#a855f7"});
+    }
+    actPlan.push({act:an,teams:teams,boss:bossAct,poolSize:currentPool.length,standbyCount:standbyAvail.length});
   }
 
   // Nota pool progressivo
   var pnote=div("");pnote.style.cssText="font-size:9px;color:var(--muted);background:var(--surf);border-radius:6px;padding:4px 8px;margin-bottom:8px;line-height:1.4";ap(planSec,pnote);
-  pnote.textContent="ℹ️ Atto 1: solo i 6 apertura disponibili. Ogni battaglia vinta aggiunge +1 personaggio dal cast standby al pool. Gli atti successivi vengono simulati con il pool progressivo.";
+  pnote.textContent="ℹ️ Atto 1: solo i 6 apertura. Ogni battaglia vinta aggiunge +1 standby. La squadra Consigliata traccia i 2 usi per char; le alternative mostrano opzioni per lo stesso pool.";
+
+  // Helper render squadra
+  function renderTeam(container,members,saveForLast,actNum,lastBoss){
+    if(!members.length){ap(container,div("","Pool insufficiente")).style.cssText="font-size:9px;color:#f87171;font-style:italic";return;}
+    members.forEach(function(m){
+      var c=m.c;var celem=el(c.key)||"anemo";
+      var isSaved=!!saveForLast[c.key]&&lastBoss&&actNum<lastBoss.act;
+      var bCol=isSaved?"#fbbf24":(EC[celem]||"var(--border)");
+      var cc=div("");cc.style.cssText="display:flex;align-items:center;gap:3px;background:var(--surf);border-radius:6px;padding:2px 6px 2px 2px;border:1px solid "+bCol+"33;cursor:pointer";
+      if(!m.isTrial)cc.onclick=function(){openMod(c.key);};
+      ap(cc,av(c.key,20));
+      var ni=div("");ni.style.cssText="display:flex;flex-direction:column";ap(cc,ni);
+      var nm=fmtName(c.key);var pts=nm.split(" ");
+      ap(ni,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:nm)).style.cssText="font-size:8px;font-weight:700;color:"+(m.isTrial?"var(--muted)":(EC[celem]||"var(--text)"));
+      ap(ni,div("",(m.useNum===1?"●○ 1/2":"●● 2/2")+(m.isTrial?" prova":""))).style.cssText="font-size:6px;color:"+(m.useNum===2?"#f87171":"#94a3b8");
+      ap(container,cc);
+    });
+  }
 
   // Render piano
   actPlan.forEach(function(step){
     var isBoss=!!step.boss;
-    var actRow=div("");actRow.style.cssText="margin-bottom:5px;background:var(--card);border-radius:8px;padding:6px 8px;border:1px solid "+(isBoss?"#fbbf2444":"var(--border)");ap(planSec,actRow);
-    var ah=div("");ah.style.cssText="display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap";ap(actRow,ah);
+    var actRow=div("");actRow.style.cssText="margin-bottom:6px;background:var(--card);border-radius:10px;padding:8px 10px;border:1px solid "+(isBoss?"#fbbf2444":"var(--border)");ap(planSec,actRow);
+    // Header atto
+    var ah=div("");ah.style.cssText="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap";ap(actRow,ah);
     ap(ah,div("","Atto "+step.act)).style.cssText="font-size:9px;font-weight:700;color:var(--muted);background:var(--surf);border-radius:4px;padding:1px 5px;flex-shrink:0";
-    // Pool size badge
-    var psBadge=div("","pool: "+step.poolSize+(step.standbyCount===0?" (solo apertura)":step.standbyCount===1?" (+1 standby)":(" (+"+step.standbyCount+" standby)")));
-    psBadge.style.cssText="font-size:7px;color:#64748b;background:var(--surf);border-radius:3px;padding:0 4px;flex-shrink:0";ap(ah,psBadge);
+    ap(ah,div("","pool: "+step.poolSize+(step.standbyCount===0?" · solo apertura":(" · +"+step.standbyCount+" standby")))).style.cssText="font-size:7px;color:#475569;flex-shrink:0";
     if(step.boss){
       ap(ah,div("","🐉 "+step.boss.boss)).style.cssText="font-size:9px;font-weight:700;color:#fbbf24;flex-shrink:0";
       (step.boss.elems||[]).forEach(function(e){ap(ah,div("",EI[e]||"")).style.cssText="font-size:11px";});
     }
-    var tr=div("");tr.style.cssText="display:flex;gap:4px;flex-wrap:wrap";ap(actRow,tr);
-    if(!step.team.length){ap(tr,div("","Pool esaurito — aggiungi altri personaggi idonei")).style.cssText="font-size:9px;color:#f87171;font-style:italic";return;}
-    step.team.forEach(function(m){
-      var c=m.c;var celem=el(c.key)||"anemo";
-      var isSaved=!!saveForLast[c.key]&&step.act<lastBoss.act;
-      var borderColor=isSaved?"#fbbf24":(EC[celem]||"var(--border)");
-      var cc=div("");cc.style.cssText="display:flex;align-items:center;gap:3px;background:var(--surf);border-radius:6px;padding:2px 6px 2px 2px;border:1px solid "+borderColor+"33;cursor:pointer;position:relative";
-      if(!m.isTrial)cc.onclick=function(){openMod(c.key);};
-      var av2=av(c.key,20);ap(cc,av2);
-      var ni=div("");ni.style.cssText="display:flex;flex-direction:column;gap:0";ap(cc,ni);
-      var nm=fmtName(c.key);var pts=nm.split(" ");
-      ap(ni,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:nm)).style.cssText="font-size:8px;font-weight:700;color:"+(m.isTrial?"var(--muted)":(EC[celem]||"var(--text)"));
-      var dots=m.useNum===1?"●○":"●●";
-      ap(ni,div("",dots+(m.isTrial?" (prova)":(m.useNum===2?" 2/2":" 1/2")))).style.cssText="font-size:6px;color:"+(m.useNum===2?"#f87171":"#94a3b8");
-      ap(tr,cc);
+    // Opzioni squadra
+    step.teams.forEach(function(opt){
+      var optRow=div("");optRow.style.cssText="margin-bottom:4px";ap(actRow,optRow);
+      var optLabel=div("",opt.label+" — "+opt.sub);optLabel.style.cssText="font-size:8px;font-weight:700;color:"+opt.color+";margin-bottom:3px";ap(optRow,optLabel);
+      var tr=div("");tr.style.cssText="display:flex;gap:4px;flex-wrap:wrap";ap(optRow,tr);
+      renderTeam(tr,opt.members,saveForLast,step.act,lastBoss);
     });
   });
 
