@@ -3035,6 +3035,26 @@ function rTeatro(){
   ap(selH,div("","⭐ Selezione consigliata")).style.cssText="font-size:13px;font-weight:700;color:#f59e0b";
   ap(selH,div("",eligibleChars.length+" disponibili")).style.cssText="font-size:10px;color:var(--muted);background:var(--surf);border-radius:6px;padding:1px 7px";
 
+  // Blocco apertura — sempre disponibili (tuoi o di prova)
+  ap(selSec,div("","Personaggi di apertura (6 — sempre disponibili, tuoi o di prova)")).style.cssText="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:5px";
+  var openingRow=div("");openingRow.style.cssText="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px";ap(selSec,openingRow);
+  TEATRO_SEASON.opening.forEach(function(k){
+    var owned=G.chars.find(function(c){return c.key===k;});
+    var celem=el(k)||"anemo";
+    var oc=div("");oc.style.cssText="background:var(--card);border:1px solid "+(owned?"#22c55e55":"#47556944")+";border-radius:8px;padding:5px 7px;text-align:center;min-width:60px;cursor:"+(owned?"pointer":"default");
+    if(owned)oc.onclick=function(){openMod(k);};
+    var av2=av(k,32);av2.style.margin="0 auto 2px";ap(oc,av2);
+    var cn=fmtName(k);var pts=cn.split(" ");
+    ap(oc,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:cn)).style.cssText="font-size:8px;font-weight:700;color:"+EC[celem];
+    if(owned){
+      ap(oc,div("","Lv"+owned.lv+(owned.con>0?" C"+owned.con:""))).style.cssText="font-size:7px;color:#4ade80";
+      if(owned.issues.length)ap(oc,div("","⚠")).style.cssText="font-size:8px;color:#f87171";
+    }else{
+      ap(oc,div("","📋 prova")).style.cssText="font-size:7px;color:var(--muted)";
+    }
+    ap(openingRow,oc);
+  });
+
   var diffsDef=[
     {name:"Facile",range:"8-10",need:2,color:"#60a5fa"},
     {name:"Normale",range:"12-14",need:6,color:"#fbbf24"},
