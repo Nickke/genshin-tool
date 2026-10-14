@@ -3130,12 +3130,13 @@ function rTC(cont){
   var nOwn=diff.own;var nSup=2;var nTotal=diff.total;
   // Formula bar
   var fBar=div("");fBar.style.cssText="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 12px;margin-bottom:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap";ap(cont,fBar);
-  [{n:"6",label:"apertura",color:"#c084fc"},{n:"+"+nOwn,label:"riserva",color:diff.color},{n:"+"+nSup,label:"supporto",color:"#4ade80"},{n:"="+nTotal,label:"totale",color:"var(--text)"}].forEach(function(f){
+  [{n:"6",label:"apertura",color:"#c084fc"},{n:"+"+nOwn,label:"riserva",color:diff.color},{n:"+"+nSup,label:"supporto (tuoi)",color:"#4ade80"},{n:"="+nTotal,label:"totale",color:"var(--text)"}].forEach(function(f){
     var fc=div("");fc.style.cssText="text-align:center;min-width:40px";ap(fBar,fc);
     ap(fc,div("",f.n)).style.cssText="font-size:16px;font-weight:700;color:"+f.color;
     ap(fc,div("",f.label)).style.cssText="font-size:9px;color:var(--muted)";
   });
-  ap(fBar,div("",elig.length>=nOwn?"✅ roster ok":"❌ "+elig.length+"/"+nOwn+" idonei")).style.cssText="font-size:10px;color:"+(elig.length>=nOwn?"#4ade80":"#f87171");
+  var nNeed=nOwn+nSup;
+  ap(fBar,div("",elig.length>=nNeed?"✅ roster ok":"❌ "+elig.length+"/"+nNeed+" idonei")).style.cssText="font-size:10px;color:"+(elig.length>=nNeed?"#4ade80":"#f87171");
   // Apertura fissi
   ap(cont,div("","Apertura (6 fissi):")).style.cssText="font-size:10px;font-weight:700;color:var(--muted2);margin-bottom:4px";
   var opGrid=div("");opGrid.style.cssText="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px";ap(cont,opGrid);
@@ -3149,19 +3150,22 @@ function rTC(cont){
     ap(oc,div("",owned?"Lv"+owned.lv:"prova")).style.cssText="font-size:7px;color:"+(owned?"#4ade80":"var(--muted)");
     ap(opGrid,oc);
   });
-  // Riserva top N
-  ap(cont,div("","Riserva (top "+nOwn+" idonei):")).style.cssText="font-size:10px;font-weight:700;color:var(--muted2);margin-bottom:4px";
+  // Riserva + supporto (tutti dal tuo roster)
+  ap(cont,div("","Riserva + supporto (top "+(nOwn+nSup)+" dal tuo roster):")).style.cssText="font-size:10px;font-weight:700;color:var(--muted2);margin-bottom:4px";
   var resGrid=div("");resGrid.style.cssText="display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:5px;margin-bottom:12px";ap(cont,resGrid);
-  var resList=elig.slice(0,nOwn);
+  var resList=elig.slice(0,nOwn+nSup);
   if(!resList.length){ap(cont,div("","Nessun personaggio idoneo.")).style.cssText="font-size:10px;color:var(--muted);text-align:center;padding:6px";}
   resList.forEach(function(item,i){
-    var c=item.c;var celem=el(c.key)||"anemo";var bc=item.isGuest?"#a855f7":(EC[celem]||"#475569");
-    var cc=div("");cc.style.cssText="background:var(--card);border:1px solid "+bc+"55;border-radius:8px;padding:5px 3px;text-align:center;cursor:pointer;position:relative";
+    var c=item.c;var celem=el(c.key)||"anemo";
+    var isSup=i>=nOwn;
+    var bc=isSup?"#22c55e":(item.isGuest?"#a855f7":(EC[celem]||"#475569"));
+    var cc=div("");cc.style.cssText="background:var(--card);border:1px solid "+bc+"55;border-radius:8px;padding:5px 3px;text-align:center;cursor:pointer;position:relative"+(isSup?";box-shadow:0 0 0 1px #22c55e22":"");
     cc.onclick=function(){openMod(c.key);};
     var rk=div("",(i+1)+"");rk.style.cssText="position:absolute;top:2px;left:3px;font-size:7px;font-weight:700;color:var(--muted2);background:var(--surf);border-radius:3px;padding:0 2px";ap(cc,rk);
+    if(isSup){var sb=div("","sup");sb.style.cssText="position:absolute;top:2px;right:2px;font-size:6px;font-weight:700;color:#22c55e;background:#22c55e22;border-radius:3px;padding:0 2px";ap(cc,sb);}
     var av2=av(c.key,32);av2.style.margin="0 auto 2px";ap(cc,av2);
     var cn=fmtName(c.key);var pts=cn.split(" ");
-    ap(cc,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:cn)).style.cssText="font-size:8px;font-weight:700;color:"+(item.isGuest?"#c084fc":(EC[celem]||"var(--text)"));
+    ap(cc,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:cn)).style.cssText="font-size:8px;font-weight:700;color:"+(isSup?"#4ade80":(item.isGuest?"#c084fc":(EC[celem]||"var(--text)")));
     ap(cc,div("","Lv"+c.lv+(c.con>0?" C"+c.con:""))).style.cssText="font-size:7px;color:var(--muted)";
     ap(resGrid,cc);
   });
