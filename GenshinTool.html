@@ -3005,6 +3005,71 @@ function rTeatro(){
   // Benedizione
   ap(info,div("","✨ "+TEATRO_SEASON.blessing)).style.cssText="font-size:10px;color:#d8b4fe;margin-top:6px;line-height:1.4;background:#4c1d9511;border-radius:6px;padding:5px 8px";
 
+  // Ospiti d'onore
+  if(TEATRO_SEASON.guests&&TEATRO_SEASON.guests.length){
+    var gRow=div("");gRow.style.cssText="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:5px";ap(info,gRow);
+    ap(gRow,div("","Ospiti:")).style.cssText="font-size:10px;color:var(--muted);flex-shrink:0";
+    TEATRO_SEASON.guests.forEach(function(k){
+      var chip=div("",fmtName(k));chip.style.cssText="padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600;background:#4c1d9533;color:#c084fc;border:1px solid #a855f744";
+      var haveIt=G&&G.chars.some(function(c){return c.key===k;});
+      if(!haveIt)chip.style.opacity="0.4";
+      ap(gRow,chip);
+    });
+  }
+
+  // Selezione consigliata — personaggi del roster ordinati per qualità
+  var openingSet={};TEATRO_SEASON.opening.forEach(function(k){openingSet[k]=1;});
+  var guestSet={};(TEATRO_SEASON.guests||[]).forEach(function(k){guestSet[k]=1;});
+  var teatroScore=function(c){return c.lv*2+c.con*8+(c.issues.length?0:25);};
+  var eligibleChars=[];var seenElig={};
+  G.chars.forEach(function(c){
+    if(seenElig[c.key]||openingSet[c.key])return;
+    if(TEATRO_MONTH_ELEMS.indexOf(el(c.key))>=0||guestSet[c.key]){
+      seenElig[c.key]=1;eligibleChars.push({c:c,isGuest:!!guestSet[c.key],score:teatroScore(c)});
+    }
+  });
+  eligibleChars.sort(function(a,b){return b.score-a.score;});
+
+  var selSec=div("");selSec.style.cssText="background:#1c1a0f22;border:1px solid #f59e0b44;border-radius:10px;padding:12px 16px;margin-bottom:16px";ap(cont,selSec);
+  var selH=div("");selH.style.cssText="display:flex;align-items:center;gap:8px;margin-bottom:8px";ap(selSec,selH);
+  ap(selH,div("","⭐ Selezione consigliata")).style.cssText="font-size:13px;font-weight:700;color:#f59e0b";
+  ap(selH,div("",eligibleChars.length+" disponibili")).style.cssText="font-size:10px;color:var(--muted);background:var(--surf);border-radius:6px;padding:1px 7px";
+
+  var diffsDef=[
+    {name:"Facile",range:"8-10",need:2,color:"#60a5fa"},
+    {name:"Normale",range:"12-14",need:6,color:"#fbbf24"},
+    {name:"Difficile",range:"16-20",need:10,color:"#f87171"}
+  ];
+  var diffRow=div("");diffRow.style.cssText="display:flex;gap:6px;margin-bottom:10px";ap(selSec,diffRow);
+  diffsDef.forEach(function(d){
+    var can=eligibleChars.length>=d.need;
+    var dc=div("");dc.style.cssText="flex:1;background:var(--card);border:1px solid "+d.color+"44;border-radius:8px;padding:6px 8px;text-align:center";ap(diffRow,dc);
+    ap(dc,div("",d.name)).style.cssText="font-size:10px;font-weight:700;color:"+d.color;
+    ap(dc,div("",d.range+" chars")).style.cssText="font-size:9px;color:var(--muted)";
+    ap(dc,div("",can?"✅":"❌ "+eligibleChars.length+"/"+d.need)).style.cssText="font-size:10px;margin-top:2px;color:"+(can?"#4ade80":"#f87171");
+  });
+
+  ap(selSec,div("","★ = ospite d'onore (bypass elemento) · n° = posizione in classifica build")).style.cssText="font-size:9px;color:var(--muted2);margin-bottom:7px";
+
+  var selGrid=div("");selGrid.style.cssText="display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:5px";ap(selSec,selGrid);
+  eligibleChars.forEach(function(item,i){
+    var c=item.c;var celem=el(c.key)||"anemo";
+    var bc=item.isGuest?"#a855f7":(EC[celem]||"#475569");
+    var cc=div("");cc.style.cssText="background:var(--card);border:1px solid "+bc+"55;border-radius:8px;padding:6px 4px;text-align:center;cursor:pointer;position:relative;transition:transform .15s";
+    cc.onmouseenter=function(){cc.style.transform="translateY(-2px)";};
+    cc.onmouseleave=function(){cc.style.transform="";};
+    cc.onclick=function(){openMod(c.key);};
+    var rk=div("",(i+1)+"");rk.style.cssText="position:absolute;top:2px;left:3px;font-size:7px;font-weight:700;color:var(--muted2);background:var(--surf);border-radius:3px;padding:0 2px";ap(cc,rk);
+    if(item.isGuest){var gb=div("","★");gb.style.cssText="position:absolute;top:2px;right:3px;font-size:8px;color:#a855f7";ap(cc,gb);}
+    var av2=av(c.key,36);av2.style.margin="0 auto 2px";ap(cc,av2);
+    var cn=fmtName(c.key);var pts=cn.split(" ");
+    ap(cc,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:cn)).style.cssText="font-size:8px;font-weight:700;color:"+(item.isGuest?"#c084fc":(EC[celem]||"var(--text)"));
+    ap(cc,div("","Lv"+c.lv+(c.con>0?" C"+c.con:""))).style.cssText="font-size:7px;color:var(--muted)";
+    ap(cc,div("",c.issues.length?"⚠":"✓")).style.cssText="font-size:8px;color:"+(c.issues.length?"#f87171":"#4ade80");
+    ap(selGrid,cc);
+  });
+  if(!eligibleChars.length)ap(selSec,div("","Nessun personaggio idoneo nel roster.")).style.cssText="font-size:11px;color:var(--muted);text-align:center;padding:8px";
+
   // Personaggi per elemento — solo quelli del teatro corrente
   TEATRO_MONTH_ELEMS.forEach(function(elem){
     var group=G.chars.filter(function(c){return el(c.key)===elem;})
