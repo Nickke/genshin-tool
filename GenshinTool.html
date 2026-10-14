@@ -2977,11 +2977,12 @@ var TEATRO_SEASON={
     {name:"Frozen",elem:"cryo",desc:"Freeze (Cryo+Hydro): +CRIT DMG su Cryo e Hydro. Ottima con Neuvillette."},
     {name:"Frosquall",elem:"anemo",desc:"Cryo Swirl e Stellar Swirl: +CRIT DMG. Core per atti 6-10."}
   ],
+  totalActs:10,charsPerAct:4,maxUses:2,
   acts:[
-    {act:3,boss:"Perpetual Mechanical Array",elems:["hydro","anemo"],tip:"Usa Neuvillette o Wanderer — risparmia tutti i DPS Cryo per gli atti finali."},
-    {act:6,boss:"Chimeric Volkodlak Archer",elems:["cryo","anemo"],tip:"AoE + Stellar Swirl (Cryo+Anemo) ottimale. Usa Odette/Sandrone + Vesna/Mizuki."},
-    {act:8,boss:"Chimeric Winged Lion",elems:["cryo","anemo","hydro"],tip:"Thundercall: scudo Electro, Cryo lo rompe. Galeforce: globi Anemo, usa Hydro/Cryo/Anemo."},
-    {act:10,boss:"S.S. Automaton: Overseer Device",elems:["cryo","hydro"],tip:"Vulnerabile a Cryo. Freeze + Frozen blessing = CRIT DMG massimo. Tieni Skirk/Ayaka per qui."}
+    {act:3,boss:"Perpetual Mechanical Array",elems:["hydro","anemo"],tip:"Usa Neuvillette o Wanderer — risparmia tutti i DPS Cryo per gli atti finali.",save:["cryo"]},
+    {act:6,boss:"Chimeric Volkodlak Archer",elems:["cryo","anemo"],tip:"AoE + Stellar Swirl (Cryo+Anemo) ottimale. Usa Odette/Sandrone + Vesna/Mizuki.",save:["cryo"]},
+    {act:8,boss:"Chimeric Winged Lion",elems:["cryo","anemo","hydro"],tip:"Thundercall: scudo Electro, Cryo lo rompe. Galeforce: globi Anemo, usa Hydro/Cryo/Anemo.",save:[]},
+    {act:10,boss:"S.S. Automaton: Overseer Device",elems:["cryo","hydro"],tip:"Vulnerabile a Cryo. Freeze + Frozen blessing = CRIT DMG massimo. Tieni Skirk/Ayaka per qui.",save:["cryo","hydro"]}
   ],
   rotation:[
     "Prune usa Elemental Skill → Horn of Spring's Call colpisce → 'Two Voices in Black and White' si attiva",
@@ -3046,6 +3047,13 @@ function tEligible(){
 
 function rTP(cont){
   var openingSet={};TEATRO_SEASON.opening.forEach(function(k){openingSet[k]=1;});
+  // Meccanica info box
+  var mBox=div("");mBox.style.cssText="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:9px 13px;margin-bottom:12px;display:flex;gap:12px;flex-wrap:wrap";ap(cont,mBox);
+  [{icon:"⚔️",val:TEATRO_SEASON.totalActs+" atti",label:"campagna"},{icon:"👥",val:TEATRO_SEASON.charsPerAct+" personaggi",label:"per atto"},{icon:"🔁",val:"max "+TEATRO_SEASON.maxUses+" usi",label:"per personaggio"},{icon:"🎲",val:"pool cresce",label:"con gli eventi"}].forEach(function(m){
+    var mc=div("");mc.style.cssText="text-align:center;min-width:70px";ap(mBox,mc);
+    ap(mc,div("",m.icon+" "+m.val)).style.cssText="font-size:11px;font-weight:700;color:var(--text)";
+    ap(mc,div("",m.label)).style.cssText="font-size:9px;color:var(--muted)";
+  });
   // Apertura
   var opSec=div("");opSec.style.cssText="margin-bottom:12px";ap(cont,opSec);
   ap(opSec,div("","Personaggi di apertura — tuoi o di prova")).style.cssText="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px";
@@ -3137,6 +3145,14 @@ function rTC(cont){
   });
   var nNeed=nOwn+nSup;
   ap(fBar,div("",elig.length>=nNeed?"✅ roster ok":"❌ "+elig.length+"/"+nNeed+" idonei")).style.cssText="font-size:10px;color:"+(elig.length>=nNeed?"#4ade80":"#f87171");
+  // Usi disponibili vs necessari
+  var maxU=TEATRO_SEASON.maxUses||2;var totalActs=TEATRO_SEASON.totalActs||10;var cpa=TEATRO_SEASON.charsPerAct||4;
+  var usiDisp=(nTotal)*maxU;var usiNeed=totalActs*cpa;
+  var uBar=div("");uBar.style.cssText="background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:6px 12px;margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap";ap(cont,uBar);
+  ap(uBar,div("","♻️ Regola 2 usi/personaggio")).style.cssText="font-size:10px;font-weight:700;color:var(--text);flex-shrink:0";
+  ap(uBar,div("","Pool "+nTotal+" char × "+maxU+" usi = "+usiDisp+" slot disponibili")).style.cssText="font-size:10px;color:var(--muted)";
+  ap(uBar,div("","· "+totalActs+" atti × "+cpa+" char = "+usiNeed+" slot richiesti")).style.cssText="font-size:10px;color:var(--muted)";
+  ap(uBar,div("",usiDisp>=usiNeed?"✅ sufficiente":"⚠ "+Math.max(0,usiNeed-usiDisp)+" slot scoperti")).style.cssText="font-size:10px;font-weight:700;color:"+(usiDisp>=usiNeed?"#4ade80":"#fbbf24");
   // Apertura fissi
   ap(cont,div("","Apertura (6 fissi):")).style.cssText="font-size:10px;font-weight:700;color:var(--muted2);margin-bottom:4px";
   var opGrid=div("");opGrid.style.cssText="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px";ap(cont,opGrid);
@@ -3167,6 +3183,7 @@ function rTC(cont){
     var cn=fmtName(c.key);var pts=cn.split(" ");
     ap(cc,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:cn)).style.cssText="font-size:8px;font-weight:700;color:"+(isSup?"#4ade80":(item.isGuest?"#c084fc":(EC[celem]||"var(--text)")));
     ap(cc,div("","Lv"+c.lv+(c.con>0?" C"+c.con:""))).style.cssText="font-size:7px;color:var(--muted)";
+    ap(cc,div("","♻ max 2 usi")).style.cssText="font-size:6px;color:#64748b;margin-top:1px";
     ap(resGrid,cc);
   });
   // Cast di supporto — top 7
@@ -3201,6 +3218,11 @@ function rTB(cont){
     var er=div("");er.style.cssText="display:flex;gap:4px;flex-wrap:wrap";ap(card,er);
     (a.elems||[]).forEach(function(e){var ep=div("",EI[e]+" "+e.charAt(0).toUpperCase()+e.slice(1));ep.style.cssText="padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;background:"+EB[e]+";color:"+EC[e];ap(er,ep);});
     ap(card,div("","💡 "+a.tip)).style.cssText="font-size:10px;color:#fbbf24;margin-top:6px;line-height:1.4;background:#f59e0b11;border-radius:6px;padding:5px 8px";
+    if(a.save&&a.save.length){
+      var svRow=div("");svRow.style.cssText="display:flex;gap:4px;align-items:center;margin-top:4px;flex-wrap:wrap";ap(card,svRow);
+      ap(svRow,div("","🔒 Conserva per dopo:")).style.cssText="font-size:9px;color:#94a3b8;flex-shrink:0";
+      a.save.forEach(function(e){var ep=div("",EI[e]+" "+e.charAt(0).toUpperCase()+e.slice(1));ep.style.cssText="padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700;background:"+EB[e]+";color:"+EC[e];ap(svRow,ep);});
+    }
     var actElig=tEligible().filter(function(item){return a.elems&&a.elems.indexOf(el(item.c.key))>=0;}).slice(0,5);
     if(actElig.length){
       var cr=div("");cr.style.cssText="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;align-items:center";ap(card,cr);
