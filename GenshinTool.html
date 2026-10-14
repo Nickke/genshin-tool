@@ -3210,34 +3210,38 @@ function rTC(cont){
   ap(planH,div("","🗓️ Piano campagna — "+diff.name)).style.cssText="font-size:12px;font-weight:700;color:var(--text)";
   ap(planH,div("",diff.acts+" battaglie · max 2 usi/char")).style.cssText="font-size:9px;color:var(--muted);background:var(--surf);border-radius:5px;padding:1px 7px";
 
-  // Costruisci pool: 6 apertura + standby dal roster
-  var planPool=[];
+  // Costruisci pool separato: apertura + standby ordinati per score
+  var planOpening=[];
   TEATRO_SEASON.opening.forEach(function(k){
     var ownedC=G.chars.find(function(c){return c.key===k;});
-    planPool.push({c:ownedC||{key:k,lv:90,con:0,issues:[]},score:ownedC?tScore(ownedC):100,isOpening:true,isTrial:!ownedC});
+    planOpening.push({c:ownedC||{key:k,lv:90,con:0,issues:[]},score:ownedC?tScore(ownedC):100,isOpening:true,isTrial:!ownedC});
   });
   var standbySlots=Math.max(0,nTotal-6);
-  elig.slice(0,standbySlots+nSup).forEach(function(item){planPool.push({c:item.c,score:item.score,isGuest:item.isGuest});});
+  var planStandby=elig.slice(0,standbySlots+nSup).map(function(item){return {c:item.c,score:item.score,isGuest:item.isGuest};});
 
-  // Identifica char critici da conservare per il boss finale (act 10 o ultimo)
+  // Identifica char critici da conservare per il boss finale
   var lastBoss=TEATRO_SEASON.acts[TEATRO_SEASON.acts.length-1];
   var saveForLast={};
   if(lastBoss&&lastBoss.save){
     lastBoss.save.forEach(function(se){
-      planPool.filter(function(item){return el(item.c.key)===se;})
+      planStandby.filter(function(item){return el(item.c.key)===se;})
         .sort(function(a,b){return b.score-a.score;})
         .slice(0,2).forEach(function(item){saveForLast[item.c.key]=lastBoss.act;});
     });
   }
 
-  // Costruisci piano greedy atto per atto
+  // Costruisci piano con pool progressivo:
+  // Atto 1 = solo apertura; ogni atto successivo +1 standby (approssimazione — dipende dagli eventi)
   var uCnt={};
   var actPlan=[];
   for(var an=1;an<=diff.acts;an++){
     var bossAct=TEATRO_SEASON.acts.filter(function(a){return a.act===an;})[0];
     var prefE=bossAct?(bossAct.elems||TEATRO_SEASON.elems):TEATRO_SEASON.elems;
     var isLastBossAct=bossAct&&lastBoss&&bossAct.act===lastBoss.act;
-    var avail=planPool.filter(function(item){return (uCnt[item.c.key]||0)<2;});
+    // pool cresce: atto 1 → solo apertura; atto N → apertura + min(N-1, standby totali)
+    var standbyAvail=planStandby.slice(0,Math.min(an-1,planStandby.length));
+    var currentPool=planOpening.concat(standbyAvail);
+    var avail=currentPool.filter(function(item){return (uCnt[item.c.key]||0)<2;});
     avail=avail.slice().sort(function(a,b){
       var am=prefE.indexOf(el(a.c.key))>=0?3:0;
       var bm=prefE.indexOf(el(b.c.key))>=0?3:0;
@@ -3249,8 +3253,12 @@ function rTC(cont){
       uCnt[item.c.key]=(uCnt[item.c.key]||0)+1;
       return {c:item.c,useNum:uCnt[item.c.key],isOpening:item.isOpening,isTrial:item.isTrial,isGuest:item.isGuest};
     });
-    actPlan.push({act:an,team:team,boss:bossAct});
+    actPlan.push({act:an,team:team,boss:bossAct,poolSize:currentPool.length,standbyCount:standbyAvail.length});
   }
+
+  // Nota pool progressivo
+  var pnote=div("");pnote.style.cssText="font-size:9px;color:var(--muted);background:var(--surf);border-radius:6px;padding:4px 8px;margin-bottom:8px;line-height:1.4";ap(planSec,pnote);
+  pnote.textContent="ℹ️ Atto 1: solo i 6 apertura disponibili. Ogni battaglia vinta aggiunge +1 personaggio dal cast standby al pool. Gli atti successivi vengono simulati con il pool progressivo.";
 
   // Render piano
   actPlan.forEach(function(step){
@@ -3258,6 +3266,9 @@ function rTC(cont){
     var actRow=div("");actRow.style.cssText="margin-bottom:5px;background:var(--card);border-radius:8px;padding:6px 8px;border:1px solid "+(isBoss?"#fbbf2444":"var(--border)");ap(planSec,actRow);
     var ah=div("");ah.style.cssText="display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap";ap(actRow,ah);
     ap(ah,div("","Atto "+step.act)).style.cssText="font-size:9px;font-weight:700;color:var(--muted);background:var(--surf);border-radius:4px;padding:1px 5px;flex-shrink:0";
+    // Pool size badge
+    var psBadge=div("","pool: "+step.poolSize+(step.standbyCount===0?" (solo apertura)":step.standbyCount===1?" (+1 standby)":(" (+"+step.standbyCount+" standby)")));
+    psBadge.style.cssText="font-size:7px;color:#64748b;background:var(--surf);border-radius:3px;padding:0 4px;flex-shrink:0";ap(ah,psBadge);
     if(step.boss){
       ap(ah,div("","🐉 "+step.boss.boss)).style.cssText="font-size:9px;font-weight:700;color:#fbbf24;flex-shrink:0";
       (step.boss.elems||[]).forEach(function(e){ap(ah,div("",EI[e]||"")).style.cssText="font-size:11px";});
