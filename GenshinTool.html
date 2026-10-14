@@ -2971,73 +2971,85 @@ var TEATRO_SEASON={
   elems:["hydro","cryo","anemo"],
   opening:["Neuvillette","Barbara","Citlali","Kaeya","Wanderer","Prune"],
   guests:["Ineffa","YaeMiko","Thoma","Chiori"],
-  blessing:"HP, ATK e DEF +20% per ogni personaggio di apertura posseduto. Congelamento (Freeze) e Turbine (Swirl) potenziati per Hydro/Cryo/Anemo."
+  blessing:"HP, ATK e DEF +20% per ogni personaggio di apertura posseduto. Congelamento (Freeze) e Turbine (Swirl) potenziati per Hydro/Cryo/Anemo.",
+  blessings:[
+    {name:"Aquabreeze",elem:"hydro",desc:"Hydro Swirl e Stellar Swirl: bonus Max HP. Core per i primi atti."},
+    {name:"Frozen",elem:"cryo",desc:"Freeze (Cryo+Hydro): +CRIT DMG su Cryo e Hydro. Ottima con Neuvillette."},
+    {name:"Frosquall",elem:"anemo",desc:"Cryo Swirl e Stellar Swirl: +CRIT DMG. Core per atti 6-10."}
+  ],
+  acts:[
+    {act:3,boss:"Perpetual Mechanical Array",elems:["hydro","anemo"],tip:"Usa Neuvillette o Wanderer — risparmia tutti i DPS Cryo per gli atti finali."},
+    {act:6,boss:"Chimeric Volkodlak Archer",elems:["cryo","anemo"],tip:"AoE + Stellar Swirl (Cryo+Anemo) ottimale. Usa Odette/Sandrone + Vesna/Mizuki."},
+    {act:8,boss:"Chimeric Winged Lion",elems:["cryo","anemo","hydro"],tip:"Thundercall: scudo Electro, Cryo lo rompe. Galeforce: globi Anemo, usa Hydro/Cryo/Anemo."},
+    {act:10,boss:"S.S. Automaton: Overseer Device",elems:["cryo","hydro"],tip:"Vulnerabile a Cryo. Freeze + Frozen blessing = CRIT DMG massimo. Tieni Skirk/Ayaka per qui."}
+  ],
+  rotation:[
+    "Prune usa Elemental Skill → Horn of Spring's Call colpisce → 'Two Voices in Black and White' si attiva",
+    "Vesna o Wanderer usa Skill → Wandering Vortex generato → buff Prune: +50% → +60% CRIT DMG su Stellar Swirl",
+    "DPS Cryo entra in campo (Odette, Sandrone, Skirk) → riceve +60% CRIT DMG per 5s",
+    "Sucrose Burst/Skill → Viridescent Venerer −40% Cryo res → Stellar Swirl massimo",
+    "Wandering Vortex dura 5s — buff rimane attivo. Ripeti a ogni rotazione."
+  ],
+  pruneBuffs:[
+    {label:"Con Hydro nel team",val:"+50% CRIT DMG",elem:"hydro",desc:"Hydro DMG e Cryo DMG del personaggio attivo · 5s"},
+    {label:"Con Wandering Vortex attivo",val:"+60% CRIT DMG",elem:"anemo",desc:"Stellar Swirl reaction DMG del personaggio attivo · 5s"}
+  ]
 };
 var TEATRO_MONTH_ELEMS=TEATRO_SEASON.elems;
+var TEATRO_TAB="panoramica";
+var TEATRO_DIFF="easy";
 
 function rTeatro(){
   if(!G){document.getElementById("tec").innerHTML="<p style='color:var(--muted);text-align:center;padding:40px'>Carica un JSON per iniziare.</p>";return;}
   var cont=document.getElementById("tec");clr(cont);
 
-  // Info teatro stagione corrente
-  var info=div("");info.style.cssText="background:#4c1d9522;border:1px solid #a855f744;border-radius:10px;padding:12px 16px;margin-bottom:16px";ap(cont,info);
-  var titleRow=div("");titleRow.style.cssText="display:flex;align-items:center;gap:8px;margin-bottom:6px";ap(info,titleRow);
-  ap(titleRow,div("","🎭 Teatro Immaginario")).style.cssText="font-size:15px;font-weight:700;color:#c084fc";
-  ap(titleRow,div("",TEATRO_SEASON.name)).style.cssText="font-size:11px;color:#a855f7;background:#4c1d9533;border-radius:8px;padding:2px 8px;font-weight:600";
-  ap(titleRow,div("","v"+TEATRO_SEASON.version)).style.cssText="font-size:10px;color:var(--muted)";
-
-  var es=div("");es.style.cssText="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 4px";ap(info,es);
-  ap(es,div("","Elementi:")).style.cssText="font-size:10px;color:var(--muted);align-self:center";
-  TEATRO_SEASON.elems.forEach(function(elem){
-    var ep=div("",EI[elem]+" "+(elem.charAt(0).toUpperCase()+elem.slice(1)));ep.style.cssText="padding:3px 9px;border-radius:12px;font-size:11px;font-weight:700;background:"+EB[elem]+";color:"+EC[elem]+";border:1px solid "+EC[elem]+"44";ap(es,ep);
+  // Header compatto
+  var hdr=div("");hdr.style.cssText="background:#4c1d9522;border:1px solid #a855f744;border-radius:10px;padding:10px 14px;margin-bottom:10px";ap(cont,hdr);
+  var tr=div("");tr.style.cssText="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap";ap(hdr,tr);
+  ap(tr,div("","🎭 "+TEATRO_SEASON.name)).style.cssText="font-size:13px;font-weight:700;color:#c084fc";
+  ap(tr,div("","v"+TEATRO_SEASON.version)).style.cssText="font-size:10px;color:var(--muted)";
+  var er=div("");er.style.cssText="display:flex;gap:4px;flex-wrap:wrap;align-items:center";ap(hdr,er);
+  TEATRO_SEASON.elems.forEach(function(e){var ep=div("",EI[e]+" "+e.charAt(0).toUpperCase()+e.slice(1));ep.style.cssText="padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;background:"+EB[e]+";color:"+EC[e];ap(er,ep);});
+  var owned6=TEATRO_SEASON.opening.filter(function(k){return G.chars.some(function(c){return c.key===k;});}).length;
+  var ownedG=(TEATRO_SEASON.guests||[]).filter(function(k){return G.chars.some(function(c){return c.key===k;});}).length;
+  ap(hdr,div("","Apertura: "+owned6+"/6 · Ospiti: "+ownedG+"/"+((TEATRO_SEASON.guests||[]).length)+" posseduti")).style.cssText="font-size:10px;color:#a855f7;margin-top:4px";
+  // Sub-tab nav
+  var nav=div("");nav.style.cssText="display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap";ap(cont,nav);
+  [["panoramica","📊 Panoramica"],["cast","🎭 Cast"],["boss","🐉 Boss"],["rotazione","🔄 Rotazione"]].forEach(function(t){
+    var btn=div("",t[1]);var isAct=TEATRO_TAB===t[0];
+    btn.style.cssText="padding:5px 11px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:"+(isAct?"700":"400")+";border:1px solid "+(isAct?"#a855f7":"var(--border)")+";background:"+(isAct?"#4c1d9533":"var(--card)")+";color:"+(isAct?"#c084fc":"var(--muted)");
+    btn.onclick=(function(k){return function(){TEATRO_TAB=k;rTeatro();};})(t[0]);
+    ap(nav,btn);
   });
+  var tc=div("");ap(cont,tc);
+  if(TEATRO_TAB==="panoramica")rTP(tc);
+  else if(TEATRO_TAB==="cast")rTC(tc);
+  else if(TEATRO_TAB==="boss")rTB(tc);
+  else if(TEATRO_TAB==="rotazione")rTR(tc);
 
-  // Personaggi apertura
-  var opRow=div("");opRow.style.cssText="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:7px";ap(info,opRow);
-  ap(opRow,div("","Apertura:")).style.cssText="font-size:10px;color:var(--muted);flex-shrink:0";
-  TEATRO_SEASON.opening.forEach(function(k){
-    var chip=div("",fmtName(k));chip.style.cssText="padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600;background:"+eb(k)+";color:"+ec(k);
-    var haveIt=G&&G.chars.some(function(c){return c.key===k;});
-    if(!haveIt)chip.style.opacity="0.5";
-    ap(opRow,chip);
-  });
+}
 
-  // Benedizione
-  ap(info,div("","✨ "+TEATRO_SEASON.blessing)).style.cssText="font-size:10px;color:#d8b4fe;margin-top:6px;line-height:1.4;background:#4c1d9511;border-radius:6px;padding:5px 8px";
-
-  // Ospiti d'onore
-  if(TEATRO_SEASON.guests&&TEATRO_SEASON.guests.length){
-    var gRow=div("");gRow.style.cssText="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:5px";ap(info,gRow);
-    ap(gRow,div("","Ospiti:")).style.cssText="font-size:10px;color:var(--muted);flex-shrink:0";
-    TEATRO_SEASON.guests.forEach(function(k){
-      var chip=div("",fmtName(k));chip.style.cssText="padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600;background:#4c1d9533;color:#c084fc;border:1px solid #a855f744";
-      var haveIt=G&&G.chars.some(function(c){return c.key===k;});
-      if(!haveIt)chip.style.opacity="0.4";
-      ap(gRow,chip);
-    });
-  }
-
-  // Selezione consigliata — personaggi del roster ordinati per qualità
+function tScore(c){return c.lv*2+c.con*8+(c.issues.length?0:25);}
+function tEligible(){
   var openingSet={};TEATRO_SEASON.opening.forEach(function(k){openingSet[k]=1;});
   var guestSet={};(TEATRO_SEASON.guests||[]).forEach(function(k){guestSet[k]=1;});
-  var teatroScore=function(c){return c.lv*2+c.con*8+(c.issues.length?0:25);};
-  var eligibleChars=[];var seenElig={};
+  var res=[];var seen={};
   G.chars.forEach(function(c){
-    if(seenElig[c.key]||openingSet[c.key])return;
+    if(seen[c.key]||openingSet[c.key])return;
     if(TEATRO_MONTH_ELEMS.indexOf(el(c.key))>=0||guestSet[c.key]){
-      seenElig[c.key]=1;eligibleChars.push({c:c,isGuest:!!guestSet[c.key],score:teatroScore(c)});
+      seen[c.key]=1;res.push({c:c,isGuest:!!guestSet[c.key],score:tScore(c)});
     }
   });
-  eligibleChars.sort(function(a,b){return b.score-a.score;});
+  res.sort(function(a,b){return b.score-a.score;});
+  return res;
+}
 
-  var selSec=div("");selSec.style.cssText="background:#1c1a0f22;border:1px solid #f59e0b44;border-radius:10px;padding:12px 16px;margin-bottom:16px";ap(cont,selSec);
-  var selH=div("");selH.style.cssText="display:flex;align-items:center;gap:8px;margin-bottom:8px";ap(selSec,selH);
-  ap(selH,div("","⭐ Selezione consigliata")).style.cssText="font-size:13px;font-weight:700;color:#f59e0b";
-  ap(selH,div("",eligibleChars.length+" disponibili")).style.cssText="font-size:10px;color:var(--muted);background:var(--surf);border-radius:6px;padding:1px 7px";
-
-  // Blocco apertura — sempre disponibili (tuoi o di prova)
-  ap(selSec,div("","Personaggi di apertura (6 — sempre disponibili, tuoi o di prova)")).style.cssText="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:5px";
-  var openingRow=div("");openingRow.style.cssText="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px";ap(selSec,openingRow);
+function rTP(cont){
+  var openingSet={};TEATRO_SEASON.opening.forEach(function(k){openingSet[k]=1;});
+  // Apertura
+  var opSec=div("");opSec.style.cssText="margin-bottom:12px";ap(cont,opSec);
+  ap(opSec,div("","Personaggi di apertura — tuoi o di prova")).style.cssText="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px";
+  var opGrid=div("");opGrid.style.cssText="display:flex;gap:5px;flex-wrap:wrap";ap(opSec,opGrid);
   TEATRO_SEASON.opening.forEach(function(k){
     var owned=G.chars.find(function(c){return c.key===k;});
     var celem=el(k)||"anemo";
@@ -3046,39 +3058,49 @@ function rTeatro(){
     var av2=av(k,32);av2.style.margin="0 auto 2px";ap(oc,av2);
     var cn=fmtName(k);var pts=cn.split(" ");
     ap(oc,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:cn)).style.cssText="font-size:8px;font-weight:700;color:"+EC[celem];
-    if(owned){
-      ap(oc,div("","Lv"+owned.lv+(owned.con>0?" C"+owned.con:""))).style.cssText="font-size:7px;color:#4ade80";
-      if(owned.issues.length)ap(oc,div("","⚠")).style.cssText="font-size:8px;color:#f87171";
-    }else{
-      ap(oc,div("","📋 prova")).style.cssText="font-size:7px;color:var(--muted)";
-    }
-    ap(openingRow,oc);
+    if(owned){ap(oc,div("","Lv"+owned.lv+(owned.con>0?" C"+owned.con:""))).style.cssText="font-size:7px;color:#4ade80";if(owned.issues.length)ap(oc,div("","⚠")).style.cssText="font-size:8px;color:#f87171";}
+    else{ap(oc,div("","📋 prova")).style.cssText="font-size:7px;color:var(--muted)";}
+    ap(opGrid,oc);
   });
-
-  var diffsDef=[
-    {name:"Facile",range:"8-10",need:2,color:"#60a5fa"},
-    {name:"Normale",range:"12-14",need:6,color:"#fbbf24"},
-    {name:"Difficile",range:"16-20",need:10,color:"#f87171"}
-  ];
-  var diffRow=div("");diffRow.style.cssText="display:flex;gap:6px;margin-bottom:10px";ap(selSec,diffRow);
-  diffsDef.forEach(function(d){
-    var can=eligibleChars.length>=d.need;
-    var dc=div("");dc.style.cssText="flex:1;background:var(--card);border:1px solid "+d.color+"44;border-radius:8px;padding:6px 8px;text-align:center";ap(diffRow,dc);
-    ap(dc,div("",d.name)).style.cssText="font-size:10px;font-weight:700;color:"+d.color;
-    ap(dc,div("",d.range+" chars")).style.cssText="font-size:9px;color:var(--muted)";
-    ap(dc,div("",can?"✅":"❌ "+eligibleChars.length+"/"+d.need)).style.cssText="font-size:10px;margin-top:2px;color:"+(can?"#4ade80":"#f87171");
-  });
-
-  ap(selSec,div("","★ = ospite d'onore (bypass elemento) · n° = posizione in classifica build")).style.cssText="font-size:9px;color:var(--muted2);margin-bottom:7px";
-
+  // Ospiti
+  if(TEATRO_SEASON.guests&&TEATRO_SEASON.guests.length){
+    var gSec=div("");gSec.style.cssText="margin-bottom:12px";ap(cont,gSec);
+    ap(gSec,div("","Ospiti d'onore (bypass elemento)")).style.cssText="font-size:11px;font-weight:700;color:#a855f7;margin-bottom:6px";
+    var gGrid=div("");gGrid.style.cssText="display:flex;gap:5px;flex-wrap:wrap";ap(gSec,gGrid);
+    TEATRO_SEASON.guests.forEach(function(k){
+      var owned=G.chars.find(function(c){return c.key===k;});
+      var chip=div("");chip.style.cssText="background:var(--card);border:1px solid #a855f744;border-radius:8px;padding:5px 8px;text-align:center;min-width:58px;cursor:"+(owned?"pointer":"default");
+      if(owned)chip.onclick=function(){openMod(k);};
+      var av2=av(k,30);av2.style.margin="0 auto 2px";ap(chip,av2);
+      ap(chip,div("",fmtName(k))).style.cssText="font-size:8px;color:#c084fc;font-weight:700";
+      ap(chip,div("",owned?"Lv"+owned.lv:"📋 prova")).style.cssText="font-size:7px;color:"+(owned?"#4ade80":"var(--muted)");
+      ap(gGrid,chip);
+    });
+  }
+  // Benedizioni
+  if(TEATRO_SEASON.blessings&&TEATRO_SEASON.blessings.length){
+    var blSec=div("");blSec.style.cssText="margin-bottom:12px";ap(cont,blSec);
+    ap(blSec,div("","✨ Benedizioni stagionali")).style.cssText="font-size:11px;font-weight:700;color:#f59e0b;margin-bottom:6px";
+    var blGrid=div("");blGrid.style.cssText="display:flex;gap:6px;flex-wrap:wrap";ap(blSec,blGrid);
+    TEATRO_SEASON.blessings.forEach(function(b){
+      var bcard=div("");bcard.style.cssText="background:var(--card);border:1px solid "+(EC[b.elem]||"var(--border)")+"44;border-radius:8px;padding:7px 10px;flex:1;min-width:120px";ap(blGrid,bcard);
+      ap(bcard,div("",EI[b.elem]+" "+b.name)).style.cssText="font-size:11px;font-weight:700;color:"+(EC[b.elem]||"var(--text)");
+      ap(bcard,div("",b.desc)).style.cssText="font-size:9px;color:var(--muted);margin-top:3px;line-height:1.4";
+    });
+  }
+  // Selezione consigliata
+  var elig=tEligible();
+  var selSec=div("");selSec.style.cssText="background:#1c1a0f22;border:1px solid #f59e0b44;border-radius:10px;padding:12px 16px";ap(cont,selSec);
+  var selH=div("");selH.style.cssText="display:flex;align-items:center;gap:8px;margin-bottom:8px";ap(selSec,selH);
+  ap(selH,div("","⭐ Selezione consigliata")).style.cssText="font-size:13px;font-weight:700;color:#f59e0b";
+  ap(selH,div("",elig.length+" disponibili")).style.cssText="font-size:10px;color:var(--muted);background:var(--surf);border-radius:6px;padding:1px 7px";
+  if(!elig.length){ap(selSec,div("","Nessun personaggio idoneo nel roster.")).style.cssText="font-size:11px;color:var(--muted);text-align:center;padding:8px";return;}
   var selGrid=div("");selGrid.style.cssText="display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:5px";ap(selSec,selGrid);
-  eligibleChars.forEach(function(item,i){
+  elig.forEach(function(item,i){
     var c=item.c;var celem=el(c.key)||"anemo";
     var bc=item.isGuest?"#a855f7":(EC[celem]||"#475569");
     var cc=div("");cc.style.cssText="background:var(--card);border:1px solid "+bc+"55;border-radius:8px;padding:6px 4px;text-align:center;cursor:pointer;position:relative;transition:transform .15s";
-    cc.onmouseenter=function(){cc.style.transform="translateY(-2px)";};
-    cc.onmouseleave=function(){cc.style.transform="";};
-    cc.onclick=function(){openMod(c.key);};
+    cc.onmouseenter=function(){cc.style.transform="translateY(-2px)";};cc.onmouseleave=function(){cc.style.transform="";};cc.onclick=function(){openMod(c.key);};
     var rk=div("",(i+1)+"");rk.style.cssText="position:absolute;top:2px;left:3px;font-size:7px;font-weight:700;color:var(--muted2);background:var(--surf);border-radius:3px;padding:0 2px";ap(cc,rk);
     if(item.isGuest){var gb=div("","★");gb.style.cssText="position:absolute;top:2px;right:3px;font-size:8px;color:#a855f7";ap(cc,gb);}
     var av2=av(c.key,36);av2.style.margin="0 auto 2px";ap(cc,av2);
@@ -3088,47 +3110,141 @@ function rTeatro(){
     ap(cc,div("",c.issues.length?"⚠":"✓")).style.cssText="font-size:8px;color:"+(c.issues.length?"#f87171":"#4ade80");
     ap(selGrid,cc);
   });
-  if(!eligibleChars.length)ap(selSec,div("","Nessun personaggio idoneo nel roster.")).style.cssText="font-size:11px;color:var(--muted);text-align:center;padding:8px";
+}
 
-  // Personaggi per elemento — solo quelli del teatro corrente
-  TEATRO_MONTH_ELEMS.forEach(function(elem){
-    var group=G.chars.filter(function(c){return el(c.key)===elem;})
-      .sort(function(a,b){return b.lv-a.lv||b.tier-a.tier;});
-    if(!group.length)return;
-    var sec=div("");ap(cont,sec);
-    var sh=div("");sh.style.cssText="display:flex;align-items:center;gap:8px;margin:14px 0 8px;padding:8px 12px;border-radius:8px;background:"+EB[elem]+"33;border:1px solid "+EC[elem]+"33";ap(sec,sh);
-    ap(sh,div("",EI[elem])).style.cssText="font-size:18px";
-    ap(sh,div("",elem.charAt(0).toUpperCase()+elem.slice(1)+" ("+group.length+" personaggi)")).style.cssText="font-size:14px;font-weight:700;color:"+EC[elem];
-    var ready=group.filter(function(c){return c.lv>=80&&!c.issues.length;});
-    ap(sh,div("",ready.length+" pronti")).style.cssText="font-size:11px;color:"+(ready.length>=4?"#4ade80":"#fbbf24");
-
-    var grid=div("");grid.style.cssText="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-bottom:8px";ap(sec,grid);
-    group.forEach(function(c){
-      var cc=div("");cc.style.cssText="background:var(--card);border:1px solid "+(c.issues.length?"#ef444433":c.lv>=80?"#22c55e22":"var(--border)")+";border-radius:8px;padding:8px;text-align:center;cursor:pointer;transition:transform .15s";
-      cc.onmouseenter=function(){cc.style.transform="translateY(-2px)";};
-      cc.onmouseleave=function(){cc.style.transform="";};
-      cc.onclick=function(){openMod(c.key);};
-      ap(grid,cc);
-      var av2=av(c.key,44);av2.style.margin="0 auto 4px";ap(cc,av2);
-      var cn2=fmtName(c.key);var pts=cn2.split(" ");ap(cc,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:cn2)).style.cssText="font-size:9px;font-weight:700;color:"+EC[elem];
-      ap(cc,div("","Lv"+c.lv)).style.cssText="font-size:9px;color:var(--muted)";
-      if(c.issues.length)ap(cc,div("","⚠"+c.issues.length)).style.cssText="font-size:9px;color:#f87171";
-      else if(c.lv>=80)ap(cc,div("","✅")).style.cssText="font-size:9px;color:#4ade80";
-    });
+function rTC(cont){
+  var elig=tEligible();
+  var diffsDef=[
+    {id:"easy",name:"Facile",own:2,total:10,color:"#60a5fa"},
+    {id:"normal",name:"Normale",own:6,total:14,color:"#fbbf24"},
+    {id:"hard",name:"Difficile",own:10,total:18,color:"#f87171"}
+  ];
+  var dRow=div("");dRow.style.cssText="display:flex;gap:4px;margin-bottom:10px";ap(cont,dRow);
+  diffsDef.forEach(function(d){
+    var btn=div("",d.name);var isAct=TEATRO_DIFF===d.id;
+    btn.style.cssText="padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:"+(isAct?"700":"400")+";border:1px solid "+(isAct?d.color:"var(--border)")+";background:"+(isAct?d.color+"22":"var(--card)")+";color:"+(isAct?d.color:"var(--muted)");
+    btn.onclick=(function(id){return function(){TEATRO_DIFF=id;rTeatro();};})(d.id);
+    ap(dRow,btn);
   });
+  var diff=diffsDef.filter(function(d){return d.id===TEATRO_DIFF;})[0]||diffsDef[0];
+  var nOwn=diff.own;var nSup=2;var nTotal=diff.total;
+  // Formula bar
+  var fBar=div("");fBar.style.cssText="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 12px;margin-bottom:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap";ap(cont,fBar);
+  [{n:"6",label:"apertura",color:"#c084fc"},{n:"+"+nOwn,label:"riserva",color:diff.color},{n:"+"+nSup,label:"supporto",color:"#4ade80"},{n:"="+nTotal,label:"totale",color:"var(--text)"}].forEach(function(f){
+    var fc=div("");fc.style.cssText="text-align:center;min-width:40px";ap(fBar,fc);
+    ap(fc,div("",f.n)).style.cssText="font-size:16px;font-weight:700;color:"+f.color;
+    ap(fc,div("",f.label)).style.cssText="font-size:9px;color:var(--muted)";
+  });
+  ap(fBar,div("",elig.length>=nOwn?"✅ roster ok":"❌ "+elig.length+"/"+nOwn+" idonei")).style.cssText="font-size:10px;color:"+(elig.length>=nOwn?"#4ade80":"#f87171");
+  // Apertura fissi
+  ap(cont,div("","Apertura (6 fissi):")).style.cssText="font-size:10px;font-weight:700;color:var(--muted2);margin-bottom:4px";
+  var opGrid=div("");opGrid.style.cssText="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px";ap(cont,opGrid);
+  TEATRO_SEASON.opening.forEach(function(k){
+    var owned=G.chars.find(function(c){return c.key===k;});var celem=el(k)||"anemo";
+    var oc=div("");oc.style.cssText="background:var(--card);border:1px solid #4c1d9555;border-radius:7px;padding:4px 6px;text-align:center;min-width:55px;opacity:"+(owned?"1":"0.5")+";cursor:"+(owned?"pointer":"default");
+    if(owned)oc.onclick=function(){openMod(k);};
+    var av2=av(k,28);av2.style.margin="0 auto 2px";ap(oc,av2);
+    var cn=fmtName(k);var pts=cn.split(" ");
+    ap(oc,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:cn)).style.cssText="font-size:7px;font-weight:700;color:"+(EC[celem]||"#c084fc");
+    ap(oc,div("",owned?"Lv"+owned.lv:"prova")).style.cssText="font-size:7px;color:"+(owned?"#4ade80":"var(--muted)");
+    ap(opGrid,oc);
+  });
+  // Riserva top N
+  ap(cont,div("","Riserva (top "+nOwn+" idonei):")).style.cssText="font-size:10px;font-weight:700;color:var(--muted2);margin-bottom:4px";
+  var resGrid=div("");resGrid.style.cssText="display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:5px;margin-bottom:12px";ap(cont,resGrid);
+  var resList=elig.slice(0,nOwn);
+  if(!resList.length){ap(cont,div("","Nessun personaggio idoneo.")).style.cssText="font-size:10px;color:var(--muted);text-align:center;padding:6px";}
+  resList.forEach(function(item,i){
+    var c=item.c;var celem=el(c.key)||"anemo";var bc=item.isGuest?"#a855f7":(EC[celem]||"#475569");
+    var cc=div("");cc.style.cssText="background:var(--card);border:1px solid "+bc+"55;border-radius:8px;padding:5px 3px;text-align:center;cursor:pointer;position:relative";
+    cc.onclick=function(){openMod(c.key);};
+    var rk=div("",(i+1)+"");rk.style.cssText="position:absolute;top:2px;left:3px;font-size:7px;font-weight:700;color:var(--muted2);background:var(--surf);border-radius:3px;padding:0 2px";ap(cc,rk);
+    var av2=av(c.key,32);av2.style.margin="0 auto 2px";ap(cc,av2);
+    var cn=fmtName(c.key);var pts=cn.split(" ");
+    ap(cc,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:cn)).style.cssText="font-size:8px;font-weight:700;color:"+(item.isGuest?"#c084fc":(EC[celem]||"var(--text)"));
+    ap(cc,div("","Lv"+c.lv+(c.con>0?" C"+c.con:""))).style.cssText="font-size:7px;color:var(--muted)";
+    ap(resGrid,cc);
+  });
+  // Cast di supporto — top 7
+  var supSec=div("");supSec.style.cssText="background:#0a2a1a;border:1px solid #22c55e33;border-radius:10px;padding:10px 12px";ap(cont,supSec);
+  ap(supSec,div("","👥 Cast di supporto — 7 per gli amici")).style.cssText="font-size:12px;font-weight:700;color:#4ade80;margin-bottom:3px";
+  ap(supSec,div("","Personaggi del tuo roster condivisi con gli amici (esclusi i 6 apertura)")).style.cssText="font-size:9px;color:var(--muted);margin-bottom:8px";
+  var supList=elig.slice(0,7);
+  var supGrid=div("");supGrid.style.cssText="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:6px";ap(supSec,supGrid);
+  if(!supList.length){ap(supSec,div("","Nessun personaggio disponibile.")).style.cssText="font-size:10px;color:var(--muted);text-align:center;padding:6px";}
+  supList.forEach(function(item,i){
+    var c=item.c;var celem=el(c.key)||"anemo";var bc=item.isGuest?"#a855f7":(EC[celem]||"#475569");
+    var sc=div("");sc.style.cssText="background:var(--card);border:1px solid "+bc+"44;border-radius:8px;padding:7px 5px;text-align:center;cursor:pointer;position:relative";
+    sc.onclick=function(){openMod(c.key);};
+    var rk=div("",(i+1)+"");rk.style.cssText="position:absolute;top:2px;left:3px;font-size:7px;font-weight:700;color:var(--muted2);background:var(--surf);border-radius:3px;padding:0 2px";ap(sc,rk);
+    var av2=av(c.key,38);av2.style.margin="0 auto 3px";ap(sc,av2);
+    var cn=fmtName(c.key);var pts=cn.split(" ");
+    ap(sc,div("",pts.length>2?pts[0][0]+"."+pts[pts.length-1]:cn)).style.cssText="font-size:9px;font-weight:700;color:"+(item.isGuest?"#c084fc":(EC[celem]||"var(--text)"));
+    ap(sc,div("","Lv"+c.lv+(c.con>0?" C"+c.con:""))).style.cssText="font-size:8px;color:var(--muted)";
+    ap(sc,div("",c.issues.length?"⚠ "+c.issues.length+" issues":"✓ pronto")).style.cssText="font-size:8px;color:"+(c.issues.length?"#f87171":"#4ade80");
+    ap(supGrid,sc);
+  });
+}
 
-  // Personaggi di altri elementi (utili per prestito)
-  var others=G.chars.filter(function(c){return TEATRO_MONTH_ELEMS.indexOf(el(c.key))<0&&c.lv>=80;});
-  if(others.length){
-    var os=div("");ap(cont,os);
-    ap(os,div("","👥 Altri (Lv80+) — disponibili per prestito")).style.cssText="font-size:12px;font-weight:700;color:var(--muted);margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)";
-    var og=div("");og.style.cssText="display:flex;gap:8px;flex-wrap:wrap";ap(os,og);
-    others.sort(function(a,b){return b.lv-a.lv;}).forEach(function(c){
-      var oc=div("tchunk");oc.onclick=function(){openMod(c.key);};ap(og,oc);
-      var ta2=av(c.key,42);ap(oc,ta2);
-      ap(oc,div("tname",c.key)).style.color=ec(c.key);
+function rTB(cont){
+  ap(cont,div("","🐉 Boss per atto — guida strategica")).style.cssText="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px";
+  if(!TEATRO_SEASON.acts||!TEATRO_SEASON.acts.length){ap(cont,div("","Nessun dato boss disponibile.")).style.cssText="font-size:11px;color:var(--muted)";return;}
+  TEATRO_SEASON.acts.forEach(function(a){
+    var card=div("");card.style.cssText="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px";ap(cont,card);
+    var ch=div("");ch.style.cssText="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap";ap(card,ch);
+    ap(ch,div("","Atto "+a.act)).style.cssText="font-size:10px;font-weight:700;color:var(--muted);background:var(--surf);border-radius:5px;padding:1px 7px";
+    ap(ch,div("",a.boss)).style.cssText="font-size:13px;font-weight:700;color:var(--text)";
+    var er=div("");er.style.cssText="display:flex;gap:4px;flex-wrap:wrap";ap(card,er);
+    (a.elems||[]).forEach(function(e){var ep=div("",EI[e]+" "+e.charAt(0).toUpperCase()+e.slice(1));ep.style.cssText="padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;background:"+EB[e]+";color:"+EC[e];ap(er,ep);});
+    ap(card,div("","💡 "+a.tip)).style.cssText="font-size:10px;color:#fbbf24;margin-top:6px;line-height:1.4;background:#f59e0b11;border-radius:6px;padding:5px 8px";
+    var actElig=tEligible().filter(function(item){return a.elems&&a.elems.indexOf(el(item.c.key))>=0;}).slice(0,5);
+    if(actElig.length){
+      var cr=div("");cr.style.cssText="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;align-items:center";ap(card,cr);
+      ap(cr,div("","Consigliati:")).style.cssText="font-size:9px;color:var(--muted);flex-shrink:0";
+      actElig.forEach(function(item){
+        var c=item.c;var celem=el(c.key)||"anemo";
+        var cp=div("");cp.style.cssText="display:flex;align-items:center;gap:3px;background:var(--surf);border-radius:6px;padding:2px 5px;cursor:pointer";
+        cp.onclick=function(){openMod(c.key);};
+        var av2=av(c.key,18);ap(cp,av2);
+        ap(cp,div("",fmtName(c.key))).style.cssText="font-size:8px;color:"+(EC[celem]||"var(--text)");
+        ap(cr,cp);
+      });
+    }
+  });
+}
+
+function rTR(cont){
+  ap(cont,div("","🔄 Rotazione consigliata")).style.cssText="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px";
+  // Prune buffs
+  if(TEATRO_SEASON.pruneBuffs&&TEATRO_SEASON.pruneBuffs.length){
+    var pSec=div("");pSec.style.cssText="margin-bottom:12px";ap(cont,pSec);
+    ap(pSec,div("","🌟 Prune — bonus esclusivi")).style.cssText="font-size:11px;font-weight:700;color:#c084fc;margin-bottom:6px";
+    var pGrid=div("");pGrid.style.cssText="display:flex;gap:6px;flex-wrap:wrap";ap(pSec,pGrid);
+    TEATRO_SEASON.pruneBuffs.forEach(function(b){
+      var bc=div("");bc.style.cssText="background:var(--card);border:1px solid "+(EC[b.elem]||"#a855f7")+"44;border-radius:8px;padding:8px 10px;flex:1;min-width:130px";ap(pGrid,bc);
+      ap(bc,div("",b.label)).style.cssText="font-size:10px;color:var(--muted);margin-bottom:2px";
+      ap(bc,div("",b.val)).style.cssText="font-size:15px;font-weight:700;color:"+(EC[b.elem]||"#c084fc");
+      ap(bc,div("",b.desc)).style.cssText="font-size:9px;color:var(--muted2);margin-top:3px;line-height:1.4";
     });
   }
+  // Passi rotazione
+  if(TEATRO_SEASON.rotation&&TEATRO_SEASON.rotation.length){
+    var rSec=div("");rSec.style.cssText="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:10px";ap(cont,rSec);
+    ap(rSec,div("","Sequenza di rotazione")).style.cssText="font-size:11px;font-weight:700;color:var(--text);margin-bottom:8px";
+    TEATRO_SEASON.rotation.forEach(function(step,i){
+      var sRow=div("");sRow.style.cssText="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px";ap(rSec,sRow);
+      var num=div("",(i+1)+"");num.style.cssText="background:#4c1d9533;color:#c084fc;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:1px";ap(sRow,num);
+      ap(sRow,div("",step)).style.cssText="font-size:10px;color:var(--muted);line-height:1.5";
+    });
+  }
+  // Sinergie
+  var synSec=div("");synSec.style.cssText="margin-top:8px";ap(cont,synSec);
+  ap(synSec,div("","Sinergie elemental chiave")).style.cssText="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px";
+  [{elem:"hydro",tip:"Neuvillette DPS principale · Barbara healer + Hydro resonance"},{elem:"cryo",tip:"Skirk/Ayaka Burst + Freeze con Hydro · Max CRIT DMG con Frozen blessing"},{elem:"anemo",tip:"Wanderer/Sucrose Swirl · Viridescent Venerer −40% resist · Prune buff attivator"}].forEach(function(s){
+    var sc=div("");sc.style.cssText="background:"+(EB[s.elem]||"var(--surf)")+"22;border:1px solid "+(EC[s.elem]||"var(--border)")+"33;border-radius:8px;padding:7px 10px;margin-bottom:5px;display:flex;gap:7px;align-items:flex-start";ap(synSec,sc);
+    ap(sc,div("",EI[s.elem]||"")).style.cssText="font-size:16px;flex-shrink:0";
+    ap(sc,div("",s.tip)).style.cssText="font-size:10px;color:var(--muted);line-height:1.4";
+  });
 }
 
 // ── CONFIG / IK ───────────────────────────────────────────────────────────────
