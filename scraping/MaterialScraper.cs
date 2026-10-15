@@ -12,8 +12,8 @@ namespace InventoryKamera
     [Serializable]
 	public struct Material : ISerializable
 	{
-		public string name;
-		public int count;
+		public readonly string name;
+		public readonly int count;
 
 		public Material(string _name, int _count)
 		{
@@ -64,7 +64,6 @@ namespace InventoryKamera
 			int scrollCount = 0;
 
 			Material material = new Material(null, 0);
-			Material previousMaterial = new Material(null, -1);
 
 			List<Rectangle> rectangles;
 			int page = 1;
@@ -98,8 +97,7 @@ namespace InventoryKamera
 					Navigation.Click();
 					Navigation.SystemWait(Navigation.Speed.SelectNextInventoryItem);
 
-					material.name = ScanMaterialName(out Bitmap nameplate);
-					material.count = 0;
+					material = new Material(ScanMaterialName(out Bitmap nameplate), 0);
 
 					// Check if new material has been found
 					if (inventory.Materials.Contains(material))
@@ -114,7 +112,8 @@ namespace InventoryKamera
 						if (!string.IsNullOrEmpty(material.name))
 						{
 							// Scan Material Quantity
-							material.count = ScanMaterialCount(rectangle, out Bitmap quantity);
+							int count = ScanMaterialCount(rectangle, out Bitmap quantity);
+							material = new Material(material.name, count);
 							using (quantity)
 							{
 								if (material.count == 0)
@@ -131,7 +130,6 @@ namespace InventoryKamera
 								UserInterface.ResetCharacterDisplay();
 								UserInterface.SetMaterial(nameplate, quantity, material.name, material.count);
 							}
-							previousMaterial.name = material.name;
 						}
 					}
 					nameplate.Dispose();
@@ -197,8 +195,7 @@ namespace InventoryKamera
 				Navigation.Click();
 				Navigation.SystemWait(Navigation.Speed.SelectNextInventoryItem);
 
-				material.name = ScanMaterialName(out Bitmap nameplate);
-				material.count = 0;
+				material = new Material(ScanMaterialName(out Bitmap nameplate), 0);
 
 				if (inventory.Materials.Contains(material) && skipAlreadyScanned) continue;
 
@@ -207,7 +204,8 @@ namespace InventoryKamera
 					if (!string.IsNullOrEmpty(material.name))
 					{
 						// Scan Material Number
-						material.count = ScanMaterialCount(rectangle, out Bitmap quantity);
+						int count = ScanMaterialCount(rectangle, out Bitmap quantity);
+						material = new Material(material.name, count);
 						if (material.count == 0)
 						{
 							UserInterface.AddError($"Failed to parse quantity for {material.name}");
