@@ -92,6 +92,7 @@ namespace InventoryKamera
 
 		private static void UpdatePictureBox(Bitmap bm, PictureBox pictureBox)
 		{
+			if (!pictureBox.IsHandleCreated) return;
 			try
 			{
 				Bitmap clone = new Bitmap(bm.Width, bm.Height);
@@ -100,10 +101,10 @@ namespace InventoryKamera
 					copy.DrawImage(bm, 0, 0);
 				}
 				MethodInvoker pictureBoxAction = delegate
-			{
-				pictureBox.Image = clone;
-				pictureBox.Refresh();
-			};
+				{
+					pictureBox.Image = clone;
+					pictureBox.Refresh();
+				};
 				pictureBox.Invoke(pictureBoxAction);
 			}
 			catch (Exception e)
@@ -114,6 +115,7 @@ namespace InventoryKamera
 
 		private static void UpdateTextBox(string text, TextBox textBox)
 		{
+			if (!textBox.IsHandleCreated) return;
 			try
 			{
 				MethodInvoker textBoxAction = delegate
@@ -132,6 +134,7 @@ namespace InventoryKamera
 
 		private static void UpdateLabel(string text, Label label)
 		{
+			if (!label.IsHandleCreated) return;
 			try
 			{
 				MethodInvoker labelAction = delegate

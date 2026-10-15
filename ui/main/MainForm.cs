@@ -31,7 +31,7 @@ namespace InventoryKamera
 
         private int Delay;
 
-        private bool running = false;
+        private static bool running = false;
 
         public MainForm()
         {
@@ -154,19 +154,7 @@ namespace InventoryKamera
             ApplyTheme(Properties.Settings.Default.DarkMode);
 
             AutoCopy_CheckBox.Checked = Properties.Settings.Default.AutoCopyEnabled;
-            bool autoCopyOn = AutoCopy_CheckBox.Checked;
-            var activeColor   = System.Drawing.Color.FromArgb(0, 120, 212);
-            var inactiveColor = System.Drawing.Color.FromArgb(160, 160, 160);
-            var activeText    = System.Drawing.Color.White;
-            AutoCopyJsonLabel.Enabled            = autoCopyOn;
-            AutoCopyLogLabel.Enabled             = autoCopyOn;
-            var inactiveText = System.Drawing.Color.FromArgb(40, 40, 40);
-            AutoCopyJsonSelect_Button.BackColor  = autoCopyOn ? activeColor : inactiveColor;
-            AutoCopyJsonSelect_Button.ForeColor  = autoCopyOn ? activeText : inactiveText;
-            AutoCopyLogSelect_Button.BackColor   = autoCopyOn ? activeColor : inactiveColor;
-            AutoCopyLogSelect_Button.ForeColor   = autoCopyOn ? activeText : inactiveText;
-            AutoCopyJsonPath_TextBox.Enabled     = autoCopyOn;
-            AutoCopyLogPath_TextBox.Enabled      = autoCopyOn;
+            ApplyAutoCopyColors(AutoCopy_CheckBox.Checked);
 
             // Check for game data updates in the background so the UI loads immediately.
             new Thread(StartupGameDataCheck) { IsBackground = true, Name = "StartupUpdateCheck" }.Start();
@@ -520,22 +508,26 @@ namespace InventoryKamera
         private void AutoCopy_CheckBox_CheckedChanged(object sender, EventArgs e)
         {
             bool on = AutoCopy_CheckBox.Checked;
-            var activeColor  = System.Drawing.Color.FromArgb(0, 120, 212);
-            var inactiveColor = System.Drawing.Color.FromArgb(160, 160, 160);
-            var activeText   = System.Drawing.Color.White;
-
-            AutoCopyJsonLabel.Enabled            = on;
-            AutoCopyLogLabel.Enabled             = on;
-            var inactiveText2 = System.Drawing.Color.FromArgb(40, 40, 40);
-            AutoCopyJsonSelect_Button.BackColor  = on ? activeColor : inactiveColor;
-            AutoCopyJsonSelect_Button.ForeColor  = on ? activeText : inactiveText2;
-            AutoCopyLogSelect_Button.BackColor   = on ? activeColor : inactiveColor;
-            AutoCopyLogSelect_Button.ForeColor   = on ? activeText : inactiveText2;
-            AutoCopyJsonPath_TextBox.Enabled     = on;
-            AutoCopyLogPath_TextBox.Enabled      = on;
-
+            ApplyAutoCopyColors(on);
             Properties.Settings.Default.AutoCopyEnabled = on;
             Properties.Settings.Default.Save();
+        }
+
+        private void ApplyAutoCopyColors(bool on)
+        {
+            var activeColor   = System.Drawing.Color.FromArgb(0, 120, 212);
+            var inactiveColor = System.Drawing.Color.FromArgb(160, 160, 160);
+            var activeText    = System.Drawing.Color.White;
+            var inactiveText  = System.Drawing.Color.FromArgb(40, 40, 40);
+
+            AutoCopyJsonLabel.Enabled           = on;
+            AutoCopyLogLabel.Enabled            = on;
+            AutoCopyJsonSelect_Button.BackColor = on ? activeColor : inactiveColor;
+            AutoCopyJsonSelect_Button.ForeColor = on ? activeText  : inactiveText;
+            AutoCopyLogSelect_Button.BackColor  = on ? activeColor : inactiveColor;
+            AutoCopyLogSelect_Button.ForeColor  = on ? activeText  : inactiveText;
+            AutoCopyJsonPath_TextBox.Enabled    = on;
+            AutoCopyLogPath_TextBox.Enabled     = on;
         }
 
         private void darkModeToolStripMenuItem_Click(object sender, EventArgs e)

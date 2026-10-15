@@ -152,23 +152,22 @@ namespace InventoryKamera
 					scrollCount++;
 
 					// scroll down
+					// WHY: Genshin's inventory UI accumulates fractional scroll drift over time.
+					// Every 3rd scroll row we skip one tick (k==7 guard); every 9th we add an
+					// extra tick to compensate the opposite drift; at row 18 we reset the counter
+					// to prevent the correction from over-shooting on long inventories.
 					for (int k = 0; k < 10; k++)
 					{
 						Navigation.sim.Mouse.VerticalScroll(-1);
-						// skip a scroll
 						if (( k == 7 ) && ( ( scrollCount % 3 ) == 0 ))
 						{
 							k++;
 							if (scrollCount % 9 == 0)
 							{
 								if (scrollCount == 18)
-								{
 									scrollCount = 0;
-								}
 								else
-								{
 									Navigation.sim.Mouse.VerticalScroll(-1);
-								}
 							}
 						}
 						Navigation.SystemWait(Navigation.Speed.InventoryScroll);
@@ -189,7 +188,7 @@ namespace InventoryKamera
 			Navigation.Wait(500);
 
 			(rectangles, _, _) = GetPageOfItems(page, acceptLess: true);
-			bool passby = true;
+			bool skipAlreadyScanned = true;
 			for (int i = rectangles.Count - 1; i >= 0; i--) // Click through but backwards to short-circuit after new materials
 			{
 				// Select Material
@@ -201,7 +200,7 @@ namespace InventoryKamera
 				material.name = ScanMaterialName(out Bitmap nameplate);
 				material.count = 0;
 
-				if (inventory.Materials.Contains(material) && passby) continue;
+				if (inventory.Materials.Contains(material) && skipAlreadyScanned) continue;
 
 				if (!inventory.Materials.Contains(material))
 				{
@@ -222,7 +221,7 @@ namespace InventoryKamera
 						if (material.count > 0) UserInterface.IncrementMaterialCount();
 						UserInterface.ResetCharacterDisplay();
 						UserInterface.SetMaterial(nameplate, quantity, material.name, material.count);
-						passby = false; // New material found so break on next old material
+						skipAlreadyScanned = false; // New material found so break on next old material
 						quantity.Dispose();
 					}
 				}
