@@ -150,18 +150,18 @@ namespace InventoryKamera
                         if (character.Constellation >= 5)
 						{
 							Logger.Info("{0} constellation 5+, adjusting scanned skill and burst levels", character.NameGOOD);
-							character.Talents["skill"] -= 3;
-							character.Talents["burst"] -= 3;
+							character.Talents["skill"] = Math.Max(1, character.Talents["skill"] - 3);
+							character.Talents["burst"] = Math.Max(1, character.Talents["burst"] - 3);
 						}
 						else if (talentLeveledAtConst3 == "skill")
 						{
 							Logger.Info("{0} constellation 3+, adjusting scanned skill level", character.NameGOOD);
-							character.Talents["skill"] -= 3;
+							character.Talents["skill"] = Math.Max(1, character.Talents["skill"] - 3);
 						}
 						else
 						{
 							Logger.Info("{0} constellation 3+, adjusting scanned burst level", character.NameGOOD);
-							character.Talents["burst"] -= 3;
+							character.Talents["burst"] = Math.Max(1, character.Talents["burst"] - 3);
 						}
 					}
 					else
