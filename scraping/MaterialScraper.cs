@@ -36,7 +36,7 @@ namespace InventoryKamera
 
 	internal class MaterialScraper : InventoryScraper
 	{
-		private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+		private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
 
 		public MaterialScraper()
@@ -68,9 +68,10 @@ namespace InventoryKamera
 
 			List<Rectangle> rectangles;
 			int page = 1;
+			bool repeatFound = false;
 
 			// Keep scanning while not repeating any items names
-			while (true)
+			while (!repeatFound)
 			{
 				int rows, cols;
 				// Find all items on the screen
@@ -104,7 +105,9 @@ namespace InventoryKamera
 					if (inventory.Materials.Contains(material))
 					{
 						Logger.Debug("Repeat material found. Scrolling until end");
-						goto LastPage;
+						repeatFound = true;
+						nameplate.Dispose();
+						break;
 					}
 					else
 					{
@@ -132,6 +135,8 @@ namespace InventoryKamera
 					nameplate.Dispose();
 					Navigation.Wait(150);
 				}
+
+				if (repeatFound) break;
 
 				Navigation.SetCursor(r.Last().Center().X, r.Last().Center().Y);
 				Navigation.Click();
@@ -171,7 +176,7 @@ namespace InventoryKamera
 				++page;
 			}
 
-		LastPage:
+			// LastPage: scroll to bottom and scan remaining items
 			// scroll down as much as possible
 			for (int i = 0; i < 20; i++)
 			{

@@ -21,18 +21,23 @@ namespace InventoryKamera
 		private static PictureBox[] cTalent_PictureBoxes = new PictureBox[3];
 		private static TextBox character_TextBox;
 
-		// Counters
+		// Counters (atomic — updated via Interlocked, labels are display-only)
 		private static Label weaponCount_Label;
+		private static int _weaponCount;
 
 		private static Label weaponMax_Label;
 
 		private static Label artifactCount_Label;
+		private static int _artifactCount;
 		private static Label artifactMax_Label;
 
 		private static Label characterCount_Label;
+		private static int _characterCount;
 
 		private static Label materialCount_Label;
+		private static int _materialCount;
 		private static Label charDevCount_Label;
+		private static int _charDevCount;
 
 		// Status
 		private static Label programStatus_Label;
@@ -100,7 +105,7 @@ namespace InventoryKamera
 			}
 			catch (Exception e)
 			{
-				Logger.Debug($"Problem updating picturebox {0}\n{1}", pictureBox.Name, e);
+				Logger.Debug("Problem updating picturebox {0}\n{1}", pictureBox.Name, e);
 			}
 		}
 
@@ -118,7 +123,7 @@ namespace InventoryKamera
 			}
 			catch (Exception e)
 			{
-				Logger.Debug($"Problem updating picturebox {0}\n{1}", textBox.Name, e);
+				Logger.Debug("Problem updating textbox {0}\n{1}", textBox.Name, e);
 			}
 		}
 
@@ -126,17 +131,16 @@ namespace InventoryKamera
 		{
 			try
 			{
-				MethodInvoker labelAction =  delegate
-			{
-				label.Text = text;
-				label.Refresh();
-			};
+				MethodInvoker labelAction = delegate
+				{
+					label.Text = text;
+					label.Refresh();
+				};
 				label.Invoke(labelAction);
 			}
 			catch (Exception e)
 			{
-				Logger.Debug($"Problem updating picturebox {0}\n{1}", label.Name, e);
-
+				Logger.Debug("Problem updating label {0}\n{1}", label.Name, e);
 			}
 		}
 
@@ -219,46 +223,45 @@ namespace InventoryKamera
 
 		public static void IncrementArtifactCount()
 		{
-			lock (artifactCount_Label)
-			{
-				UpdateLabel($"{Int32.Parse(artifactCount_Label.Text) + 1}", artifactCount_Label);
-			}
+			int next = System.Threading.Interlocked.Increment(ref _artifactCount);
+			UpdateLabel(next.ToString(), artifactCount_Label);
 		}
 
 		public static void IncrementWeaponCount()
 		{
-			lock (weaponCount_Label)
-			{
-				UpdateLabel($"{Int32.Parse(weaponCount_Label.Text) + 1}", weaponCount_Label);
-			}
+			int next = System.Threading.Interlocked.Increment(ref _weaponCount);
+			UpdateLabel(next.ToString(), weaponCount_Label);
 		}
 
 		public static void IncrementCharacterCount()
 		{
-			lock (characterCount_Label)
-			{
-				UpdateLabel($"{Int32.Parse(characterCount_Label.Text) + 1}", characterCount_Label);
-			}
+			int next = System.Threading.Interlocked.Increment(ref _characterCount);
+			UpdateLabel(next.ToString(), characterCount_Label);
 		}
 
 		public static void IncrementMaterialCount()
 		{
-			lock (materialCount_Label)
-			{
-				UpdateLabel($"{Int32.Parse(materialCount_Label.Text) + 1}", materialCount_Label);
-			}
+			int next = System.Threading.Interlocked.Increment(ref _materialCount);
+			UpdateLabel(next.ToString(), materialCount_Label);
 		}
 
 		public static void IncrementCharDevCount()
 		{
-			lock (charDevCount_Label)
-			{
-				UpdateLabel($"{Int32.Parse(charDevCount_Label.Text) + 1}", charDevCount_Label);
-			}
+			int next = System.Threading.Interlocked.Increment(ref _charDevCount);
+			UpdateLabel(next.ToString(), charDevCount_Label);
 		}
 
-		public static void ResetMaterialCount() => UpdateLabel("0", materialCount_Label);
-		public static void ResetCharDevCount() => UpdateLabel("0", charDevCount_Label);
+		public static void ResetMaterialCount()
+		{
+			System.Threading.Interlocked.Exchange(ref _materialCount, 0);
+			UpdateLabel("0", materialCount_Label);
+		}
+
+		public static void ResetCharDevCount()
+		{
+			System.Threading.Interlocked.Exchange(ref _charDevCount, 0);
+			UpdateLabel("0", charDevCount_Label);
+		}
 
 		public static void SetProgramStatus(string status, bool ok = true)
 		{
@@ -313,10 +316,14 @@ namespace InventoryKamera
 
 		public static void ResetCounters()
 		{
-			MethodInvoker characterCountAction = delegate { characterCount_Label.Text = "0"; weaponMax_Label.Refresh(); };
-			MethodInvoker weaponCountAction = delegate { weaponCount_Label.Text = "0"; weaponMax_Label.Refresh(); };
+			System.Threading.Interlocked.Exchange(ref _characterCount, 0);
+			System.Threading.Interlocked.Exchange(ref _weaponCount, 0);
+			System.Threading.Interlocked.Exchange(ref _artifactCount, 0);
+
+			MethodInvoker characterCountAction = delegate { characterCount_Label.Text = "0"; };
+			MethodInvoker weaponCountAction = delegate { weaponCount_Label.Text = "0"; };
 			MethodInvoker weaponMaxAction = delegate { weaponMax_Label.Text = "?"; weaponMax_Label.Refresh(); };
-			MethodInvoker artifactCountAction = delegate { artifactCount_Label.Text = "0"; artifactMax_Label.Refresh(); };
+			MethodInvoker artifactCountAction = delegate { artifactCount_Label.Text = "0"; };
 			MethodInvoker artifactMaxAction = delegate { artifactMax_Label.Text = "?"; artifactMax_Label.Refresh(); };
 
 			characterCount_Label.Invoke(characterCountAction);

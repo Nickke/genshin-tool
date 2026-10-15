@@ -38,50 +38,7 @@ namespace InventoryKamera
 
 			ClearFilters();
 
-			//if (SortByLevel)
-			//{
-			//	Logger.Debug("Sorting by level to optimize total scan time");
-			//	// Check if sorted by level
-			//	// If not, sort by level
-			//	if (CurrentSortingMethod() != "level")
-			//	{
-			//		Logger.Debug("Not already sorting by level...");
-			//		Navigation.SetCursor(
-			//			X: (int)(230 / 1280.0 * Navigation.GetWidth()),
-			//			Y: (int)(680 / 720.0 * Navigation.GetHeight()));
-			//		Navigation.Click();
-			//		Navigation.Wait();
-			//		Navigation.SetCursor(
-			//			X: (int)(250 / 1280.0 * Navigation.GetWidth()),
-			//			Y: (int)(615 / 720.0 * Navigation.GetHeight()));
-			//		Navigation.Click();
-			//		Navigation.Wait();
-			//	}
-			//	Logger.Debug("Inventory is sorted by level.");
-			//}
-			//else
-			//{
-			//	Logger.Debug("Sorting by quality to scan all artifacts matching quality filter.");
-			//	// Check if sorted by quality
-			//	if (CurrentSortingMethod() != "quality")
-			//	{
-			//		Logger.Debug("Not already sorting by quality...");
-			//		// If not, sort by quality
-			//		Navigation.SetCursor(
-			//			X: (int)(230 / 1280.0 * Navigation.GetWidth()),
-			//			Y: (int)(680 / 720.0 * Navigation.GetHeight()));
-			//		Navigation.Click();
-			//		Navigation.Wait();
-			//		Navigation.SetCursor(
-			//			X: (int)(250 / 1280.0 * Navigation.GetWidth()),
-			//			Y: (int)(645 / 720.0 * Navigation.GetHeight()));
-			//		Navigation.Click();
-			//		Navigation.Wait();
-			//	}
-			//	Logger.Debug("Inventory is sorted by quality");
-			//}
-
-			// Go through artifact list
+				// Go through artifact list
 			while (cardsQueued < artifactCount)
 			{
 				Logger.Debug("Scanning artifact page {0}", page);
@@ -164,7 +121,7 @@ namespace InventoryKamera
             }
         }
 
-        public async void QueueScan(int id)
+        public void QueueScan(int id)
 		{
 			var card = GetItemCard();
             Bitmap name, gearSlot, mainStat, subStats, level, equipped, locked;
@@ -533,26 +490,23 @@ namespace InventoryKamera
 
 		private static string ScanArtifactSet(Bitmap itemName)
         {
-            GenshinProcesor.SetGamma(0.2, 0.2, 0.2, ref itemName);
-            Bitmap grayscale = GenshinProcesor.ConvertToGrayscale(itemName);
+            Bitmap source = (Bitmap)itemName.Clone();
+            GenshinProcesor.SetGamma(0.2, 0.2, 0.2, ref source);
+            Bitmap grayscale = GenshinProcesor.ConvertToGrayscale(source);
+            source.Dispose();
             GenshinProcesor.SetInvert(ref grayscale);
 
-            // Analyze
+            // White padding around the glyph improves Tesseract accuracy
             using (Bitmap padded = new Bitmap((int)(grayscale.Width + grayscale.Width * .1), grayscale.Height + (int)(grayscale.Height * .5)))
+            using (Graphics g = Graphics.FromImage(padded))
             {
-                using (Graphics g = Graphics.FromImage(padded))
-                {
-                    g.Clear(Color.White);
-                    g.DrawImage(grayscale, (padded.Width - grayscale.Width) / 2, (padded.Height - grayscale.Height) / 2);
+                g.Clear(Color.White);
+                g.DrawImage(grayscale, (padded.Width - grayscale.Width) / 2, (padded.Height - grayscale.Height) / 2);
+                grayscale.Dispose();
 
-                    var scannedText = GenshinProcesor.AnalyzeText(grayscale, Tesseract.PageSegMode.Auto).ToLower().Replace("\n", " ");
-                    string text = Regex.Replace(scannedText, @"[\W]", string.Empty);
-                    text = GenshinProcesor.FindClosestArtifactSetFromArtifactName(text);
-
-					grayscale.Dispose();
-
-					return text;
-                }
+                var scannedText = GenshinProcesor.AnalyzeText(padded, Tesseract.PageSegMode.Auto).ToLower().Replace("\n", " ");
+                string text = Regex.Replace(scannedText, @"[\W]", string.Empty);
+                return GenshinProcesor.FindClosestArtifactSetFromArtifactName(text);
             }
         }
 

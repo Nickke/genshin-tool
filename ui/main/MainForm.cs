@@ -88,7 +88,7 @@ namespace InventoryKamera
             Logger.Info("Hotkey pressed");
             e.Handled = true;
             // Check if scanner is running
-            if (scannerThread.IsAlive)
+            if (scannerThread != null && scannerThread.IsAlive)
             {
                 // Stop navigating weapons/artifacts
                 scannerThread.Abort();
@@ -115,7 +115,7 @@ namespace InventoryKamera
 
         public static void UnexpectedError(string error)
         {
-            if (scannerThread.IsAlive)
+            if (scannerThread != null && scannerThread.IsAlive)
             {
                 UserInterface.AddError(error);
             }
@@ -130,7 +130,10 @@ namespace InventoryKamera
                     Properties.Settings.Default.Upgrade();
                     Logger.Info("Application settings loaded from previous version");
                 }
-                catch (Exception) { }
+                catch (Exception ex)
+                {
+                    Logger.Warn(ex, "Could not upgrade application settings from previous version");
+                }
                 Properties.Settings.Default.UpgradeNeeded = false;
                 Properties.Settings.Default.Save();
             }
@@ -882,7 +885,7 @@ namespace InventoryKamera
         private void MainForm_Shown(object sender, EventArgs e)
         {
             CheckForKameraUpdates();
-            CheckForGenshinUpdates();
+            // Game data update check runs in background via StartupGameDataCheck (launched in MainForm_Load)
         }
 
         private async void CheckForKameraUpdates()
