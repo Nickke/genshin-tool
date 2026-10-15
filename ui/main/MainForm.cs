@@ -29,6 +29,7 @@ namespace InventoryKamera
         private static InventoryKamera data = new InventoryKamera();
         private static DatabaseManager databaseManager = new DatabaseManager();
         private static Font _themeFont;
+        private static Font _scanButtonFont;
 
         private int Delay;
 
@@ -576,7 +577,9 @@ namespace InventoryKamera
             StartScan_Button.BackColor = Accent;
             StartScan_Button.ForeColor = Color.White;
             StartScan_Button.FlatAppearance.BorderSize = 0;
-            StartScan_Button.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            if (_scanButtonFont == null)
+                _scanButtonFont = new Font("Segoe UI", 10F, FontStyle.Bold);
+            StartScan_Button.Font = _scanButtonFont;
             RoundButton(StartScan_Button, 6);
         }
 
