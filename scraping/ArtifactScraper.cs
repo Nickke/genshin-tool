@@ -397,7 +397,8 @@ namespace InventoryKamera
 			List<string> lines;
 			List<SubStat> substats = new List<SubStat>();
 			string text;
-			using (Bitmap bm = (Bitmap)artifactImage.Clone())
+			Bitmap bm = (Bitmap)artifactImage.Clone();
+			try
 			{
 				GenshinProcesor.SetBrightness(-30, ref bm);
 				GenshinProcesor.SetContrast(85, ref bm);
@@ -405,6 +406,10 @@ namespace InventoryKamera
 				{
 					text = GenshinProcesor.AnalyzeText(n, Tesseract.PageSegMode.Auto).ToLower();
 				}
+			}
+			finally
+			{
+				bm?.Dispose();
 			}
 
             lines = new List<string>(text.Split('\n'));

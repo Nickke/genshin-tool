@@ -60,7 +60,9 @@ namespace InventoryKamera
                 CharactersScanned_Label,
                 ProgramStatus_Label,
                 ErrorLog_TextBox,
-                Navigation_Image);
+                Navigation_Image,
+                MaterialsScanned_Label,
+                CharDevScanned_Label);
         }
 
         private double ScannerDelayValue(int value)
@@ -136,6 +138,7 @@ namespace InventoryKamera
             UpdateKeyTextBoxes();
 
             Delay = ScannerDelay_TrackBar.Value;
+            SpeedToggle.Checked = Properties.Settings.Default.ScannerDelay == 2;
 
             ProgramStatus_Label.Text = "";
             if (string.IsNullOrWhiteSpace(OutputPath_TextBox.Text))
@@ -148,12 +151,17 @@ namespace InventoryKamera
 
             AutoCopy_CheckBox.Checked = Properties.Settings.Default.AutoCopyEnabled;
             bool autoCopyOn = AutoCopy_CheckBox.Checked;
-            AutoCopyJsonLabel.Enabled = autoCopyOn;
-            AutoCopyJsonSelect_Button.Enabled = autoCopyOn;
-            AutoCopyJsonPath_TextBox.Enabled = autoCopyOn;
-            AutoCopyLogLabel.Enabled = autoCopyOn;
-            AutoCopyLogSelect_Button.Enabled = autoCopyOn;
-            AutoCopyLogPath_TextBox.Enabled = autoCopyOn;
+            var activeColor   = System.Drawing.Color.FromArgb(0, 120, 212);
+            var inactiveColor = System.Drawing.Color.FromArgb(160, 160, 160);
+            var activeText    = System.Drawing.Color.White;
+            AutoCopyJsonLabel.Enabled            = autoCopyOn;
+            AutoCopyLogLabel.Enabled             = autoCopyOn;
+            AutoCopyJsonSelect_Button.BackColor  = autoCopyOn ? activeColor : inactiveColor;
+            AutoCopyJsonSelect_Button.ForeColor  = activeText;
+            AutoCopyLogSelect_Button.BackColor   = autoCopyOn ? activeColor : inactiveColor;
+            AutoCopyLogSelect_Button.ForeColor   = activeText;
+            AutoCopyJsonPath_TextBox.Enabled     = autoCopyOn;
+            AutoCopyLogPath_TextBox.Enabled      = autoCopyOn;
 
             // Check for game data updates in the background so the UI loads immediately.
             new Thread(StartupGameDataCheck) { IsBackground = true, Name = "StartupUpdateCheck" }.Start();
@@ -446,6 +454,14 @@ namespace InventoryKamera
 
         }
 
+        private void SpeedToggle_CheckedChanged(object sender, EventArgs e)
+        {
+            int next = SpeedToggle.Checked ? 2 : 0;
+            Properties.Settings.Default.ScannerDelay = next;
+            Properties.Settings.Default.Save();
+            Delay = next;
+        }
+
         private void Github_Label_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://github.com/Andrewthe13th/Inventory_Kamera/");
@@ -453,7 +469,7 @@ namespace InventoryKamera
 
         private void Releases_Label_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("https://github.com/Andrewthe13th/Inventory_Kamera/releases");
+            Process.Start("https://github.com/Nickke/genshin-tool");
         }
 
         private void IssuesPage_Label_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -501,12 +517,19 @@ namespace InventoryKamera
         private void AutoCopy_CheckBox_CheckedChanged(object sender, EventArgs e)
         {
             bool on = AutoCopy_CheckBox.Checked;
-            AutoCopyJsonLabel.Enabled = on;
-            AutoCopyJsonSelect_Button.Enabled = on;
-            AutoCopyJsonPath_TextBox.Enabled = on;
-            AutoCopyLogLabel.Enabled = on;
-            AutoCopyLogSelect_Button.Enabled = on;
-            AutoCopyLogPath_TextBox.Enabled = on;
+            var activeColor  = System.Drawing.Color.FromArgb(0, 120, 212);
+            var inactiveColor = System.Drawing.Color.FromArgb(160, 160, 160);
+            var activeText   = System.Drawing.Color.White;
+
+            AutoCopyJsonLabel.Enabled            = on;
+            AutoCopyLogLabel.Enabled             = on;
+            AutoCopyJsonSelect_Button.BackColor  = on ? activeColor : inactiveColor;
+            AutoCopyJsonSelect_Button.ForeColor  = activeText;
+            AutoCopyLogSelect_Button.BackColor   = on ? activeColor : inactiveColor;
+            AutoCopyLogSelect_Button.ForeColor   = activeText;
+            AutoCopyJsonPath_TextBox.Enabled     = on;
+            AutoCopyLogPath_TextBox.Enabled      = on;
+
             Properties.Settings.Default.AutoCopyEnabled = on;
             Properties.Settings.Default.Save();
         }
@@ -519,39 +542,58 @@ namespace InventoryKamera
             ApplyTheme(dark);
         }
 
-        // ─── Windows 10 layout + Genshin palette ─────────────────────────────
-        private static readonly Color Accent = Color.FromArgb(200, 170, 110); // Genshin gold
+        // ─── Windows 11 palette ───────────────────────────────────────────────
+        private static readonly Color Accent = Color.FromArgb(0, 120, 212); // Windows 11 blue
 
         private void ApplyTheme(bool dark)
         {
-            // Dark: deep Genshin navy  |  Light: warm Genshin parchment
-            Color bg      = dark ? Color.FromArgb(13,  21,  32)  : Color.FromArgb(245, 232, 208);
-            Color surface = dark ? Color.FromArgb(22,  34,  58)  : Color.FromArgb(255, 252, 245);
-            Color btnBg   = dark ? Color.FromArgb(26,  42,  72)  : Color.FromArgb(27,  42,  85);
-            Color btnFg   = dark ? Color.FromArgb(232, 213, 176) : Color.FromArgb(200, 170, 110);
-            Color text    = dark ? Color.FromArgb(232, 213, 176) : Color.FromArgb(26,  31,  53);
-            Color inputBg = dark ? Color.FromArgb(18,  28,  48)  : Color.White;
-            Color inputFg = dark ? Color.FromArgb(232, 213, 176) : Color.FromArgb(26,  31,  53);
-            Color menuBg  = dark ? Color.FromArgb(9,   14,  24)  : Color.FromArgb(27,  42,  85);
-            Color menuFg  = Color.FromArgb(200, 170, 110); // gold always
-            Color border  = dark ? Color.FromArgb(200, 170, 110) : Color.FromArgb(180, 148,  90);
+            // Windows 11 light / dark
+            Color bg      = dark ? Color.FromArgb(32,  32,  32)  : Color.FromArgb(243, 243, 243);
+            Color surface = dark ? Color.FromArgb(45,  45,  45)  : Color.FromArgb(255, 255, 255);
+            Color btnBg   = dark ? Color.FromArgb(0,   120, 212) : Color.FromArgb(0,   120, 212);
+            Color btnFg   = Color.White;
+            Color text    = dark ? Color.FromArgb(255, 255, 255) : Color.FromArgb(30,  30,  30);
+            Color inputBg = dark ? Color.FromArgb(61,  61,  61)  : Color.White;
+            Color inputFg = dark ? Color.FromArgb(255, 255, 255) : Color.FromArgb(30,  30,  30);
+            Color menuBg  = dark ? Color.FromArgb(44,  44,  44)  : Color.FromArgb(249, 249, 249);
+            Color menuFg  = dark ? Color.FromArgb(255, 255, 255) : Color.FromArgb(30,  30,  30);
+            Color border  = dark ? Color.FromArgb(69,  69,  69)  : Color.FromArgb(209, 209, 209);
+
+            Font baseFont = new Font("Segoe UI", 9F);
+            ApplyFont(baseFont);
 
             BackColor = bg;
 
             menuStrip1.BackColor = menuBg;
             menuStrip1.ForeColor = menuFg;
+            menuStrip1.Font      = baseFont;
             menuStrip1.Renderer  = new ToolStripProfessionalRenderer(new FluentMenuColors(dark));
             ApplyMenuItemColors(menuStrip1.Items, menuFg, menuBg);
 
             ApplyToControls(Controls, bg, surface, btnBg, btnFg, text, inputBg, inputFg, border, dark);
 
-            // Primary action button — accent colored, rounded
+            // Primary action button — Windows 11 blue, rounded
             StartScan_Button.FlatStyle = FlatStyle.Flat;
             StartScan_Button.BackColor = Accent;
-            StartScan_Button.ForeColor = Color.FromArgb(28, 28, 28);
+            StartScan_Button.ForeColor = Color.White;
             StartScan_Button.FlatAppearance.BorderSize = 0;
-            StartScan_Button.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            RoundButton(StartScan_Button, 8);
+            StartScan_Button.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            RoundButton(StartScan_Button, 6);
+        }
+
+        private void ApplyFont(Font f)
+        {
+            foreach (Control c in Controls)
+                SetFont(c, f);
+        }
+
+        private static void SetFont(Control c, Font f)
+        {
+            if (c is MenuStrip || c is ToolStrip) return;
+            if (!(c is PictureBox) && !(c is TrackBar))
+                c.Font = f;
+            foreach (Control child in c.Controls)
+                SetFont(child, f);
         }
 
         private static void ApplyMenuItemColors(ToolStripItemCollection items, Color fg, Color bg)
@@ -604,7 +646,7 @@ namespace InventoryKamera
                         ll.BackColor       = Color.Transparent;
                         ll.ForeColor       = Accent;
                         ll.LinkColor       = Accent;
-                        ll.ActiveLinkColor = Color.FromArgb(230, 200, 130);
+                        ll.ActiveLinkColor = Color.FromArgb(0, 90, 180);
                         break;
 
                     case TextBox tb:
@@ -644,13 +686,13 @@ namespace InventoryKamera
         private class FluentMenuColors : ProfessionalColorTable
         {
             private readonly bool _dark;
-            private static readonly Color Gold = Color.FromArgb(200, 170, 110);
+            private static readonly Color Blue = Color.FromArgb(0, 120, 212);
             public FluentMenuColors(bool dark) { _dark = dark; }
-            private Color Bg    => _dark ? Color.FromArgb(9,  14, 24) : Color.FromArgb(27, 42, 85);
-            private Color Hover => _dark ? Color.FromArgb(26, 42, 72) : Color.FromArgb(45, 65, 115);
+            private Color Bg    => _dark ? Color.FromArgb(44,  44,  44) : Color.FromArgb(249, 249, 249);
+            private Color Hover => _dark ? Color.FromArgb(61,  61,  61) : Color.FromArgb(227, 241, 255);
             public override Color MenuItemSelected              => Hover;
-            public override Color MenuItemBorder                => Gold;
-            public override Color MenuBorder                    => Gold;
+            public override Color MenuItemBorder                => Blue;
+            public override Color MenuBorder                    => Color.FromArgb(209, 209, 209);
             public override Color ToolStripDropDownBackground   => Bg;
             public override Color ImageMarginGradientBegin      => Bg;
             public override Color ImageMarginGradientMiddle     => Bg;
