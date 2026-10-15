@@ -16,6 +16,7 @@ namespace InventoryKamera
 		public static void ScanCharacters(ref List<Character> Characters)
 		{
 			int viewed = 0;
+			int consecutiveFailures = 0;
 			string first = null;
 			HashSet<string> scanned = new HashSet<string>();
 
@@ -27,6 +28,7 @@ namespace InventoryKamera
 				if (Characters.Count > 0 && character.NameGOOD == Characters.ElementAt(0).NameGOOD) break;
 				if (character.IsValid())
 				{
+					consecutiveFailures = 0;
                     if (!scanned.Contains(character.NameGOOD))
 					{
 						Characters.Add(character);
@@ -49,6 +51,12 @@ namespace InventoryKamera
 					if (!character.HasValidConstellation()) error += "Invalid constellation\n";
 					if (!character.HasValidTalents()) error += "Invalid talents\n";
 					Logger.Error("Failed to scan character\n" + error + character);
+
+					if (++consecutiveFailures >= 5)
+					{
+						Logger.Warn("5 consecutive scan failures — exiting character scan to avoid loop.");
+						break;
+					}
 				}
 
 				Navigation.SelectNextCharacter();
@@ -228,21 +236,51 @@ namespace InventoryKamera
 				Right:  (int)( 305 / 1280.0 * Navigation.GetWidth() ),
 				Bottom: (int)( 55  / 720.0 * Navigation.GetHeight() ));
 
+			string prevBlock = null;
+			string prevLine = null;
+			int staleCount = 0;
+
 			do
 			{
 				Navigation.SystemWait(Navigation.Speed.Fast);
 				using (Bitmap bm = Navigation.CaptureRegion(region))
 				{
+					// First half: standard pipeline (light text on dark background).
+					// Second half: skip invert to handle dark text on light background.
+					bool invertEnabled = attempts < maxAttempts / 2;
 					Bitmap n = GenshinProcesor.ConvertToGrayscale(bm);
 					GenshinProcesor.SetThreshold(110, ref n);
-					GenshinProcesor.SetInvert(ref n);
+					if (invertEnabled) GenshinProcesor.SetInvert(ref n);
 
 					n = GenshinProcesor.ResizeImage(n, n.Width * 2, n.Height * 2);
 					string block = GenshinProcesor.AnalyzeText(n, Tesseract.PageSegMode.Auto).ToLower().Trim();
 					string line = GenshinProcesor.AnalyzeText(n, Tesseract.PageSegMode.SingleLine).ToLower().Trim();
+					Logger.Debug("OCR name region (invert={2}) — block: '{0}' | line: '{1}'", block, line, invertEnabled);
+
+					// Tesseract sometimes reads '/' as '|' — normalise so the split works
+					string normLine = line.Replace('|', '/');
+					string normBlock = block.Replace('|', '/');
+
+					// Early-abort: if block stays empty and line is unchanged for 10 attempts, stop wasting time.
+					// This happens when the character card has no readable text in this region (puppet characters).
+					if (block == prevBlock && line == prevLine && string.IsNullOrEmpty(block))
+					{
+						if (++staleCount >= 10)
+						{
+							Logger.Debug("OCR stale after {0} identical empty attempts — aborting early.", staleCount);
+							n.Dispose();
+							break;
+						}
+					}
+					else
+					{
+						staleCount = 0;
+						prevBlock = block;
+						prevLine = line;
+					}
 
 					// Characters with wrapped names will not have a slash
-					string nameAndElement = line.Contains("/") ? line : block;
+					string nameAndElement = normLine.Contains("/") ? normLine : normBlock;
 
 										if (nameAndElement.Contains("/"))
 					{
@@ -269,10 +307,10 @@ namespace InventoryKamera
 							}
 						}
                     }
-					else if (!string.IsNullOrWhiteSpace(block))
+					else if (!string.IsNullOrWhiteSpace(normBlock))
 					{
 						// No slash found (element shown as icon only): try word-by-word name match
-						string[] words = Regex.Replace(block, @"[\W]", " ").Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+						string[] words = Regex.Replace(normBlock, @"[\W]", " ").Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 						foreach (string w in words)
 						{
 							if (w.Length < 2) continue;
@@ -300,7 +338,11 @@ namespace InventoryKamera
 					else
                     {
                         Logger.Debug("Could not parse character name/element (Atempt {0}/{1}). Retrying...", attempts+1, maxAttempts);
-                        bm.Save($"./logging/characters/{bm.GetHashCode()}.png");
+                        if (attempts == 0 || attempts == maxAttempts - 1)
+                        {
+                            System.IO.Directory.CreateDirectory("./logging/characters/");
+                            bm.Save($"./logging/characters/attempt{attempts+1}_{bm.GetHashCode()}.png");
+                        }
                     }
 				}
 				attempts++;
