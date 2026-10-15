@@ -311,13 +311,15 @@ namespace InventoryKamera
 		{
 			RECT reference = Navigation.GetAspectRatio() == new Size(16, 9) ?
 				new RECT(new Rectangle(862, 80, 327, 560)) : (RECT)new Rectangle(862, 80, 328, 640);
-			Bitmap nameBitmap = card.Clone(new RECT(
+			using (Bitmap nameBitmap = card.Clone(new RECT(
 				Left: 0,
 				Top: 0,
 				Right: card.Width,
-				Bottom: (int)( 38.0 / reference.Height * card.Height )), card.PixelFormat);
-			string material = ScanEnhancementMaterialName(nameBitmap);
-			return !string.IsNullOrWhiteSpace(material) && GenshinProcesor.enhancementMaterials.Contains(material.ToLower());
+				Bottom: (int)( 38.0 / reference.Height * card.Height )), card.PixelFormat))
+			{
+				string material = ScanEnhancementMaterialName(nameBitmap);
+				return !string.IsNullOrWhiteSpace(material) && GenshinProcesor.enhancementMaterials.Contains(material.ToLower());
+			}
 		}
 
 		private static string ScanEnhancementMaterialName(Bitmap bm)

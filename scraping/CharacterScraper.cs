@@ -30,6 +30,7 @@ namespace InventoryKamera
                     if (!scanned.Contains(character.NameGOOD))
 					{
 						Characters.Add(character);
+						scanned.Add(character.NameGOOD);
 						UserInterface.IncrementCharacterCount();
 						Logger.Info("Scanned {0} successfully", character.NameGOOD);
 						if (Characters.Count == 1) first = character.NameGOOD;
@@ -274,7 +275,7 @@ namespace InventoryKamera
 						string[] words = Regex.Replace(block, @"[\W]", " ").Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 						foreach (string w in words)
 						{
-							if (w.Length < 4) continue;
+							if (w.Length < 2) continue;
 							string candidate = GenshinProcesor.FindClosestCharacterName(w, 75);
 							if (!string.IsNullOrWhiteSpace(candidate))
 							{

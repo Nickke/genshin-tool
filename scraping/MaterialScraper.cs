@@ -227,6 +227,10 @@ namespace InventoryKamera
 						quantity.Dispose();
 						nameplate.Dispose();
 					}
+					else
+					{
+						nameplate.Dispose();
+					}
 				}
 				else
 				{
@@ -279,6 +283,7 @@ namespace InventoryKamera
 				var invert = (Bitmap)gray.Clone();
 				GenshinProcesor.SetInvert(ref invert);
 				var input = GenshinProcesor.AnalyzeText(invert).Split(' ').ToList();
+				invert.Dispose();
 				Logger.Debug("Scanned mora input: {0}", input.ToString());
 				input.RemoveAll(e => Regex.IsMatch(e.Trim(), @"[^0-9]") || string.IsNullOrWhiteSpace(e.Trim()));
 				var mora = input.LastOrDefault();
@@ -357,10 +362,10 @@ namespace InventoryKamera
                             for (int j = 0; j < copy.Height * 0.25; j++)
                                 copy.SetPixel(i, j, Color.White);
 
-                        Bitmap n = GenshinProcesor.ConvertToGrayscale(copy);
-                        
-						GenshinProcesor.SetInvert(ref n);
-                        n = new Threshold(50).Apply(n);
+                        Bitmap gray = GenshinProcesor.ConvertToGrayscale(copy);
+                        GenshinProcesor.SetInvert(ref gray);
+                        Bitmap n = new Threshold(50).Apply(gray);
+                        gray.Dispose();
 
                         string original = GenshinProcesor.AnalyzeText(n).Trim();
 
@@ -410,9 +415,10 @@ namespace InventoryKamera
 							for (int j = 0; j < copy.Height * 0.25; j++)
 								copy.SetPixel(i, j, Color.White);
 
-						Bitmap n = GenshinProcesor.ConvertToGrayscale(copy);
-						GenshinProcesor.SetInvert(ref n);
-						n = new Threshold(50).Apply(n);
+						Bitmap gray = GenshinProcesor.ConvertToGrayscale(copy);
+					GenshinProcesor.SetInvert(ref gray);
+					Bitmap n = new Threshold(50).Apply(gray);
+					gray.Dispose();
 
 						string original = GenshinProcesor.AnalyzeText(n).Trim();
 						n.Dispose();
