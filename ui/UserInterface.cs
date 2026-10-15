@@ -21,6 +21,9 @@ namespace InventoryKamera
 		private static PictureBox[] cTalent_PictureBoxes = new PictureBox[3];
 		private static TextBox character_TextBox;
 
+		// Cached font for SetProgramStatus — created once after Init, reused to avoid GDI leaks
+		private static Font _statusFont;
+
 		// Counters (atomic — updated via Interlocked, labels are display-only)
 		private static Label weaponCount_Label;
 		private static int _weaponCount;
@@ -269,7 +272,9 @@ namespace InventoryKamera
 			{
 				programStatus_Label.Text = status;
 				programStatus_Label.ForeColor = ok ? Color.Green : Color.Red;
-				programStatus_Label.Font = new Font(programStatus_Label.Font.FontFamily, 15);
+				if (_statusFont == null)
+					_statusFont = new Font(programStatus_Label.Font.FontFamily, 15);
+				programStatus_Label.Font = _statusFont;
 				programStatus_Label.Refresh();
 			};
 
@@ -278,7 +283,7 @@ namespace InventoryKamera
 
 		public static void AddError(string error)
 		{
-			UpdateTextBox($"{error.Replace("\n", Environment.NewLine)}" + Environment.NewLine, error_TextBox);
+			UpdateTextBox(error.Replace("\n", Environment.NewLine), error_TextBox);
 			Logger.Error(error);
 		}
 

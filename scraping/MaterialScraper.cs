@@ -115,20 +115,22 @@ namespace InventoryKamera
 						{
 							// Scan Material Quantity
 							material.count = ScanMaterialCount(rectangle, out Bitmap quantity);
-							if (material.count == 0)
+							using (quantity)
 							{
-								UserInterface.AddError($"Failed to parse quantity for {material.name}");
-								SaveInventoryBitmap(quantity, $"{material.name}_Quantity.png");
+								if (material.count == 0)
+								{
+									UserInterface.AddError($"Failed to parse quantity for {material.name}");
+									SaveInventoryBitmap(quantity, $"{material.name}_Quantity.png");
+								}
+								else if (Properties.Settings.Default.LogScreenshots)
+								{
+									SaveInventoryBitmap(quantity, $"{material.name}_Quantity.png");
+								}
+								inventory.Materials.Add(material);
+								if (material.count > 0) UserInterface.IncrementMaterialCount();
+								UserInterface.ResetCharacterDisplay();
+								UserInterface.SetMaterial(nameplate, quantity, material.name, material.count);
 							}
-							if (Properties.Settings.Default.LogScreenshots || material.count == 0)
-                            {
-								SaveInventoryBitmap(quantity, $"{material.name}_Quantity.png");
-                            }
-							inventory.Materials.Add(material);
-							if (material.count > 0) UserInterface.IncrementMaterialCount();
-							UserInterface.ResetCharacterDisplay();
-							UserInterface.SetMaterial(nameplate, quantity, material.name, material.count);
-
 							previousMaterial.name = material.name;
 						}
 					}

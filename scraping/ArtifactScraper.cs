@@ -114,7 +114,7 @@ namespace InventoryKamera
             {
                 //Navigation.DisplayBitmap(x);
 				var t = GenshinProcesor.AnalyzeText(x).Trim().ToLower();
-				if (t != null && t.Contains("filter"))
+				if (t.Contains("filter"))
 				{
 					Navigation.ClearArtifactFilters();
 				}
@@ -135,13 +135,6 @@ namespace InventoryKamera
 			level = GetLevelBitmap(card, isElixir);
 			subStats = GetSubstatsBitmap(card, isElixir);
 
-
-			//Navigation.DisplayBitmap(name);
-			//Navigation.DisplayBitmap(locked);
-			//Navigation.DisplayBitmap(equipped);
-			//Navigation.DisplayBitmap(mainStat);
-			//Navigation.DisplayBitmap(subStats);
-			//Navigation.DisplayBitmap(level);
 
 			// Separate to all pieces of artifact and add to pics
 			List<Bitmap> artifactImages = new List<Bitmap>
@@ -246,7 +239,7 @@ namespace InventoryKamera
 
 			if (bm.Count >= 6)
 			{
-				int a_name = 0; int a_gearSlot = 1; int a_mainStat = 2; int a_level = 3; int a_subStats = 4; int a_equippedCharacter = 5; int a_lock = 6; 
+				const int a_name = 0, a_gearSlot = 1, a_mainStat = 2, a_level = 3, a_subStats = 4, a_equippedCharacter = 5, a_lock = 6;
 				// Get Rarity
 				rarity = GetRarity(bm[a_name]);
 
@@ -401,15 +394,17 @@ namespace InventoryKamera
 
 		private static List<SubStat> ScanArtifactSubStats(Bitmap artifactImage)
         {
-            Bitmap bm = (Bitmap)artifactImage.Clone();
-			List<string> lines = new List<string>();
+			List<string> lines;
 			List<SubStat> substats = new List<SubStat>();
 			string text;
-            GenshinProcesor.SetBrightness(-30, ref bm);
-            GenshinProcesor.SetContrast(85, ref bm);
-			using (var n = GenshinProcesor.ConvertToGrayscale(bm))
+			using (Bitmap bm = (Bitmap)artifactImage.Clone())
 			{
-				text = GenshinProcesor.AnalyzeText(n, Tesseract.PageSegMode.Auto).ToLower();
+				GenshinProcesor.SetBrightness(-30, ref bm);
+				GenshinProcesor.SetContrast(85, ref bm);
+				using (var n = GenshinProcesor.ConvertToGrayscale(bm))
+				{
+					text = GenshinProcesor.AnalyzeText(n, Tesseract.PageSegMode.Auto).ToLower();
+				}
 			}
 
             lines = new List<string>(text.Split('\n'));
@@ -420,8 +415,6 @@ namespace InventoryKamera
             {
                 lines.RemoveRange(index, lines.Count - index);
             }
-
-            bm.Dispose();
             for (int i = 0; i < lines.Count; i++)
             {
                 var line = Regex.Replace(lines[i], @"(?:^[^a-zA-Z]*)", string.Empty).Replace(" ", string.Empty);

@@ -27,6 +27,7 @@ namespace InventoryKamera
         private static Thread scannerThread;
         private static InventoryKamera data = new InventoryKamera();
         private static DatabaseManager databaseManager = new DatabaseManager();
+        private static Font _themeFont;
 
         private int Delay;
 
@@ -283,8 +284,6 @@ namespace InventoryKamera
 
         private void StartButton_Clicked(object sender, EventArgs e)
         {
-            GC.Collect();
-
             UserInterface.ResetAll();
 
             UserInterface.SetProgramStatus("Scanning");
@@ -302,7 +301,7 @@ namespace InventoryKamera
                 HotkeyManager.Current.AddOrReplace("Stop", Keys.Enter, Hotkey_Pressed);
                 Logger.Info("Hotkey registered");
                 var settings = Properties.Settings.Default;
-                var gameVersion = new DatabaseManager().LocalVersion.ToString(2);
+                var gameVersion = databaseManager.LocalVersion.ToString(2);
                 var options =
                     $"\n\tGame Version Data:\t\t\t {gameVersion}\n" +
                     $"\tWeapons:\t\t\t\t {settings.ScanWeapons}\n" +
@@ -564,7 +563,9 @@ namespace InventoryKamera
             Color menuFg  = dark ? Color.FromArgb(255, 255, 255) : Color.FromArgb(30,  30,  30);
             Color border  = dark ? Color.FromArgb(69,  69,  69)  : Color.FromArgb(209, 209, 209);
 
-            Font baseFont = new Font("Segoe UI", 9F);
+            if (_themeFont == null)
+                _themeFont = new Font("Segoe UI", 9F);
+            Font baseFont = _themeFont;
             ApplyFont(baseFont);
 
             BackColor = bg;
@@ -884,18 +885,18 @@ namespace InventoryKamera
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            CheckForKameraUpdates();
+            // Fire-and-forget; exceptions are caught inside the method
+            _ = CheckForKameraUpdates();
             // Game data update check runs in background via StartupGameDataCheck (launched in MainForm_Load)
         }
 
-        private async void CheckForKameraUpdates()
+        private async Task CheckForKameraUpdates()
         {
             var client = new GitHubClient(new ProductHeaderValue("Inventory_Kamera"));
             try
             {
                 var releases = await client.Repository.Release.GetAll("Andrewthe13th", "Inventory_Kamera");
                 var latest = releases.First();
-
 
                 Version latestVersion = new Version(Regex.Replace(latest.TagName, "[a-zA-Z]", string.Empty));
                 Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -912,50 +913,7 @@ namespace InventoryKamera
                 }
             }
             catch (RateLimitExceededException) { Logger.Warn("Rate limit exceeded checking for Kamera Update!!!! This warning should be resolved in an hour."); }
-            
-        }
-
-        private void CheckForGenshinUpdates()
-        {
-            var databaseManager = new DatabaseManager();
-            try
-            {
-                var updatesAvailable = databaseManager.UpdateAvailable();
-                if (updatesAvailable)
-                {
-                    var message = "A new version for Genshin Impact has been found. Would you like to update Kamera's lookup tables? (Recommended)";
-                    var result = MessageBox.Show(message, "Game Version Update", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes)
-                    {
-                        switch (databaseManager.UpdateGameData())
-                        {
-                            case UpdateStatus.Fail:
-                                MessageBox.Show("Unable to update game data. Please check the log for more details", "Update failed", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Stop);
-                                break;
-                            case UpdateStatus.Success:
-                                MessageBox.Show($"Update for game version {databaseManager.LocalVersion.ToString(2) } successful.", "Update status", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Information);
-                                Logger.Info("Updated game data to {0}", databaseManager.LocalVersion.ToString(2));
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    else if (result == DialogResult.No)
-                    {
-                        MessageBox.Show("Update skipped. Please know that skipping this update will likely result in incorrect scans.\n" +
-                            "\nYou may check for updates again on restarting this application or by using the update manager found" +
-                            " under 'options'", "Update declined", MessageBoxButtons.OK);
-                    }
-                }
-                else
-                    Logger.Info("Current game data is up to date with data for {0}", databaseManager.LocalVersion.ToString(2));
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn(ex, "Could not check for list updates");
-                MessageBox.Show("Could not check for updates. Consider trying again in an hour or so.", "Game Version Update", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            Properties.Settings.Default.LastUpdateCheck = DateTime.Now;
+            catch (Exception ex) { Logger.Error(ex, "Unexpected error checking for Kamera update"); }
         }
 
         private void Export_Button_Click(object sender, EventArgs e)
