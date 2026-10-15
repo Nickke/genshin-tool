@@ -168,20 +168,35 @@ namespace InventoryKamera
         /// </summary>
         private static bool IsElixirArtifact(Bitmap card)
         {
-            // The banner sits between the star rarity area and the level box,
-            // approximately at y=22-32% of card height. Sample a vertical strip
-            // at the horizontal center for the distinctive purple color.
-            int x = card.Width / 2;
+            // The banner spans the FULL WIDTH of the card at y=22-32%.
+            // A genuine banner shows purple at every horizontal position,
+            // while normal artifact artwork is not uniformly purple across the whole width.
+            // Sampling 5 horizontal positions: all must pass for this to be a banner.
             int yStart = (int)(card.Height * 0.22);
             int yEnd   = (int)(card.Height * 0.32);
-            for (int y = yStart; y <= yEnd; y++)
+            int[] xPositions = {
+                (int)(card.Width * 0.10),
+                (int)(card.Width * 0.30),
+                card.Width / 2,
+                (int)(card.Width * 0.70),
+                (int)(card.Width * 0.90)
+            };
+            foreach (int xPos in xPositions)
             {
-                Color c = card.GetPixel(x, y);
-                // Purple: B and R both elevated, G notably lower
-                if (c.B > 140 && c.R > 90 && c.G < c.B - 40 && c.G < c.R + 30)
-                    return true;
+                bool foundPurple = false;
+                for (int y = yStart; y <= yEnd; y++)
+                {
+                    Color c = card.GetPixel(xPos, y);
+                    // Purple: B and R both elevated, G notably lower than both
+                    if (c.B > 140 && c.R > 90 && c.G < c.B - 40 && c.G < c.R + 30)
+                    {
+                        foundPurple = true;
+                        break;
+                    }
+                }
+                if (!foundPurple) return false;
             }
-            return false;
+            return true;
         }
 
         // Elixir artifacts have a purple banner that shifts level/substats/equipped down ~6.5%

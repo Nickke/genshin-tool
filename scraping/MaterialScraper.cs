@@ -197,7 +197,11 @@ namespace InventoryKamera
 
 				material = new Material(ScanMaterialName(out Bitmap nameplate), 0);
 
-				if (inventory.Materials.Contains(material) && skipAlreadyScanned) continue;
+				if (inventory.Materials.Contains(material) && skipAlreadyScanned)
+				{
+					nameplate.Dispose();
+					continue;
+				}
 
 				if (!inventory.Materials.Contains(material))
 				{
@@ -221,6 +225,7 @@ namespace InventoryKamera
 						UserInterface.SetMaterial(nameplate, quantity, material.name, material.count);
 						skipAlreadyScanned = false; // New material found so break on next old material
 						quantity.Dispose();
+						nameplate.Dispose();
 					}
 				}
 				else
