@@ -575,8 +575,8 @@ namespace InventoryKamera
                 new Rectangle(
                     x: (int)(card.Width * 0.15),
                     y: (int)(card.Height * yFactor),
-                    width: card.Width,
-                    height: card.Height));
+                    width: (int)(card.Width * 0.85),
+                    height: (int)(card.Height * (Navigation.IsNormal ? 0.062 : 0.057))));
         }
 
         internal void SaveInventoryBitmap(Bitmap image, string filename)
