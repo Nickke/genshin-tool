@@ -70,7 +70,8 @@ namespace InventoryKamera
             materialPages.Remove(InventoryPage.Artifacts);
         }
 
-        internal bool StopScanning { get; set; }
+        private volatile bool _stopScanning;
+        internal bool StopScanning { get => _stopScanning; set => _stopScanning = value; }
 
         /// <summary>
         /// Gets the item card on the right side of the in-game screen
