@@ -68,6 +68,7 @@ namespace InventoryKamera
 			List<Rectangle> rectangles;
 			int page = 1;
 			bool repeatFound = false;
+			int consecutiveRepeats = 0;
 
 			// Keep scanning while not repeating any items names
 			while (!repeatFound)
@@ -79,15 +80,15 @@ namespace InventoryKamera
 				// Remove last row. Sometimes the bottom of a page of items is caught which results
 				// in a faded quantity that can't be parsed. Removing slightly increases the number of pages that
 				// need to be scrolled but it's fine.
-				var r = rectangles.Take(rectangles.Count() - cols).ToList();
+				var r = rectangles.Take(Math.Max(0, rectangles.Count() - cols)).ToList();
 
 				Logger.Debug("Scanning material page {0}", page);
 				Logger.Debug("Located {0} possible item locations on page.", rectangles.Count);
 
 				if (!r.Any())
 				{
-					Logger.Warn("Scan_Materials: page {0} returned no scannable items; aborting scan.", page);
-					return;
+					Logger.Warn("Scan_Materials: page {0} has only 1 row — breaking to LastPage scan.", page);
+					break;
 				}
 
 				foreach (var rectangle in r)
@@ -102,13 +103,18 @@ namespace InventoryKamera
 					// Check if new material has been found
 					if (inventory.Materials.Contains(material))
 					{
-						Logger.Debug("Repeat material found. Scrolling until end");
-						repeatFound = true;
-						nameplate.Dispose();
-						break;
+						if (++consecutiveRepeats >= 2)
+						{
+							Logger.Debug("Repeat material found (2 consecutive). Scrolling until end");
+							repeatFound = true;
+							nameplate.Dispose();
+							break;
+						}
+						// consecutiveRepeats < 2: nameplate disposed by end-of-loop dispose below
 					}
 					else
 					{
+						consecutiveRepeats = 0;
 						if (!string.IsNullOrEmpty(material.name))
 						{
 							// Scan Material Quantity
@@ -280,11 +286,14 @@ namespace InventoryKamera
 		{
 			using (var gray = GenshinProcesor.ConvertToGrayscale(screenshot))
 			{
-				var invert = (Bitmap)gray.Clone();
-				GenshinProcesor.SetInvert(ref invert);
-				var input = GenshinProcesor.AnalyzeText(invert).Split(' ').ToList();
-				invert.Dispose();
-				Logger.Debug("Scanned mora input: {0}", input.ToString());
+				List<string> input;
+			using (var invert = (Bitmap)gray.Clone())
+			{
+				Bitmap inv = invert;
+				GenshinProcesor.SetInvert(ref inv);
+				input = GenshinProcesor.AnalyzeText(inv).Split(' ').ToList();
+			}
+			Logger.Debug("Scanned mora input: {0}", string.Join(", ", input));
 				input.RemoveAll(e => Regex.IsMatch(e.Trim(), @"[^0-9]") || string.IsNullOrWhiteSpace(e.Trim()));
 				var mora = input.LastOrDefault();
 				Logger.Debug("Parsed mora input: {0}", mora);
