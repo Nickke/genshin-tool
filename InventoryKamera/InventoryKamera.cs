@@ -31,6 +31,7 @@ namespace InventoryKamera
 		private MaterialScraper materialScraper;
 
 		private volatile bool b_threadCancel;
+		private volatile bool b_forceStop;
 		private readonly int NumWorkers;
 		private readonly object _inventoryLock = new object();
 
@@ -87,7 +88,7 @@ namespace InventoryKamera
 
 		public void StopImageProcessorWorkers()
 		{
-			b_threadCancel = true;
+			b_forceStop = true;
 			AwaitProcessors();
 			workerQueue = new ConcurrentQueue<OCRImageCollection>();
 		}
@@ -252,6 +253,7 @@ namespace InventoryKamera
 				if (ImageProcessors.Count > 0) Thread.Sleep(50);
 			}
 			b_threadCancel = false;
+			b_forceStop = false;
 		}
 
 		public void ImageProcessorWorker()
@@ -259,9 +261,14 @@ namespace InventoryKamera
 			Logger.Debug("Thread #{0} priority: {1}", Thread.CurrentThread.ManagedThreadId, Thread.CurrentThread.Priority);
 			while (true)
 			{
-				if (b_threadCancel)
+				if (b_forceStop)
 				{
 					while (workerQueue.TryDequeue(out _)) { }
+					break;
+				}
+
+				if (b_threadCancel && workerQueue.IsEmpty)
+				{
 					break;
 				}
 
