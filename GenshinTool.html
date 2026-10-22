@@ -26,52 +26,54 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Chakra Petch',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
 /* ── HEADER ──────────────────────────────────────────────────────────────── */
-.hdr{background:linear-gradient(180deg,#090f1c 0%,#0d1520 100%);padding:12px 24px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #4a8fd822;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px #0009}
-.hdr-logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#4a8fd8,#2d6bb5);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:#fff;flex-shrink:0;letter-spacing:-1px;box-shadow:0 0 14px #4a8fd844;font-family:'Russo One',sans-serif}
-.hdr h1{font-size:18px;font-weight:700;letter-spacing:.5px;font-family:'Russo One',sans-serif;color:#e8f0ff}
-.hdr h1 span{color:#f5c800}
+.hdr{background:linear-gradient(135deg,#060c1a 0%,#0c1a30 35%,#112040 60%,#0a1428 100%);padding:12px 24px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #4a8fd82a;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px #000a,0 1px 0 #4a8fd81a}
+.hdr-logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#5da8f0 0%,#2d6bb5 60%,#1a4080 100%);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:#fff;flex-shrink:0;letter-spacing:-1px;box-shadow:0 2px 12px #4a8fd855,inset 0 1px 0 #ffffff30;font-family:'Russo One',sans-serif}
+.hdr h1{font-size:18px;font-weight:700;letter-spacing:.5px;font-family:'Russo One',sans-serif;background:linear-gradient(90deg,#e8f0ff 0%,#7ab8f0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr h1 span{background:linear-gradient(90deg,#f5c800,#e0a800);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hdr p{font-size:11px;color:var(--muted);margin-top:1px}
 .hdr-stats{margin-left:auto;display:flex;gap:10px}
-.pill{background:#4a8fd80d;border:1px solid #4a8fd822;border-radius:20px;padding:5px 13px;text-align:center;transition:background .2s,border-color .2s,box-shadow .2s}
-.pill:hover{background:#4a8fd818;border-color:#4a8fd844;box-shadow:0 0 10px #4a8fd822}
-.pill .v{font-size:16px;font-weight:700;color:#e8f0ff;font-family:'Russo One',sans-serif}
+.pill{background:linear-gradient(135deg,#4a8fd80a,#2d6bb508);border:1px solid #4a8fd82a;border-radius:20px;padding:5px 13px;text-align:center;transition:all .2s}
+.pill:hover{background:linear-gradient(135deg,#4a8fd818,#2d6bb514);border-color:#4a8fd848;box-shadow:0 0 12px #4a8fd820}
+.pill .v{font-size:16px;font-weight:700;color:#b8d8f8;font-family:'Russo One',sans-serif}
 .pill .l{font-size:10px;color:var(--muted);margin-top:1px}
 /* ── TOOLBAR ─────────────────────────────────────────────────────────────── */
-.upbar{background:var(--surf);border-bottom:1px solid var(--border);padding:9px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.upbar{background:linear-gradient(180deg,var(--surf) 0%,#0f1c2e 100%);border-bottom:1px solid var(--border);padding:9px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .btn{padding:7px 14px;border-radius:7px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:5px;font-family:'Chakra Petch',sans-serif}
-.btn:hover{filter:brightness(1.12);box-shadow:0 0 12px #4a8fd833}
-/* blu per bottoni normali, giallo solo per il CTA primario */
-.btn-blue{background:#f5c800;color:#0d1520;font-weight:700}
-.btn-blue:hover{box-shadow:0 0 14px #f5c80044}
-.btn-ghost{background:#4a8fd80d;color:#7ab8f0;border:1px solid #4a8fd833}
-.btn-green{background:var(--green-d);color:var(--green);border:1px solid #6ee7b755}
-.btn-teal{background:#0a1e30;color:#4a8fd8;border:1px solid #4a8fd833}
+.btn:hover{filter:brightness(1.12)}
+/* CTA primario: giallo con sfumatura */
+.btn-blue{background:linear-gradient(135deg,#f5c800 0%,#d4a800 100%);color:#0d1520;font-weight:700;box-shadow:0 2px 10px #f5c80030}
+.btn-blue:hover{box-shadow:0 4px 18px #f5c80050;filter:brightness(1.08)}
+/* bottoni secondari: blu sfumato */
+.btn-ghost{background:linear-gradient(135deg,#4a8fd810,#2d6bb808);color:#7ab8f0;border:1px solid #4a8fd830}
+.btn-ghost:hover{background:linear-gradient(135deg,#4a8fd820,#2d6bb815);box-shadow:0 2px 10px #4a8fd820}
+.btn-green{background:linear-gradient(135deg,#0a2218,#062010);color:var(--green);border:1px solid #6ee7b740}
+.btn-teal{background:linear-gradient(135deg,#0a1e30,#061526);color:#4a8fd8;border:1px solid #4a8fd830}
 .btn:disabled{opacity:.4;cursor:not-allowed;filter:none;box-shadow:none}
 .upbar-sep{width:1px;height:22px;background:var(--border);flex-shrink:0;margin:0 3px}
 .upmsg{color:var(--muted);font-size:12px}
 .upmsg.ok{color:var(--green)}
 /* ── TABS ────────────────────────────────────────────────────────────────── */
-.tabs{display:flex;gap:2px;padding:10px 20px 0;background:var(--surf);border-bottom:1px solid var(--border)}
+.tabs{display:flex;gap:2px;padding:10px 20px 0;background:linear-gradient(180deg,var(--surf),#0f1c2e);border-bottom:1px solid var(--border)}
 .tab{padding:8px 15px;border-radius:7px 7px 0 0;border:none;cursor:pointer;font-size:12px;font-weight:600;background:transparent;color:var(--muted);transition:all .2s;position:relative;font-family:'Chakra Petch',sans-serif}
-.tab.on{background:var(--blue);color:#fff;box-shadow:0 -2px 10px #4a8fd833}
-.tab:hover:not(.on){background:var(--card);color:var(--text)}
+.tab.on{background:linear-gradient(135deg,#4a8fd8 0%,#2d6bb5 100%);color:#fff;box-shadow:0 -2px 12px #4a8fd830,inset 0 1px 0 #ffffff20}
+.tab:hover:not(.on){background:linear-gradient(135deg,#172338,#111e30);color:var(--text)}
 /* ── LAYOUT ──────────────────────────────────────────────────────────────── */
 .wrap{padding:18px 20px;max-width:1300px;margin:0 auto}
 .panel{display:none}.panel.on{display:block}
 .spanel{display:none}.spanel.on{display:block}
 #gtabs{margin-bottom:14px}
 /* ── CARDS ───────────────────────────────────────────────────────────────── */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;transition:border-color .2s}
-.card:hover{border-color:#4a8fd833}
+.card{background:linear-gradient(160deg,#172338 0%,#131e30 100%);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:#4a8fd835;box-shadow:0 2px 12px #4a8fd80a}
 .grid4{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:18px}
-.scard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 14px;text-align:center;transition:border-color .2s,box-shadow .2s}
-.scard:hover{border-color:#4a8fd844;box-shadow:0 4px 18px #4a8fd811}
-.scard .big{font-size:34px;font-weight:800;line-height:1;color:#7ab8f0;font-family:'Russo One',sans-serif}
+.scard{background:linear-gradient(160deg,#172338 0%,#111e2e 100%);border:1px solid var(--border);border-radius:var(--radius);padding:18px 14px;text-align:center;transition:border-color .2s,box-shadow .2s}
+.scard:hover{border-color:#4a8fd848;box-shadow:0 4px 20px #4a8fd814}
+.scard .big{font-size:34px;font-weight:800;line-height:1;background:linear-gradient(135deg,#b8d8f8,#7ab8f0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Russo One',sans-serif}
 .scard .lbl{font-size:11px;color:var(--muted);margin-top:3px}
 /* ── CHARACTER GRID ──────────────────────────────────────────────────────── */
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px}
-.ccard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;position:relative}
-.ccard:hover{transform:translateY(-4px);box-shadow:0 10px 28px #0009,0 0 20px #4a8fd814;border-color:var(--blue)}
+.ccard{background:linear-gradient(160deg,#172338,#111e2e);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;position:relative}
+.ccard:hover{transform:translateY(-4px);box-shadow:0 12px 32px #0009,0 0 22px #4a8fd818;border-color:#4a8fd855}
 .ccard.iss{border-color:#f8717166;border-left-color:#f87171}
 .cav{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;overflow:hidden;position:relative}
 .cav img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
