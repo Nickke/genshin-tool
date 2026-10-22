@@ -8814,44 +8814,6 @@ function renderIKConfig(cont){
     ap(rr,div("",r[1])).style.color="var(--text)";
   });
 
-  // ── MANICHINI DA ALLENAMENTO ──────────────────────────────────────────────
-  var mnCard=div("card");ap(cont,mnCard);
-  var mnHdr=div("","🎯 Manichini da Allenamento (Training Ground)");mnHdr.style.cssText="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px";ap(mnCard,mnHdr);
-  var mnInfo=div("","I manichini da allenamento sono i bersagli fissi nel campo prova di Genshin. IK potrebbe rilevare voci anomale nella scansione se il gioco è aperto in quella schermata. Aggiungi qui i nomi esatti da ignorare: verranno esclusi dal calcolo nel tool.");
-  mnInfo.style.cssText="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6";ap(mnCard,mnInfo);
-
-  // Lista manichini noti
-  var KNOWN_DUMMIES=[
-    {key:"TrainingDummy",     label:"Training Dummy",             desc:"Manichino generico (campo prova standard)"},
-    {key:"SpecializedDummy",  label:"Specialized Training Dummy", desc:"Manichino con resistenze personalizzate"},
-    {key:"ProtectedDummy",    label:"Protected Dummy",            desc:"Manichino con scudo — test burst"},
-    {key:"EliteDummy",        label:"Elite Training Dummy",       desc:"Versione rinforzata per test DPS massimo"}
-  ];
-
-  var mnGrid=div("");mnGrid.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px";ap(mnCard,mnGrid);
-  KNOWN_DUMMIES.forEach(function(d){
-    var stored=localStorage.getItem("mn_ignore_"+d.key)==="1";
-    var row=div("");
-    row.style.cssText="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid "+(stored?"#4a8fd860":"var(--border)")+";background:"+(stored?"#0d1e3544":"var(--surf)")+";cursor:pointer;transition:all .2s";
-    var chk=document.createElement("input");chk.type="checkbox";chk.checked=stored;chk.style.cssText="width:15px;height:15px;flex-shrink:0;margin-top:2px;accent-color:#4a8fd8";
-    var info=div("");info.style.flex="1";
-    ap(info,div("",d.label)).style.cssText="font-size:11px;font-weight:600;color:var(--text);margin-bottom:2px";
-    ap(info,div("",d.desc)).style.cssText="font-size:10px;color:var(--muted)";
-    ap(row,chk);ap(row,info);
-    row.onclick=function(){chk.checked=!chk.checked;var on=chk.checked;localStorage.setItem("mn_ignore_"+d.key,on?"1":"0");row.style.borderColor=on?"#4a8fd860":"var(--border)";row.style.background=on?"#0d1e3544":"var(--surf)";};
-    ap(mnGrid,row);
-  });
-
-  // Manichini custom
-  var mnCustomHdr=div("","Nomi custom da ignorare (uno per riga, esatti come appaiono in-game):");
-  mnCustomHdr.style.cssText="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600";ap(mnCard,mnCustomHdr);
-  var mnTa=document.createElement("textarea");mnTa.id="mnCustom";mnTa.rows=3;mnTa.placeholder="es. Dummy, 训练靶, SomeUnknownChar…";
-  mnTa.style.cssText="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);font-size:11px;font-family:monospace;resize:vertical";
-  mnTa.value=localStorage.getItem("mn_custom_names")||"";
-  mnTa.oninput=function(){localStorage.setItem("mn_custom_names",this.value);};ap(mnCard,mnTa);
-
-  var mnNote=div("","ℹ Le esclusioni sono salvate nel browser. Non vengono incluse nel file .config (IK non ha un campo nativo per l\'esclusione): servono come riferimento visivo nel tool per escludere questi personaggi dall\'analisi.");
-  mnNote.style.cssText="font-size:10px;color:#60a5fa;background:#0d1e3522;border-radius:6px;padding:7px 10px;border:1px solid #4a8fd830;margin-top:10px";ap(mnCard,mnNote);
 }
 
 function renderGuide(cont){
