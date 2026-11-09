@@ -80,36 +80,51 @@ def _good(s: str) -> str:
     return re.sub(r"[^A-Za-z0-9]", "", s)
 
 # ─── 1. Versione gioco ────────────────────────────────────────────────────────
+def _ver_tuple(v: str) -> tuple:
+    """Converte "7.1" in (7, 1) per confronto ordinato."""
+    try:
+        return tuple(int(x) for x in str(v).split("."))
+    except Exception:
+        return (0, 0)
+
 def get_current_version() -> str | None:
     """
-    Legge la versione corrente del gioco.
-    Fonte: versione max trovata sui nuovi personaggi da genshin-db-api,
-    oppure fallback da version.txt locale.
+    Legge la versione corrente del gioco campionando più personaggi
+    per trovare il MAX della versione (non l'ultimo alfabetico).
+    Fallback: version.txt locale.
     """
-    # Proviamo a ricavare la versione dall'ultimo personaggio nella lista
-    # (più efficiente di scaricare tutti i dettagli)
     names_data = fetch_json(f"{GENSHINDB_BASE}/characters?query=names&matchCategories=true")
     if isinstance(names_data, list) and names_data:
-        # Prende il dettaglio dell'ultimo personaggio nella lista (di solito quello più recente)
-        # Il campo `version` indica in quale versione è stato aggiunto
-        last = names_data[-1]
-        detail = fetch_json(f"{GENSHINDB_BASE}/characters?query={urllib.parse.quote(last)}&matchCategories=true&verboseCategories=true")
-        if isinstance(detail, dict):
-            ver = detail.get("version")
-            if ver and re.match(r'^\d+\.\d+', str(ver)):
-                # Prende anche il penultimo per sicurezza e usa il max
-                versions = [str(ver)]
-                if len(names_data) >= 2:
-                    d2 = fetch_json(f"{GENSHINDB_BASE}/characters?query={urllib.parse.quote(names_data[-2])}&matchCategories=true&verboseCategories=true")
-                    if isinstance(d2, dict) and d2.get("version"):
-                        versions.append(str(d2["version"]))
-                best = max(versions, key=lambda v: tuple(int(x) for x in v.split(".")))
-                print(f"  Fonte: genshin-db-api (char recenti) → {best}")
-                return best
+        # Campiona ~12 personaggi distribuiti nella lista (inizio, metà, fine)
+        total = len(names_data)
+        indices = set()
+        for i in range(0, min(total, 12)):
+            indices.add(int(i * total / 12))
+        indices.add(total - 1)   # sempre l'ultimo
+        indices.add(total - 2)   # e il penultimo
 
-    # Fallback: usa version.txt locale se esiste
+        versions = []
+        for idx in sorted(indices):
+            name = names_data[idx]
+            if name in _SKIP_CHARS:
+                continue
+            d = fetch_json(
+                f"{GENSHINDB_BASE}/characters?query={urllib.parse.quote(name)}"
+                "&matchCategories=true&verboseCategories=true"
+            )
+            if isinstance(d, dict) and d.get("version"):
+                v = str(d["version"])
+                if re.match(r'^\d+\.\d+', v):
+                    versions.append(v)
+
+        if versions:
+            best = max(versions, key=_ver_tuple)
+            print(f"  Fonte: genshin-db-api (campione {len(versions)} chars) → {best}")
+            return best
+
+    # Fallback: version.txt locale
     if VERSION_FILE.exists():
-        local_ver = VERSION_FILE.read_text("utf-8").strip()
+        local_ver = VERSION_FILE.read_text("utf-8-sig").strip()
         if local_ver and re.match(r'^\d+\.\d+', local_ver):
             print(f"  Fonte: version.txt locale → {local_ver}")
             return local_ver
