@@ -69,29 +69,29 @@
     "normalizedName": "aubadeofmorningstarandmoon",
     "artifacts": {
       "flower": {
-        "artifactName": "Morningstar Petal",
-        "GOOD": "MorningstarPetal",
-        "normalizedName": "morningstarpetal"
+        "artifactName": "Moonlit Offering's Opulent Dream",
+        "GOOD": "MoonlitOfferingsOpulentDream",
+        "normalizedName": "moonlitofferingsopulentdream"
       },
       "plume": {
-        "artifactName": "Feather of the Dawn",
-        "GOOD": "FeatheroftheDawn",
-        "normalizedName": "featherofthedawn"
+        "artifactName": "Moonlit Offering's Parting Light",
+        "GOOD": "MoonlitOfferingsPartingLight",
+        "normalizedName": "moonlitofferingspartinglight"
       },
       "sands": {
-        "artifactName": "Sands of Eternal Twilight",
-        "GOOD": "SandsofEternalTwilight",
-        "normalizedName": "sandsofeternaltwilight"
+        "artifactName": "Moonlit Offering's Final Hour",
+        "GOOD": "MoonlitOfferingsFinalHour",
+        "normalizedName": "moonlitofferingsfinalhour"
       },
       "goblet": {
-        "artifactName": "Goblet of Moonrise",
-        "GOOD": "GobletofMoonrise",
-        "normalizedName": "gobletofmoonrise"
+        "artifactName": "Moonlit Offering's Libation",
+        "GOOD": "MoonlitOfferingsLibation",
+        "normalizedName": "moonlitofferingslibation"
       },
       "circlet": {
-        "artifactName": "Circlet of the Waning Star",
-        "GOOD": "CircletoftheWaningStar",
-        "normalizedName": "circletofthewaningstar"
+        "artifactName": "Moonlit Offering's Silver Crown",
+        "GOOD": "MoonlitOfferingsSilverCrown",
+        "normalizedName": "moonlitofferingssilvercrown"
       }
     }
   },
@@ -645,29 +645,29 @@
     "normalizedName": "heartofthefurnace",
     "artifacts": {
       "flower": {
-        "artifactName": "Furnace Heart Bloom",
-        "GOOD": "FurnaceHeartBloom",
-        "normalizedName": "furnaceheartbloom"
+        "artifactName": "Foundryman's Conjecture",
+        "GOOD": "FoundrymansConjecture",
+        "normalizedName": "foundrymansconjecture"
       },
       "plume": {
-        "artifactName": "Feather of Stellar Flame",
-        "GOOD": "FeatherofStellarFlame",
-        "normalizedName": "featherofstellarflame"
+        "artifactName": "Foundryman's Observation",
+        "GOOD": "FoundrymansObservation",
+        "normalizedName": "foundrymansobservation"
       },
       "sands": {
-        "artifactName": "Hourglass of the Furnace",
-        "GOOD": "HourglassoftheFurnace",
-        "normalizedName": "hourglassofthefurnace"
+        "artifactName": "Foundryman's Calculus",
+        "GOOD": "FoundrymansCalculus",
+        "normalizedName": "foundrymanscalculus"
       },
       "goblet": {
-        "artifactName": "Goblet of Stellar Embers",
-        "GOOD": "GobletofStellarEmbers",
-        "normalizedName": "gobletofstellarembers"
+        "artifactName": "Foundryman's Magnanimity",
+        "GOOD": "FoundrymansMagnanimity",
+        "normalizedName": "foundrymansmagnanimity"
       },
       "circlet": {
-        "artifactName": "Circlet of the Smelt",
-        "GOOD": "CircletoftheSmelt",
-        "normalizedName": "circletofthesmelt"
+        "artifactName": "Foundryman's Legacy",
+        "GOOD": "FoundrymansLegacy",
+        "normalizedName": "foundrymanslegacy"
       }
     }
   },
@@ -1301,29 +1301,29 @@
     "normalizedName": "scarletproof",
     "artifacts": {
       "flower": {
-        "artifactName": "Scarlet Proof Bloom",
-        "GOOD": "ScarletProofBloom",
-        "normalizedName": "scarletproofbloom"
+        "artifactName": "Honor to Your Devotion",
+        "GOOD": "HonorToYourDevotion",
+        "normalizedName": "honortoyourdevotion"
       },
       "plume": {
-        "artifactName": "Scarlet Proof Feather",
-        "GOOD": "ScarletProofFeather",
-        "normalizedName": "scarletprooffeather"
+        "artifactName": "Glory to Your Legacy",
+        "GOOD": "GloryToYourLegacy",
+        "normalizedName": "glorytoyourlegacy"
       },
       "sands": {
-        "artifactName": "Scarlet Proof Sands",
-        "GOOD": "ScarletProofSands",
-        "normalizedName": "scarletproofsands"
+        "artifactName": "Time Gifted Unto You",
+        "GOOD": "TimeGiftedUntoYou",
+        "normalizedName": "timegifteduntoyou"
       },
       "goblet": {
-        "artifactName": "Scarlet Proof Goblet",
-        "GOOD": "ScarletProofGoblet",
-        "normalizedName": "scarletproofgoblet"
+        "artifactName": "Chalice of Your Blood and Sorrow",
+        "GOOD": "ChaliceOfYourBloodAndSorrow",
+        "normalizedName": "chaliceofyourbloodandsorrow"
       },
       "circlet": {
-        "artifactName": "Scarlet Proof Circlet",
-        "GOOD": "ScarletProofCirclet",
-        "normalizedName": "scarletproofcirclet"
+        "artifactName": "Testament to Your Faith",
+        "GOOD": "TestamentToYourFaith",
+        "normalizedName": "testamenttoyourfaith"
       }
     }
   },
@@ -1456,34 +1456,34 @@
     }
   },
   "silkenmoonsserenade": {
-    "setName": "Silken Moons Serenade",
+    "setName": "Silken Moon's Serenade",
     "GOOD": "SilkenMoonsSerenade",
     "normalizedName": "silkenmoonsserenade",
     "artifacts": {
       "flower": {
-        "artifactName": "Silken Moon Bloom",
-        "GOOD": "SilkenMoonBloom",
-        "normalizedName": "silkenmoonbloom"
+        "artifactName": "Crystal Tear of the Wanderer",
+        "GOOD": "CrystalTearOfTheWanderer",
+        "normalizedName": "crystaltearofthewanderer"
       },
       "plume": {
-        "artifactName": "Silken Moon Feather",
-        "GOOD": "SilkenMoonFeather",
-        "normalizedName": "silkenmoonfeather"
+        "artifactName": "Pristine Plume of the Blessed",
+        "GOOD": "PristinePlumeOfTheBlessed",
+        "normalizedName": "pristineplumeoftheblessed"
       },
       "sands": {
-        "artifactName": "Silken Moon Sands",
-        "GOOD": "SilkenMoonSands",
-        "normalizedName": "silkenmoonsands"
+        "artifactName": "Frost Devotee's Delirium",
+        "GOOD": "FrostDevoteesDelirium",
+        "normalizedName": "frostdevoteesdelirium"
       },
       "goblet": {
-        "artifactName": "Silken Moon Goblet",
-        "GOOD": "SilkenMoonGoblet",
-        "normalizedName": "silkenmoongoblet"
+        "artifactName": "Joyous Glory of the Pure",
+        "GOOD": "JoyousGloryOfThePure",
+        "normalizedName": "joyousgloryofthepure"
       },
       "circlet": {
-        "artifactName": "Silken Moon Circlet",
-        "GOOD": "SilkenMoonCirclet",
-        "normalizedName": "silkenmooncirclet"
+        "artifactName": "Holy Crown of the Believer",
+        "GOOD": "HolyCrownOfTheBeliever",
+        "normalizedName": "holycrownofthebeliever"
       }
     }
   },
@@ -2031,38 +2031,6 @@
       }
     }
   },
-  "silkenmoonsserenade": {
-    "setName": "Silken Moon's Serenade",
-    "GOOD": "SilkenMoonsSerenade",
-    "normalizedName": "silkenmoonsserenade",
-    "artifacts": {
-      "flower": {
-        "artifactName": "Crystal Tear of the Wanderer",
-        "GOOD": "CrystalTearOfTheWanderer",
-        "normalizedName": "crystaltearofthewanderer"
-      },
-      "plume": {
-        "artifactName": "Pristine Plume of the Blessed",
-        "GOOD": "PristinePlumeOfTheBlessed",
-        "normalizedName": "pristineplumeoftheblessed"
-      },
-      "sands": {
-        "artifactName": "Frost Devotee's Delirium",
-        "GOOD": "FrostDevoteesDelirium",
-        "normalizedName": "frostdevoteesdelirium"
-      },
-      "goblet": {
-        "artifactName": "Joyous Glory of the Pure",
-        "GOOD": "JoyousGloryOfThePure",
-        "normalizedName": "joyousgloryofthepure"
-      },
-      "circlet": {
-        "artifactName": "Holy Crown of the Believer",
-        "GOOD": "HolyCrownOfTheBeliever",
-        "normalizedName": "holycrownofthebeliever"
-      }
-    }
-  },
   "adaycarvedfromrisingwinds": {
     "setName": "A Day Carved From Rising Winds",
     "GOOD": "ADayCarvedFromRisingWinds",
@@ -2092,38 +2060,6 @@
         "artifactName": "Minnesang of Love and Lament",
         "GOOD": "MinnesangOfLoveAndLament",
         "normalizedName": "minnesangofloveandlament"
-      }
-    }
-  },
-  "aubadeofmorningstarandmoon": {
-    "setName": "Aubade of Morningstar and Moon",
-    "GOOD": "AubadeOfMorningstarAndMoon",
-    "normalizedName": "aubadeofmorningstarandmoon",
-    "artifacts": {
-      "flower": {
-        "artifactName": "Moonlit Offering's Opulent Dream",
-        "GOOD": "MoonlitOfferingsOpulentDream",
-        "normalizedName": "moonlitofferingsopulentdream"
-      },
-      "plume": {
-        "artifactName": "Moonlit Offering's Parting Light",
-        "GOOD": "MoonlitOfferingsPartingLight",
-        "normalizedName": "moonlitofferingspartinglight"
-      },
-      "sands": {
-        "artifactName": "Moonlit Offering's Final Hour",
-        "GOOD": "MoonlitOfferingsFinalHour",
-        "normalizedName": "moonlitofferingsfinalhour"
-      },
-      "goblet": {
-        "artifactName": "Moonlit Offering's Libation",
-        "GOOD": "MoonlitOfferingsLibation",
-        "normalizedName": "moonlitofferingslibation"
-      },
-      "circlet": {
-        "artifactName": "Moonlit Offering's Silver Crown",
-        "GOOD": "MoonlitOfferingsSilverCrown",
-        "normalizedName": "moonlitofferingssilvercrown"
       }
     }
   },
@@ -2188,70 +2124,6 @@
         "artifactName": "Pendulum That Ceased Amidst a Great Fall",
         "GOOD": "PendulumThatCeasedAmidstAGreatFall",
         "normalizedName": "pendulumthatceasedamidstagreatfall"
-      }
-    }
-  },
-  "scarletproof": {
-    "setName": "Scarlet Proof",
-    "GOOD": "ScarletProof",
-    "normalizedName": "scarletproof",
-    "artifacts": {
-      "flower": {
-        "artifactName": "Honor to Your Devotion",
-        "GOOD": "HonorToYourDevotion",
-        "normalizedName": "honortoyourdevotion"
-      },
-      "plume": {
-        "artifactName": "Glory to Your Legacy",
-        "GOOD": "GloryToYourLegacy",
-        "normalizedName": "glorytoyourlegacy"
-      },
-      "sands": {
-        "artifactName": "Time Gifted Unto You",
-        "GOOD": "TimeGiftedUntoYou",
-        "normalizedName": "timegifteduntoyou"
-      },
-      "goblet": {
-        "artifactName": "Chalice of Your Blood and Sorrow",
-        "GOOD": "ChaliceOfYourBloodAndSorrow",
-        "normalizedName": "chaliceofyourbloodandsorrow"
-      },
-      "circlet": {
-        "artifactName": "Testament to Your Faith",
-        "GOOD": "TestamentToYourFaith",
-        "normalizedName": "testamenttoyourfaith"
-      }
-    }
-  },
-  "heartofthefurnace": {
-    "setName": "Heart of the Furnace",
-    "GOOD": "HeartOfTheFurnace",
-    "normalizedName": "heartofthefurnace",
-    "artifacts": {
-      "flower": {
-        "artifactName": "Foundryman's Conjecture",
-        "GOOD": "FoundrymansConjecture",
-        "normalizedName": "foundrymansconjecture"
-      },
-      "plume": {
-        "artifactName": "Foundryman's Observation",
-        "GOOD": "FoundrymansObservation",
-        "normalizedName": "foundrymansobservation"
-      },
-      "sands": {
-        "artifactName": "Foundryman's Calculus",
-        "GOOD": "FoundrymansCalculus",
-        "normalizedName": "foundrymanscalculus"
-      },
-      "goblet": {
-        "artifactName": "Foundryman's Magnanimity",
-        "GOOD": "FoundrymansMagnanimity",
-        "normalizedName": "foundrymansmagnanimity"
-      },
-      "circlet": {
-        "artifactName": "Foundryman's Legacy",
-        "GOOD": "FoundrymansLegacy",
-        "normalizedName": "foundrymanslegacy"
       }
     }
   }

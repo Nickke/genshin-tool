@@ -434,7 +434,11 @@ def update_version(version: str) -> bool:
     if not version:
         return False
     INV_DIR.mkdir(exist_ok=True)
-    old = VERSION_FILE.read_text("utf-8").strip() if VERSION_FILE.exists() else ""
+    old = VERSION_FILE.read_text("utf-8-sig").strip() if VERSION_FILE.exists() else ""
+    # Non sovrascrivere se la versione locale è già più recente dell'API
+    if old and _ver_tuple(old) > _ver_tuple(version):
+        print(f"  version.txt: versione locale ({old}) > API ({version}), skip")
+        return False
     if old != version:
         VERSION_FILE.write_text(version, encoding="utf-8")
         print(f"  version.txt: {old or '(vuoto)'} → {version}")

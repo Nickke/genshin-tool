@@ -1021,6 +1021,20 @@
     ],
     "WeaponType": 3
   },
+  "mitya": {
+    "GOOD": "Mitya",
+    "ConstellationName": [
+      "Nodus Gordianus"
+    ],
+    "ConstellationOrder": [
+      "skill",
+      "burst"
+    ],
+    "Element": [
+      "electro"
+    ],
+    "WeaponType": 5
+  },
   "mona": {
     "GOOD": "Mona",
     "ConstellationName": [

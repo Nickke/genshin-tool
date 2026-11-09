@@ -3001,34 +3001,25 @@ function rAb(){
 
 // ── TEATRO IMMAGINARIO ────────────────────────────────────────────────────────
 var TEATRO_SEASON={
-  name:"Stagione 28 — Ottobre 2026",version:"7.1",
-  elems:["hydro","cryo","anemo"],
-  opening:["Neuvillette","Barbara","Citlali","Kaeya","Wanderer","Prune"],
-  guests:["Ineffa","YaeMiko","Thoma","Chiori"],
-  blessing:"HP, ATK e DEF +20% per ogni personaggio di apertura posseduto. Congelamento (Freeze) e Turbine (Swirl) potenziati per Hydro/Cryo/Anemo.",
+  name:"Stagione 29 — Novembre 2026",version:"7.2",
+  elems:["hydro","electro","geo"],
+  opening:["Yelan","Aino","Flins","Fischl","Zhongli","Kachina"],
+  guests:["Qiqi","Odette","Vesna","Jahoda"],
+  blessing:"HP, ATK e DEF +20% per ogni personaggio di apertura posseduto. Potenziati: Electro-Charged e Crystallize per Hydro/Electro/Geo.",
   blessings:[
-    {name:"Aquabreeze",elem:"hydro",desc:"Hydro Swirl e Stellar Swirl: bonus Max HP. Core per i primi atti."},
-    {name:"Frozen",elem:"cryo",desc:"Freeze (Cryo+Hydro): +CRIT DMG su Cryo e Hydro. Ottima con Neuvillette."},
-    {name:"Frosquall",elem:"anemo",desc:"Cryo Swirl e Stellar Swirl: +CRIT DMG. Core per atti 6-10."}
+    {name:"Electro Surge",elem:"electro",desc:"Electro-Charged e Superconduct: +bonus ATK. Core per personaggi Electro come Fischl e Mitya."},
+    {name:"Crystal Shield",elem:"geo",desc:"Crystallize: +DEF e +CRIT DMG per il personaggio attivo. Core Zhongli/Kachina."},
+    {name:"Aqua Flow",elem:"hydro",desc:"Vaporize e Bloom: bonus Max HP. Potenzia Yelan e Aino."}
   ],
   charsPerAct:4,maxUses:2,
-  acts:[
-    {act:3,boss:"Perpetual Mechanical Array",elems:["hydro","anemo"],tip:"Usa Neuvillette o Wanderer — risparmia tutti i DPS Cryo per gli atti finali.",save:["cryo"]},
-    {act:6,boss:"Chimeric Volkodlak Archer",elems:["cryo","anemo"],tip:"AoE + Stellar Swirl (Cryo+Anemo) ottimale. Usa Odette/Sandrone + Vesna/Mizuki.",save:["cryo"]},
-    {act:8,boss:"Chimeric Winged Lion",elems:["cryo","anemo","hydro"],tip:"Thundercall: scudo Electro, Cryo lo rompe. Galeforce: globi Anemo, usa Hydro/Cryo/Anemo.",save:[]},
-    {act:10,boss:"S.S. Automaton: Overseer Device",elems:["cryo","hydro"],tip:"Vulnerabile a Cryo. Freeze + Frozen blessing = CRIT DMG massimo. Tieni Skirk/Ayaka per qui.",save:["cryo","hydro"]}
-  ],
+  acts:[],
   rotation:[
-    "Prune usa Elemental Skill → Horn of Spring's Call colpisce → 'Two Voices in Black and White' si attiva",
-    "Vesna o Wanderer usa Skill → Wandering Vortex generato → buff Prune: +50% → +60% CRIT DMG su Stellar Swirl",
-    "DPS Cryo entra in campo (Odette, Sandrone, Skirk) → riceve +60% CRIT DMG per 5s",
-    "Sucrose Burst/Skill → Viridescent Venerer −40% Cryo res → Stellar Swirl massimo",
-    "Wandering Vortex dura 5s — buff rimane attivo. Ripeti a ogni rotazione."
+    "Fischl usa Skill → Oz generato → Electro DMG costante su tutti i nemici",
+    "Yelan/Aino usa Skill/Burst → applicazione Hydro → innesca Electro-Charged",
+    "Zhongli Burst → Petrification + scudo Geo → buff Crystal Shield attivo",
+    "DPS Electro (Flins, Mitya) in campo → massimizza Electro-Charged + Crystallize CRIT DMG"
   ],
-  pruneBuffs:[
-    {label:"Con Hydro nel team",val:"+50% CRIT DMG",elem:"hydro",desc:"Hydro DMG e Cryo DMG del personaggio attivo · 5s"},
-    {label:"Con Wandering Vortex attivo",val:"+60% CRIT DMG",elem:"anemo",desc:"Stellar Swirl reaction DMG del personaggio attivo · 5s"}
-  ]
+  pruneBuffs:[]
 };
 var TEATRO_MONTH_ELEMS=TEATRO_SEASON.elems;
 var TEATRO_TAB="panoramica";
@@ -8894,45 +8885,25 @@ function renderGuide(cont){
 
 // ── EVENTS ────────────────────────────────────────────────────────────────────
 var GENSHIN_EVENTS = {
-  version: "7.1",
+  version: "7.2",
   lastUpdated: "2026-11-09",
   bannerPhase1: [
     {type:"char", chars5:["Vesna","Vodyanitsa"], chars4:["Faruzan","Chongyun","Diona"], start:"2026-09-23", end:"2026-10-13", note:"Ver 7.1 Fase 1 — terminata il 13/10. Vesna (Anemo Sword) e Vodyanitsa (Hydro Catalyst) — debutto."},
-    {type:"weapon", weapons:["BeyondTheChrysalis","HymnOfTheMaelstrom"], start:"2026-09-23", end:"2026-10-13"}
-  ],
-  bannerCurrent: [
-    {type:"char", chars5:["Skirk","Escoffier"], chars4:["Dahlia","Candace","Mika"], start:"2026-10-13", end:"2026-11-03", note:"Ver 7.1 Fase 2 — attiva fino al 3/11. Skirk (Cryo Sword) + Escoffier (Cryo Polearm) rerun. 4★: Dahlia, Candace, Mika."},
+    {type:"weapon", weapons:["BeyondTheChrysalis","HymnOfTheMaelstrom"], start:"2026-09-23", end:"2026-10-13"},
+    {type:"char", chars5:["Skirk","Escoffier"], chars4:["Dahlia","Candace","Mika"], start:"2026-10-13", end:"2026-11-03", note:"Ver 7.1 Fase 2 — terminata il 3/11. Skirk (Cryo Sword) + Escoffier (Cryo Polearm) rerun."},
     {type:"weapon", weapons:["Azurelight","SymphonistOfScents"], start:"2026-10-13", end:"2026-11-03"}
   ],
-  bannerNext: [
-    {type:"char", chars5:["Mitya"], chars4:[], start:"2026-11-03", end:"", note:"Ver 7.2 Fase 1 — Mitya (Electro ⚡) debutto. Tipo: Electro confermato (fonte: fandom wiki). 4★ e date esatte da confermare."}
+  bannerCurrent: [
+    {type:"char", chars5:["Mitya","Furina"], chars4:["Valeriy","Charlotte","Rosaria"], start:"2026-11-04", end:"2026-11-24", note:"Ver 7.2 Fase 1 — Mitya (Electro Catalyst, debutto) + Furina (Hydro Sword, rerun). 4\u2605: Valeriy, Charlotte, Rosaria."},
+    {type:"weapon", weapons:["StarseaedEdict","SplendorOfTranquilWaters"], start:"2026-11-04", end:"2026-11-24"}
   ],
+  bannerNext: [],
   events: [
-    {name:"Anniversary Memories Album", start:"2026-09-28", end:"2026-10-18", type:"exploration", url:"https://genshin-impact.fandom.com/wiki/Events"},
-    {name:"Stygian Onslaught", start:"2026-09-30", end:"2026-11-03", type:"combat", url:"https://genshin-impact.fandom.com/wiki/Events"},
-    {name:"Starlit Gala — Fase 1", start:"2026-10-01", end:"2026-10-22", type:"login", url:"https://genshin-impact.fandom.com/wiki/Events"},
-    {name:"Predictive Victory Dynamics", start:"2026-10-12", end:"2026-10-20", type:"combat", url:"https://genshin-impact.fandom.com/wiki/Events"},
-    {name:"Sinfonia della Dissoluzione", start:"2026-10-13", end:"2026-11-03", type:"combat", url:"https://genshin-impact.fandom.com/wiki/Events"},
-    {name:"Teatro Spettrale (ritorno)", start:"2026-10-13", end:"2026-11-03", type:"combat", url:"https://genshin-impact.fandom.com/wiki/Imaginarium_Theater"},
-    {name:"Carefree Snowball Fight", start:"2026-10-21", end:"2026-11-02", type:"combat", url:"https://genshin-impact.fandom.com/wiki/Events"},
-    {name:"Starlit Gala — Fase 2", start:"2026-10-22", end:"2026-11-03", type:"login", url:"https://genshin-impact.fandom.com/wiki/Events"},
-    {name:"Overflowing Favor — Artefatti 2x drop", start:"2026-10-26", end:"2026-11-02", type:"resin", url:"https://genshin-impact.fandom.com/wiki/Overflowing_Favor"},
-    {
-      name:"Selettore 5★ Standard — Natura congelata",
-      start:"2026-09-23", end:"2026-11-03", type:"freechar",
-      url:"https://genshin-impact.fandom.com/wiki/Events",
-      selectorType:"standard",
-      chars:["Jean","Diluc","Qiqi","Mona","Keqing","Tighnari","Dehya","YumemizukiMizuki"],
-      note:"Selettore 5★ Standard — disponibile subito al login dopo l'aggiornamento."
-    },
-    {
-      name:"Selettore 5★ Limited — Compagnia del Gdr",
-      start:"2026-09-23", end:"2026-11-03", type:"freechar",
-      url:"https://genshin-impact.fandom.com/wiki/Events",
-      selectorType:"limited",
-      chars:["Tartaglia","Nilou","Baizhu","Chiori","Clorinde","Varesa"],
-      note:"Selettore 5★ Limited — richiede il completamento del Capitolo 7 Atto 4."
-    }
+    {name:"Stygian Onslaught", start:"2026-11-11", end:"2026-12-15"},
+    {name:"Trial of the Usurper", start:"2026-11-16", end:"2026-11-26"},
+    {name:"Stress Block Smashing Project", start:"2026-11-20", end:"2026-11-30"},
+    {name:"Frames of Fierce Splendor", start:"2026-11-27", end:"2026-12-07"},
+    {name:"Ley Line Overflow", start:"2026-12-07", end:"2026-12-14"}
   ]
 };
 
