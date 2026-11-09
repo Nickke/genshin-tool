@@ -355,13 +355,13 @@ def replace_js_var(html_text: str, var_name: str, new_value_js: str) -> tuple[st
 
 # ─── 8. Aggiorna characters.json ─────────────────────────────────────────────
 def update_characters(new_chars: list[dict]) -> int:
-    """Aggiunge nuovi personaggi a characters.json. Restituisce numero aggiunti."""
+    """Aggiunge nuovi personaggi a characters.json (merge additivo). Restituisce numero aggiunti."""
     if not new_chars:
         return 0
     data = {}
     if CHARS_FILE.exists():
         try:
-            data = json.loads(CHARS_FILE.read_text("utf-8"))
+            data = json.loads(CHARS_FILE.read_text("utf-8-sig"))  # gestisce BOM
         except Exception:
             pass
     added = 0
@@ -387,13 +387,13 @@ def update_characters(new_chars: list[dict]) -> int:
 
 # ─── 9. Aggiorna weapons.json ────────────────────────────────────────────────
 def update_weapons(new_weapons: list[dict]) -> int:
-    """Aggiunge nuove armi a weapons.json. Restituisce numero aggiunte."""
+    """Aggiunge nuove armi a weapons.json (merge additivo). Restituisce numero aggiunte."""
     if not new_weapons:
         return 0
     data = {}
     if WEAPONS_FILE.exists():
         try:
-            data = json.loads(WEAPONS_FILE.read_text("utf-8"))
+            data = json.loads(WEAPONS_FILE.read_text("utf-8-sig"))  # gestisce BOM
         except Exception:
             pass
     added = 0
