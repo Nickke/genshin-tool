@@ -334,7 +334,11 @@ def ask_manual_teatro(html_text: str) -> str | None:
     """
     Chiede all'utente se vuole aggiornare TEATRO_SEASON manualmente.
     Restituisce il nuovo JS o None se skip.
+    In modalità --auto salta sempre.
     """
+    if "--auto" in sys.argv:
+        print("  [AUTO] TEATRO_SEASON: skip prompt manuale (modalità automatica).")
+        return None
     ans = input(PROMPT_TEATRO).strip().lower()
     if ans not in ("s", "si", "sì", "y", "yes"):
         return None
@@ -478,8 +482,9 @@ if __name__ == "__main__":
         preview()
     elif "--help" in sys.argv or "-h" in sys.argv:
         print(__doc__)
-        print("Uso: python genshin_update.py [--preview] [--teatro] [--help]")
+        print("Uso: python genshin_update.py [--preview] [--teatro] [--auto] [--help]")
         print("  --preview  Mostra cosa verrebbe aggiornato senza modificare")
         print("  --teatro   Forza aggiornamento manuale TEATRO_SEASON")
+        print("  --auto     Modalità non interattiva (salta prompt manuali, per scheduler)")
     else:
         main()
