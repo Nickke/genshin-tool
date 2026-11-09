@@ -12,6 +12,7 @@ import os
 import datetime
 import urllib.request
 import urllib.error
+import urllib.parse
 import html
 from pathlib import Path
 
@@ -29,148 +30,250 @@ HEADERS = {
     "Accept": "application/json",
 }
 
-def fetch_json(url: str, timeout: int = 15) -> dict | list | None:
+def fetch_json(url: str, timeout: int = 10) -> dict | list | None:
     req = urllib.request.Request(url, headers=HEADERS)
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return json.loads(r.read().decode())
     except Exception as e:
-        print(f"  [WARN] fetch_json({url}): {e}")
+        print(f"  [WARN] fetch_json({url.split('?')[0]}): {e}", flush=True)
         return None
 
-def fetch_text(url: str, timeout: int = 15) -> str | None:
+def fetch_text(url: str, timeout: int = 10) -> str | None:
     req = urllib.request.Request(url, headers={**HEADERS, "Accept": "text/html,*/*"})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return r.read().decode("utf-8", errors="replace")
     except Exception as e:
-        print(f"  [WARN] fetch_text({url}): {e}")
+        print(f"  [WARN] fetch_text({url}): {e}", flush=True)
         return None
 
-# ─── 1. Versione gioco ────────────────────────────────────────────────────────
-def get_current_version() -> str | None:
-    """Recupera versione corrente da genshin.dev."""
-    data = fetch_json("https://genshin.dev/api/version")
-    if data and isinstance(data, dict):
-        return data.get("current") or data.get("version")
-    # fallback: wiki fandom
-    text = fetch_text("https://genshin-impact.fandom.com/wiki/Version")
-    if text:
-        m = re.search(r"Version\s+(\d+\.\d+)", text)
-        if m:
-            return m.group(1)
-    return None
-
-# ─── 2. Nuovi personaggi ─────────────────────────────────────────────────────
+# ─── Mapping elementi e armi ─────────────────────────────────────────────────
 ELEMENT_MAP = {
+    # ambr.top usa questi nomi
+    "Ice":"cryo", "Fire":"pyro", "Water":"hydro",
+    "Electric":"electro", "Wind":"anemo", "Rock":"geo", "Grass":"dendro",
+    # genshin.dev usa questi
     "Pyro":"pyro","Hydro":"hydro","Cryo":"cryo","Electro":"electro",
     "Anemo":"anemo","Geo":"geo","Dendro":"dendro",
 }
-WEAPON_MAP = {"Sword":1,"Claymore":2,"Polearm":3,"Bow":4,"Catalyst":5}
+WEAPON_MAP = {
+    "Sword":1,"Claymore":2,"Polearm":3,"Bow":4,"Catalyst":5,
+    "Pole":3,  # ambr.top chiama i polearm "Pole"
+}
 
-def get_new_characters(version: str) -> list[dict]:
+GENSHINDB_BASE = "https://genshin-db-api.vercel.app/api/v5"
+WEAPON_TYPE_MAP = {
+    "WEAPON_SWORD_ONE_HAND": 1, "Sword": 1,
+    "WEAPON_CLAYMORE": 2, "Claymore": 2,
+    "WEAPON_POLE": 3, "Polearm": 3, "WEAPON_POLEARM": 3,
+    "WEAPON_BOW": 4, "Bow": 4,
+    "WEAPON_CATALYST": 5, "Catalyst": 5,
+}
+
+def _slug(s: str) -> str:
+    """Genera una chiave slug lowercase senza caratteri speciali."""
+    return re.sub(r"[^a-z0-9]", "", s.lower())
+
+def _good(s: str) -> str:
+    """Converte un nome in formato GOOD (senza spazi/apostrofi)."""
+    return re.sub(r"[^A-Za-z0-9]", "", s)
+
+# ─── 1. Versione gioco ────────────────────────────────────────────────────────
+def get_current_version() -> str | None:
     """
-    Tenta di recuperare i nuovi personaggi per la versione indicata.
-    Fonte primaria: genshin.dev characters list + details.
+    Legge la versione corrente del gioco.
+    Fonte: versione max trovata sui nuovi personaggi da genshin-db-api,
+    oppure fallback da version.txt locale.
     """
-    chars_list = fetch_json("https://genshin.dev/api/characters")
-    if not isinstance(chars_list, list):
-        return []
-    # Carica characters.json esistente per capire chi è già presente
+    # Proviamo a ricavare la versione dall'ultimo personaggio nella lista
+    # (più efficiente di scaricare tutti i dettagli)
+    names_data = fetch_json(f"{GENSHINDB_BASE}/characters?query=names&matchCategories=true")
+    if isinstance(names_data, list) and names_data:
+        # Prende il dettaglio dell'ultimo personaggio nella lista (di solito quello più recente)
+        # Il campo `version` indica in quale versione è stato aggiunto
+        last = names_data[-1]
+        detail = fetch_json(f"{GENSHINDB_BASE}/characters?query={urllib.parse.quote(last)}&matchCategories=true&verboseCategories=true")
+        if isinstance(detail, dict):
+            ver = detail.get("version")
+            if ver and re.match(r'^\d+\.\d+', str(ver)):
+                # Prende anche il penultimo per sicurezza e usa il max
+                versions = [str(ver)]
+                if len(names_data) >= 2:
+                    d2 = fetch_json(f"{GENSHINDB_BASE}/characters?query={urllib.parse.quote(names_data[-2])}&matchCategories=true&verboseCategories=true")
+                    if isinstance(d2, dict) and d2.get("version"):
+                        versions.append(str(d2["version"]))
+                best = max(versions, key=lambda v: tuple(int(x) for x in v.split(".")))
+                print(f"  Fonte: genshin-db-api (char recenti) → {best}")
+                return best
+
+    # Fallback: usa version.txt locale se esiste
+    if VERSION_FILE.exists():
+        local_ver = VERSION_FILE.read_text("utf-8").strip()
+        if local_ver and re.match(r'^\d+\.\d+', local_ver):
+            print(f"  Fonte: version.txt locale → {local_ver}")
+            return local_ver
+
+    return None
+
+# ─── 2. Nuovi personaggi ─────────────────────────────────────────────────────
+# Nomi da skippare (Traveler, NPC non giocabili)
+_SKIP_CHARS = {"Aether", "Lumine"}
+
+def _fetch_char_detail(name: str) -> dict | None:
+    """Fetcha i dettagli di un personaggio da genshin-db-api."""
+    return fetch_json(
+        f"{GENSHINDB_BASE}/characters?query={urllib.parse.quote(name)}"
+        "&matchCategories=true&verboseCategories=true"
+    )
+
+def get_new_characters(_version: str = "") -> tuple[list[dict], str]:
+    """
+    Restituisce (nuovi_personaggi, versione_max).
+    Nuovi = presenti nell'API ma non ancora in characters.json.
+    """
     existing = set()
     if CHARS_FILE.exists():
         try:
             existing = set(json.loads(CHARS_FILE.read_text("utf-8")).keys())
         except Exception:
             pass
+
+    names = fetch_json(f"{GENSHINDB_BASE}/characters?query=names&matchCategories=true")
+    if not isinstance(names, list):
+        print("  [WARN] genshin-db-api non raggiungibile per personaggi.")
+        return [], ""
+
     new_chars = []
-    for key in chars_list:
-        if key.lower() in existing:
+    max_ver = ""
+    for name in names:
+        if name in _SKIP_CHARS:
             continue
-        detail = fetch_json(f"https://genshin.dev/api/characters/{key}")
+        key = _slug(name)
+        if key in existing:
+            continue
+        detail = _fetch_char_detail(name)
         if not isinstance(detail, dict):
             continue
-        elem_raw = detail.get("element", "")
-        weapon_raw = detail.get("weapon_type") or detail.get("weaponType") or ""
+        elem_raw = detail.get("elementText") or detail.get("element", "")
+        wpn_raw  = detail.get("weaponText")  or detail.get("weaponType", "")
+        ver      = str(detail.get("version", ""))
+        constellation = detail.get("constellation", "")
         new_chars.append({
-            "key": key.lower().replace(" ", "").replace("-", ""),
-            "GOOD": detail.get("name", key).replace(" ", ""),
-            "element": ELEMENT_MAP.get(elem_raw, elem_raw.lower()),
-            "weaponType": WEAPON_MAP.get(weapon_raw, 1),
-            "constellation": detail.get("constellation", ""),
+            "key":          key,
+            "GOOD":         _good(name),
+            "element":      ELEMENT_MAP.get(elem_raw, elem_raw.lower()),
+            "weaponType":   WEAPON_TYPE_MAP.get(wpn_raw, 1),
+            "constellation": constellation,
+            "version":      ver,
         })
-    return new_chars
+        if ver and re.match(r'^\d+\.\d+', ver):
+            if not max_ver or tuple(int(x) for x in ver.split(".")) > tuple(int(x) for x in max_ver.split(".")):
+                max_ver = ver
+
+    return new_chars, max_ver
 
 # ─── 3. Nuove armi ────────────────────────────────────────────────────────────
-def get_new_weapons(version: str) -> list[dict]:
-    weapons_list = fetch_json("https://genshin.dev/api/weapons")
-    if not isinstance(weapons_list, list):
-        return []
+def get_new_weapons(_version: str = "") -> tuple[list[dict], str]:
+    """
+    Restituisce (nuove_armi, versione_max).
+    Nuove = presenti nell'API ma non ancora in weapons.json.
+    """
     existing = set()
     if WEAPONS_FILE.exists():
         try:
             existing = set(json.loads(WEAPONS_FILE.read_text("utf-8")).keys())
         except Exception:
             pass
+
+    names = fetch_json(f"{GENSHINDB_BASE}/weapons?query=names&matchCategories=true")
+    if not isinstance(names, list):
+        print("  [WARN] genshin-db-api non raggiungibile per armi.")
+        return [], ""
+
     new_weapons = []
-    for key in weapons_list:
-        slug = key.lower().replace(" ", "").replace("-", "").replace("'", "")
-        if slug in existing:
+    max_ver = ""
+    for name in names:
+        key = _slug(name)
+        if key in existing:
             continue
-        detail = fetch_json(f"https://genshin.dev/api/weapons/{key}")
+        detail = fetch_json(
+            f"{GENSHINDB_BASE}/weapons?query={urllib.parse.quote(name)}"
+            "&matchCategories=true&verboseCategories=true"
+        )
         if not isinstance(detail, dict):
             continue
-        wtype_raw = detail.get("type") or detail.get("weaponType") or ""
+        type_raw = detail.get("weaponText") or detail.get("weaponType", "")
+        ver      = str(detail.get("version", ""))
         new_weapons.append({
-            "key": slug,
-            "GOOD": detail.get("name", key).replace(" ", "").replace("'", ""),
-            "type": WEAPON_MAP.get(wtype_raw, 1),
+            "key":    key,
+            "GOOD":   _good(name),
+            "type":   WEAPON_TYPE_MAP.get(type_raw, 1),
             "rarity": detail.get("rarity", 4),
+            "version": ver,
         })
-    return new_weapons
+        if ver and re.match(r'^\d+\.\d+', ver):
+            if not max_ver or tuple(int(x) for x in ver.split(".")) > tuple(int(x) for x in max_ver.split(".")):
+                max_ver = ver
 
-# ─── 4. Dati banner da Paimon.moe ─────────────────────────────────────────────
+    return new_weapons, max_ver
+
+# ─── 4. Dati banner ───────────────────────────────────────────────────────────
+def _parse_banners(banners: list, today: str) -> list:
+    """Filtra i banner attivi oggi da una lista generica."""
+    result = []
+    for b in banners:
+        if not isinstance(b, dict):
+            continue
+        btype  = b.get("type", "")
+        chars5 = b.get("featured_5_star") or b.get("featured5") or b.get("characters5", [])
+        chars4 = b.get("featured_4_star") or b.get("featured4") or b.get("characters4", [])
+        weapons= b.get("featured_weapons") or b.get("featuredWeapons") or b.get("weapons", [])
+        start  = b.get("start") or b.get("start_date") or b.get("time_start") or ""
+        end    = b.get("end")   or b.get("end_date")   or b.get("time_end")   or ""
+        note   = b.get("name") or b.get("title") or ""
+        if not start or not end:
+            continue
+        # Normalizza a "YYYY-MM-DD"
+        start_d = start[:10]
+        end_d   = end[:10]
+        if start_d <= today <= end_d:
+            if btype in ("weapon", "weapons", "arm", "armi"):
+                result.append({"type":"weapon","weapons":[re.sub(r"[^A-Za-z0-9]","",w) for w in weapons],"start":start_d,"end":end_d})
+            else:
+                result.append({"type":"char","chars5":[c.replace(" ","") for c in chars5],"chars4":[c.replace(" ","") for c in chars4],"start":start_d,"end":end_d,"note":note})
+    return result
+
 def get_banner_data() -> dict:
     """
-    Tenta di leggere i banner correnti da paimon.moe o hoyowiki.
-    Restituisce un dict con chiavi: version, bannerCurrent, bannerNext
+    Tenta di leggere i banner correnti da più fonti.
+    Restituisce un dict con chiave bannerCurrent (lista dei banner attivi).
     """
-    data = fetch_json("https://paimon.moe/api/banners/current")
-    if isinstance(data, list) and data:
-        banners = data
-    else:
-        # fallback: genshin.dev schedule
-        banners = fetch_json("https://genshin.dev/api/banners/current") or []
-
-    result = {
-        "version": "",
-        "bannerCurrent": [],
-        "bannerNext": [],
-    }
     today = datetime.date.today().isoformat()
-    for b in (banners if isinstance(banners, list) else []):
-        btype = b.get("type", "")
-        chars5 = b.get("featured_5_star") or b.get("featured5") or []
-        chars4 = b.get("featured_4_star") or b.get("featured4") or []
-        weapons = b.get("featured_weapons") or b.get("featuredWeapons") or []
-        start = b.get("start") or b.get("start_date") or ""
-        end   = b.get("end")   or b.get("end_date")   or ""
-        note  = b.get("name") or ""
-        if start <= today <= end:
-            if btype in ("character", "char", ""):
-                result["bannerCurrent"].append({
-                    "type": "char",
-                    "chars5": [c.replace(" ", "") for c in chars5],
-                    "chars4": [c.replace(" ", "") for c in chars4],
-                    "start": start, "end": end, "note": note,
-                })
-            else:
-                result["bannerCurrent"].append({
-                    "type": "weapon",
-                    "weapons": [w.replace(" ", "") for w in weapons],
-                    "start": start, "end": end,
-                })
-    return result
+    banner_urls = [
+        "https://paimon.moe/api/banners/current",
+        "https://paimon.moe/api/banners",
+        "https://paimon.moe/api/banners/list",
+        "https://genshin.dev/api/banners/current",
+    ]
+    for url in banner_urls:
+        raw = fetch_json(url)
+        if isinstance(raw, list) and raw:
+            banners = _parse_banners(raw, today)
+            if banners:
+                print(f"  Banner trovati da {url}")
+                return {"bannerCurrent": banners}
+        elif isinstance(raw, dict):
+            # potrebbe essere {banners:[...]} o {data:[...]}
+            for key in ("banners", "data", "current", "result"):
+                if isinstance(raw.get(key), list):
+                    banners = _parse_banners(raw[key], today)
+                    if banners:
+                        print(f"  Banner trovati da {url} (chiave '{key}')")
+                        return {"bannerCurrent": banners}
+
+    print("  [WARN] Nessun dato banner trovato — bannerCurrent non verrà aggiornato.")
+    return {"bannerCurrent": []}
 
 # ─── 5. Legge GENSHIN_EVENTS esistente da HTML ───────────────────────────────
 def read_js_var(html_text: str, var_name: str) -> str | None:
@@ -269,7 +372,7 @@ def update_characters(new_chars: list[dict]) -> int:
         # ConstellationOrder di default: skill → burst (personalizzabile)
         data[key] = {
             "GOOD": c["GOOD"],
-            "ConstellationName": [c.get("constellation", "Unknown")],
+            "ConstellationName": [c.get("constellation") or "Unknown"],
             "ConstellationOrder": ["skill", "burst"],
             "Element": [c["element"]],
             "WeaponType": c["weaponType"],
@@ -382,35 +485,53 @@ def main():
     html_text = HTML_FILE.read_text("utf-8")
     print(f"✔ GenshinTool.html letto ({len(html_text):,} caratteri)")
 
-    # 1. Versione gioco
-    print("\n[1/5] Recupero versione gioco...")
-    version = get_current_version()
-    if version:
-        print(f"  Versione corrente: {version}")
-        update_version(version)
-    else:
-        version = "0.0"
-        print("  [WARN] Versione non trovata, skip version.txt")
-
-    # 2. Nuovi personaggi
+    # 2. Nuovi personaggi (prima della versione, così ne ricaviamo la versione)
     print("\n[2/5] Controllo nuovi personaggi...")
-    new_chars = get_new_characters(version)
+    new_chars, chars_ver = get_new_characters()
     if new_chars:
         added = update_characters(new_chars)
         print(f"  Aggiunti {added} personaggi a characters.json")
         for c in new_chars[:5]:
-            print(f"    + {c['GOOD']} ({c['element']}, W:{c['weaponType']})")
+            print(f"    + {c['GOOD']} ({c['element']}, W:{c['weaponType']}, v{c.get('version','')})")
     else:
         print("  Nessun nuovo personaggio trovato.")
 
     # 3. Nuove armi
     print("\n[3/5] Controllo nuove armi...")
-    new_weapons = get_new_weapons(version)
+    new_weapons, weapons_ver = get_new_weapons()
     if new_weapons:
         added = update_weapons(new_weapons)
         print(f"  Aggiunte {added} armi a weapons.json")
+        for w in new_weapons[:3]:
+            print(f"    + {w['GOOD']} (rarity:{w['rarity']}, v{w.get('version','')})")
     else:
         print("  Nessuna nuova arma trovata.")
+
+    # 1. Versione gioco — ricavata da nuovi chars/armi o da version.txt
+    print("\n[1/5] Determinazione versione gioco...")
+    # Prendi la versione più alta tra chars e weapons, o quella dall'API
+    version = ""
+    for v in [chars_ver, weapons_ver]:
+        if v and re.match(r'^\d+\.\d+', v):
+            if not version or tuple(int(x) for x in v.split(".")) > tuple(int(x) for x in version.split(".")):
+                version = v
+    if not version:
+        # Nessun nuovo contenuto, prova API dedicata
+        version = get_current_version()
+    if not version:
+        print("[ERR] Versione gioco non determinabile (API down e version.txt assente).")
+        print("      Aggiornamento HTML annullato — characters/weapons già aggiornati.")
+        sys.exit(0)   # exit 0: chars/weapons OK, solo HTML saltato
+    print(f"  Versione corrente: {version}")
+
+    # Controlla se la versione nell'HTML è già aggiornata
+    current_events_check = read_current_events(html_text)
+    html_version = current_events_check.get("version", "")
+    if html_version == version and not new_chars and not new_weapons:
+        print(f"  Tutto già aggiornato alla versione {version}. Nulla da fare.")
+        sys.exit(0)
+
+    update_version(version)
 
     # 4. Aggiorna GENSHIN_EVENTS
     print("\n[4/5] Aggiornamento GENSHIN_EVENTS...")
@@ -464,14 +585,16 @@ def preview():
     """Mostra cosa verrebbe aggiornato senza modificare nulla."""
     today = datetime.date.today().isoformat()
     print(f"\n--- PREVIEW (nessuna modifica) — {today} ---\n")
-    version = get_current_version()
-    print(f"Versione gioco: {version or 'non trovata'}")
-    new_chars = get_new_characters(version or "")
+    new_chars, chars_ver = get_new_characters()
+    new_weapons, weapons_ver = get_new_weapons()
+    version = chars_ver or weapons_ver or get_current_version()
+    print(f"Versione rilevata: {version or 'non trovata'}")
     print(f"Nuovi personaggi: {len(new_chars)}")
-    for c in new_chars[:3]:
-        print(f"  + {c['GOOD']}")
-    new_weapons = get_new_weapons(version or "")
+    for c in new_chars[:5]:
+        print(f"  + {c['GOOD']} ({c['element']}, W:{c['weaponType']}, v{c.get('version','')})")
     print(f"Nuove armi: {len(new_weapons)}")
+    for w in new_weapons[:3]:
+        print(f"  + {w['GOOD']} (rarity:{w['rarity']}, v{w.get('version','')})")
     banner = get_banner_data()
     print(f"Banner correnti trovati: {len(banner.get('bannerCurrent', []))}")
     print("\n--- Fine preview ---\n")
