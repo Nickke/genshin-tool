@@ -741,6 +741,20 @@
     ],
     "WeaponType": 2
   },
+  "kaya": {
+    "GOOD": "Kaeya",
+    "ConstellationName": [
+      "Pavo Ocellus"
+    ],
+    "ConstellationOrder": [
+      "skill",
+      "burst"
+    ],
+    "Element": [
+      "cryo"
+    ],
+    "WeaponType": 1
+  },
   "keqing": {
     "GOOD": "Keqing",
     "ConstellationName": [
@@ -782,6 +796,20 @@
       "dendro"
     ],
     "WeaponType": 1
+  },
+  "kirari": {
+    "GOOD": "Kirari",
+    "ConstellationName": [
+      "Stella Marina"
+    ],
+    "ConstellationOrder": [
+      "skill",
+      "burst"
+    ],
+    "Element": [
+      "hydro"
+    ],
+    "WeaponType": 4
   },
   "klee": {
     "GOOD": "Klee",
@@ -1021,6 +1049,34 @@
     ],
     "WeaponType": 5
   },
+  "mulani": {
+    "GOOD": "Mulani",
+    "ConstellationName": [
+      "Ventus Aequor"
+    ],
+    "ConstellationOrder": [
+      "skill",
+      "burst"
+    ],
+    "Element": [
+      "anemo"
+    ],
+    "WeaponType": 3
+  },
+  "nahica": {
+    "GOOD": "Nahida",
+    "ConstellationName": [
+      "Sapientia Oromasdis"
+    ],
+    "ConstellationOrder": [
+      "skill",
+      "burst"
+    ],
+    "Element": [
+      "dendro"
+    ],
+    "WeaponType": 4
+  },
   "nahida": {
     "GOOD": "Nahida",
     "ConstellationName": [
@@ -1034,6 +1090,20 @@
       "dendro"
     ],
     "WeaponType": 5
+  },
+  "nahioa": {
+    "GOOD": "Nahida",
+    "ConstellationName": [
+      "Sapientia Oromasdis"
+    ],
+    "ConstellationOrder": [
+      "skill",
+      "burst"
+    ],
+    "Element": [
+      "dendro"
+    ],
+    "WeaponType": 4
   },
   "navia": {
     "GOOD": "Navia",
@@ -1398,6 +1468,52 @@
       "dendro"
     ],
     "WeaponType": 4
+  },
+  "traveler": {
+    "GOOD": "Traveler",
+    "ConstellationName": [
+      "Nickke"
+    ],
+    "ConstellationOrder": {
+      "electro": [
+        "burst",
+        "skill"
+      ],
+      "pyro": [
+        "skill",
+        "burst"
+      ],
+      "dendro": [
+        "skill",
+        "burst"
+      ],
+      "geo": [
+        "burst",
+        "skill"
+      ],
+      "hydro": [
+        "skill",
+        "burst"
+      ],
+      "anemo": [
+        "burst",
+        "skill"
+      ],
+      "cryo": [
+        "skill",
+        "burst"
+      ]
+    },
+    "Element": [
+      "electro",
+      "pyro",
+      "dendro",
+      "geo",
+      "hydro",
+      "anemo",
+      "cryo"
+    ],
+    "WeaponType": 1
   },
   "varesa": {
     "GOOD": "Varesa",

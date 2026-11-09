@@ -14,6 +14,11 @@
     "type": 4,
     "rarity": 4
   },
+  "amberbead": {
+    "GOOD": "AmberBead",
+    "type": 1,
+    "rarity": 4
+  },
   "amenomakageuchi": {
     "GOOD": "AmenomaKageuchi",
     "type": 1,
@@ -44,6 +49,16 @@
     "type": 1,
     "rarity": 5
   },
+  "ardentstorm": {
+    "GOOD": "ArdentStorm",
+    "type": 1,
+    "rarity": 4
+  },
+  "ardentstormsublimation": {
+    "GOOD": "ArdentStormSublimation",
+    "type": 1,
+    "rarity": 4
+  },
   "ashgravendrinkinghorn": {
     "GOOD": "AshGravenDrinkingHorn",
     "type": 5,
@@ -73,6 +88,11 @@
     "GOOD": "AThousandFloatingDreams",
     "type": 5,
     "rarity": 5
+  },
+  "atouchoffrostinscorchingsummer": {
+    "GOOD": "ATouchOfFrostInScorchingSummer",
+    "type": 1,
+    "rarity": 4
   },
   "azurelight": {
     "GOOD": "Azurelight",
@@ -234,6 +254,21 @@
     "type": 5,
     "rarity": 4
   },
+  "dawnstarofsaharsublimation": {
+    "GOOD": "DawnstarOfShaharSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "dawnstarofshahar": {
+    "GOOD": "DawnstarOfShahar",
+    "type": 1,
+    "rarity": 4
+  },
+  "dawnstarofshaharsublimation": {
+    "GOOD": "DawnstarOfShaharSublimation",
+    "type": 1,
+    "rarity": 4
+  },
   "deathmatch": {
     "GOOD": "Deathmatch",
     "type": 3,
@@ -243,6 +278,11 @@
     "GOOD": "DebateClub",
     "type": 2,
     "rarity": 3
+  },
+  "deicide": {
+    "GOOD": "Deicide",
+    "type": 1,
+    "rarity": 4
   },
   "dialoguesofthedesertsages": {
     "GOOD": "DialoguesoftheDesertSages",
@@ -277,6 +317,11 @@
   "earthshaker": {
     "GOOD": "EarthShaker",
     "type": 2,
+    "rarity": 4
+  },
+  "ebonybow": {
+    "GOOD": "EbonyBow",
+    "type": 1,
     "rarity": 4
   },
   "echoesoftheheart": {
@@ -459,6 +504,16 @@
     "type": 2,
     "rarity": 5
   },
+  "goldenboughofnemorensis": {
+    "GOOD": "GoldenBoughOfNemorensis",
+    "type": 1,
+    "rarity": 4
+  },
+  "goldenboughofnemorensissublimation": {
+    "GOOD": "GoldenBoughOfNemorensisSublimation",
+    "type": 1,
+    "rarity": 4
+  },
   "goldenfrostboundoath": {
     "GOOD": "GoldenFrostboundOath",
     "type": 4,
@@ -473,6 +528,16 @@
     "GOOD": "Halberd",
     "type": 3,
     "rarity": 3
+  },
+  "hallowedfetters": {
+    "GOOD": "HallowedFetters",
+    "type": 1,
+    "rarity": 4
+  },
+  "hallowedfetterssublimation": {
+    "GOOD": "HallowedFettersSublimation",
+    "type": 1,
+    "rarity": 4
   },
   "hamayumi": {
     "GOOD": "Hamayumi",
@@ -564,6 +629,11 @@
     "type": 3,
     "rarity": 4
   },
+  "kunwuswyrmbane": {
+    "GOOD": "KunwusWyrmbane",
+    "type": 1,
+    "rarity": 4
+  },
   "lightbearingmoonshard": {
     "GOOD": "LightbearingMoonshard",
     "type": 1,
@@ -589,6 +659,11 @@
     "type": 3,
     "rarity": 4
   },
+  "lostballade": {
+    "GOOD": "LostBallade",
+    "type": 1,
+    "rarity": 4
+  },
   "lostprayertothesacredwinds": {
     "GOOD": "LostPrayertotheSacredWinds",
     "type": 5,
@@ -598,6 +673,11 @@
     "GOOD": "LumidouceElegy",
     "type": 3,
     "rarity": 5
+  },
+  "lumiduceelegy": {
+    "GOOD": "LumidouceElegy",
+    "type": 1,
+    "rarity": 4
   },
   "luxurioussealord": {
     "GOOD": "LuxuriousSeaLord",
@@ -638,6 +718,11 @@
     "GOOD": "Messenger",
     "type": 4,
     "rarity": 3
+  },
+  "mirrorbreaker": {
+    "GOOD": "MirrorBreaker",
+    "type": 1,
+    "rarity": 4
   },
   "missivewindspear": {
     "GOOD": "MissiveWindspear",
@@ -689,6 +774,11 @@
     "type": 5,
     "rarity": 5
   },
+  "nocturnesscurtaincall": {
+    "GOOD": "NocturnesCurtainCall",
+    "type": 1,
+    "rarity": 4
+  },
   "oathsworneye": {
     "GOOD": "OathswornEye",
     "type": 5,
@@ -699,6 +789,11 @@
     "type": 2,
     "rarity": 2
   },
+  "oneside": {
+    "GOOD": "OneSide",
+    "type": 1,
+    "rarity": 4
+  },
   "otherworldlystory": {
     "GOOD": "OtherworldlyStory",
     "type": 5,
@@ -708,6 +803,11 @@
     "GOOD": "PeakPatrolSong",
     "type": 1,
     "rarity": 5
+  },
+  "phantasmalgiftstaromen": {
+    "GOOD": "PhantasmalGiftStarOmen",
+    "type": 1,
+    "rarity": 4
   },
   "pocketgrimoire": {
     "GOOD": "PocketGrimoire",
@@ -733,6 +833,16 @@
     "GOOD": "PrimordialJadeCutter",
     "type": 1,
     "rarity": 5
+  },
+  "primordialjadegreatsword": {
+    "GOOD": "PrimordialJadeGreatsword",
+    "type": 1,
+    "rarity": 4
+  },
+  "primordialjadevista": {
+    "GOOD": "PrimordialJadeVista",
+    "type": 1,
+    "rarity": 4
   },
   "primordialjadewingedspear": {
     "GOOD": "PrimordialJadeWingedSpear",
@@ -777,6 +887,11 @@
   "prototypestarglitter": {
     "GOOD": "PrototypeStarglitter",
     "type": 3,
+    "rarity": 4
+  },
+  "quartz": {
+    "GOOD": "Quartz",
+    "type": 1,
     "rarity": 4
   },
   "rainbowserpentsrainbow": {
@@ -909,9 +1024,24 @@
     "type": 1,
     "rarity": 4
   },
+  "serpentdevourer": {
+    "GOOD": "SerpentDevourer",
+    "type": 1,
+    "rarity": 4
+  },
+  "serpentdevourersublimation": {
+    "GOOD": "SerpentDevourerSublimation",
+    "type": 1,
+    "rarity": 4
+  },
   "serpentspine": {
     "GOOD": "SerpentSpine",
     "type": 2,
+    "rarity": 4
+  },
+  "sevenedictsofdustandlight": {
+    "GOOD": "SevenEdictsOfDustAndLight",
+    "type": 1,
     "rarity": 4
   },
   "sharpshootersoath": {
@@ -919,8 +1049,28 @@
     "type": 4,
     "rarity": 3
   },
+  "shatteredmoon": {
+    "GOOD": "ShatteredMoon",
+    "type": 1,
+    "rarity": 4
+  },
+  "shatteredmoonsublimation": {
+    "GOOD": "ShatteredMoonSublimation",
+    "type": 1,
+    "rarity": 4
+  },
   "silverlight": {
     "GOOD": "SilverLight",
+    "type": 1,
+    "rarity": 4
+  },
+  "silverradianceofgradlon": {
+    "GOOD": "SilverRadianceOfGradlon",
+    "type": 1,
+    "rarity": 4
+  },
+  "silverradianceofgradlonsublimation": {
+    "GOOD": "SilverRadianceOfGradlonSublimation",
     "type": 1,
     "rarity": 4
   },
@@ -1024,6 +1174,26 @@
     "type": 5,
     "rarity": 5
   },
+  "starlightoffylkir": {
+    "GOOD": "StarlightOfFylkir",
+    "type": 1,
+    "rarity": 4
+  },
+  "starlightoffylkirsublimation": {
+    "GOOD": "StarlightOfFylkirSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "starpiercer": {
+    "GOOD": "Starpiercer",
+    "type": 1,
+    "rarity": 4
+  },
+  "starpiercersublimation": {
+    "GOOD": "StarpiercerSublimation",
+    "type": 1,
+    "rarity": 4
+  },
   "sturdybone": {
     "GOOD": "SturdyBone",
     "type": 1,
@@ -1038,6 +1208,11 @@
     "GOOD": "SunnyMorningSleepIn",
     "type": 5,
     "rarity": 5
+  },
+  "superawesomemagickey": {
+    "GOOD": "SuperAwesomeMagicKey",
+    "type": 1,
+    "rarity": 4
   },
   "surfsup": {
     "GOOD": "SurfsUp",
@@ -1104,8 +1279,18 @@
     "type": 4,
     "rarity": 5
   },
+  "theflagstaff": {
+    "GOOD": "TheFlagstaff",
+    "type": 1,
+    "rarity": 4
+  },
   "theflute": {
     "GOOD": "TheFlute",
+    "type": 1,
+    "rarity": 4
+  },
+  "theotherside": {
+    "GOOD": "TheOtherSide",
     "type": 1,
     "rarity": 4
   },
@@ -1174,6 +1359,11 @@
     "type": 2,
     "rarity": 4
   },
+  "unbreakabledurandarte": {
+    "GOOD": "UnbreakableDurandarte",
+    "type": 1,
+    "rarity": 4
+  },
   "urakumisugiri": {
     "GOOD": "UrakuMisugiri",
     "type": 1,
@@ -1212,6 +1402,11 @@
   "waveridingwhirl": {
     "GOOD": "WaveridingWhirl",
     "type": 5,
+    "rarity": 4
+  },
+  "waveridinwhirl": {
+    "GOOD": "WaveridingWhirl",
+    "type": 1,
     "rarity": 4
   },
   "whiteblind": {
@@ -1261,6 +1456,16 @@
   },
   "xiphosmoonlight": {
     "GOOD": "XiphosMoonlight",
+    "type": 1,
+    "rarity": 4
+  },
+  "yayu": {
+    "GOOD": "Yayu",
+    "type": 1,
+    "rarity": 4
+  },
+  "yayusublimation": {
+    "GOOD": "YayuSublimation",
     "type": 1,
     "rarity": 4
   }
