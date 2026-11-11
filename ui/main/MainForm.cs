@@ -93,7 +93,8 @@ namespace InventoryKamera
             // Check if scanner is running
             if (scannerThread != null && scannerThread.IsAlive)
             {
-                // Stop navigating weapons/artifacts
+                // Signal worker threads to stop processing, then abort the scanner
+                data.StopImageProcessorWorkers();
                 scannerThread.Abort();
 
                 UserInterface.SetProgramStatus("Scan Stopped");
@@ -309,8 +310,15 @@ namespace InventoryKamera
 
                 Logger.Info("Scan settings: {0}", options);
 
+                // Capture UI values before thread start (cross-thread access unsafe)
+                string outputPath = OutputPath_TextBox.Text;
+                bool autoCopy = AutoCopy_CheckBox.Checked;
+                string autoCopyJsonPath = AutoCopyJsonPath_TextBox.Text;
+                string autoCopyLogPath = AutoCopyLogPath_TextBox.Text;
+
                 scannerThread = new Thread(() =>
                 {
+                    bool exported = false;
                     try
                     {
                         // Get Screen Location and Size
@@ -345,19 +353,20 @@ namespace InventoryKamera
                         Logger.Info("Data converted to GOOD");
 
                         // Make Json File
-                        good.WriteToJSON(OutputPath_TextBox.Text);
+                        good.WriteToJSON(outputPath);
+                        exported = true;
                         Logger.Info("Exported data");
 
                         // Auto-copy JSON and logging to their respective folders
-                        if (AutoCopy_CheckBox.Checked)
+                        if (autoCopy)
                         {
                             try
                             {
-                                if (!string.IsNullOrWhiteSpace(AutoCopyJsonPath_TextBox.Text))
+                                if (!string.IsNullOrWhiteSpace(autoCopyJsonPath))
                                 {
-                                    string jsonDest = AutoCopyJsonPath_TextBox.Text;
+                                    string jsonDest = autoCopyJsonPath;
                                     Directory.CreateDirectory(jsonDest);
-                                    var jsonFile = Directory.GetFiles(OutputPath_TextBox.Text, "genshinData_GOOD_*.json")
+                                    var jsonFile = Directory.GetFiles(outputPath, "genshinData_GOOD_*.json")
                                                             .OrderByDescending(File.GetLastWriteTime)
                                                             .FirstOrDefault();
                                     if (jsonFile != null)
@@ -365,9 +374,9 @@ namespace InventoryKamera
                                     Logger.Info("Auto-copied JSON to {0}", jsonDest);
                                 }
 
-                                if (!string.IsNullOrWhiteSpace(AutoCopyLogPath_TextBox.Text))
+                                if (!string.IsNullOrWhiteSpace(autoCopyLogPath))
                                 {
-                                    string logDest = AutoCopyLogPath_TextBox.Text;
+                                    string logDest = autoCopyLogPath;
                                     if (Directory.Exists(logDest))
                                         Directory.Delete(logDest, recursive: true);
                                     string srcLog = Path.GetFullPath("./logging");
@@ -406,6 +415,35 @@ namespace InventoryKamera
                     }
                     finally
                     {
+                        // Export partial data on stop/abort if not yet exported
+                        if (!exported && data != null && data.HasData)
+                        {
+                            try
+                            {
+                                NLog.LogManager.Flush();
+                                GOOD partialGood = new GOOD(data);
+                                partialGood.WriteToJSON(outputPath);
+                                Logger.Info("Partial data auto-saved on stop/error");
+
+                                if (autoCopy && !string.IsNullOrWhiteSpace(autoCopyJsonPath))
+                                {
+                                    try
+                                    {
+                                        Directory.CreateDirectory(autoCopyJsonPath);
+                                        var jsonFile = Directory.GetFiles(outputPath, "genshinData_GOOD_*.json")
+                                                                .OrderByDescending(File.GetLastWriteTime)
+                                                                .FirstOrDefault();
+                                        if (jsonFile != null)
+                                            File.Copy(jsonFile, Path.Combine(autoCopyJsonPath, Path.GetFileName(jsonFile)), overwrite: true);
+                                        Logger.Info("Auto-copied partial JSON to {0}", autoCopyJsonPath);
+                                    }
+                                    catch (Exception copyEx) { Logger.Error(copyEx, "Auto-copy of partial JSON failed"); }
+                                }
+                            }
+                            catch (Exception ex) { Logger.Error(ex, "Failed to auto-save partial data on stop/error"); }
+                        }
+
+                        NLog.LogManager.Flush();
                         ResetUI();
                         running = false;
                         ManualExportButton.Invoke((MethodInvoker)delegate
@@ -540,22 +578,32 @@ namespace InventoryKamera
             ApplyTheme(dark);
         }
 
-        // ─── Windows 11 palette ───────────────────────────────────────────────
-        private static readonly Color Accent = Color.FromArgb(0, 120, 212); // Windows 11 blue
+        // ─── Genshin Mix: navy dominante + giallo solo per CTA principale ────────
+        private static readonly Color YellowCta  = Color.FromArgb(245, 200,   0); // giallo solo per Start Scan
+        private static readonly Color CrystalBlue= Color.FromArgb( 74, 143, 216); // blu cristallo — accento UI
+        private static readonly Color BlueDark   = Color.FromArgb( 45,  85, 155); // blu bottoni/bordi
+        private static readonly Color NavyBg     = Color.FromArgb( 13,  21,  32); // sfondo deep navy
+        private static readonly Color NavySurf   = Color.FromArgb( 17,  30,  48); // surface
+        private static readonly Color NavyInput  = Color.FromArgb( 20,  35,  58); // input
+        private static readonly Color NavyMenu   = Color.FromArgb(  9,  15,  28); // menu bar
+        private static readonly Color TextMain   = Color.FromArgb(232, 240, 255); // testo blu-bianco
+        private static readonly Color LightBg    = Color.FromArgb(240, 244, 252); // light mode bg
+        private static readonly Color LightSurf  = Color.White;
+        private static readonly Color LightText  = Color.FromArgb( 15,  25,  50);
 
         private void ApplyTheme(bool dark)
         {
-            // Windows 11 light / dark
-            Color bg      = dark ? Color.FromArgb(32,  32,  32)  : Color.FromArgb(243, 243, 243);
-            Color surface = dark ? Color.FromArgb(45,  45,  45)  : Color.FromArgb(255, 255, 255);
-            Color btnBg   = dark ? Color.FromArgb(0,   120, 212) : Color.FromArgb(0,   120, 212);
-            Color btnFg   = Color.White;
-            Color text    = dark ? Color.FromArgb(255, 255, 255) : Color.FromArgb(30,  30,  30);
-            Color inputBg = dark ? Color.FromArgb(61,  61,  61)  : Color.White;
-            Color inputFg = dark ? Color.FromArgb(255, 255, 255) : Color.FromArgb(30,  30,  30);
-            Color menuBg  = dark ? Color.FromArgb(44,  44,  44)  : Color.FromArgb(249, 249, 249);
-            Color menuFg  = dark ? Color.FromArgb(255, 255, 255) : Color.FromArgb(30,  30,  30);
-            Color border  = dark ? Color.FromArgb(69,  69,  69)  : Color.FromArgb(209, 209, 209);
+            // Dark: deep navy Genshin  |  Light: bianco blu-tinted
+            Color bg      = dark ? NavyBg    : LightBg;
+            Color surface = dark ? NavySurf  : LightSurf;
+            Color btnBg   = dark ? BlueDark  : Color.FromArgb(210, 222, 245);
+            Color btnFg   = dark ? TextMain  : LightText;
+            Color text    = dark ? TextMain  : LightText;
+            Color inputBg = dark ? NavyInput : LightSurf;
+            Color inputFg = dark ? TextMain  : LightText;
+            Color menuBg  = dark ? NavyMenu  : Color.FromArgb(230, 238, 252);
+            Color menuFg  = CrystalBlue;  // blu sempre per menu
+            Color border  = dark ? Color.FromArgb(36, 54, 82) : Color.FromArgb(180, 200, 235);
 
             if (_themeFont == null)
                 _themeFont = new Font("Segoe UI", 9F);
@@ -572,10 +620,10 @@ namespace InventoryKamera
 
             ApplyToControls(Controls, bg, surface, btnBg, btnFg, text, inputBg, inputFg, border, dark);
 
-            // Primary action button — Windows 11 blue, rounded
+            // Bottone principale — giallo Genshin solo qui (CTA primario)
             StartScan_Button.FlatStyle = FlatStyle.Flat;
-            StartScan_Button.BackColor = Accent;
-            StartScan_Button.ForeColor = Color.White;
+            StartScan_Button.BackColor = YellowCta;
+            StartScan_Button.ForeColor = Color.FromArgb(13, 21, 32);
             StartScan_Button.FlatAppearance.BorderSize = 0;
             if (_scanButtonFont == null)
                 _scanButtonFont = new Font("Segoe UI", 10F, FontStyle.Bold);
@@ -688,13 +736,14 @@ namespace InventoryKamera
         private class FluentMenuColors : ProfessionalColorTable
         {
             private readonly bool _dark;
-            private static readonly Color Blue = Color.FromArgb(0, 120, 212);
+            private static readonly Color Blue       = Color.FromArgb( 74, 143, 216); // blu cristallo
+            private static readonly Color BlueBorder = Color.FromArgb( 45,  85, 155); // blu bordi
             public FluentMenuColors(bool dark) { _dark = dark; }
-            private Color Bg    => _dark ? Color.FromArgb(44,  44,  44) : Color.FromArgb(249, 249, 249);
-            private Color Hover => _dark ? Color.FromArgb(61,  61,  61) : Color.FromArgb(227, 241, 255);
+            private Color Bg    => _dark ? Color.FromArgb( 9, 15, 28) : Color.FromArgb(230, 238, 252);
+            private Color Hover => _dark ? Color.FromArgb(20, 35, 60) : Color.FromArgb(200, 218, 245);
             public override Color MenuItemSelected              => Hover;
-            public override Color MenuItemBorder                => Blue;
-            public override Color MenuBorder                    => Color.FromArgb(209, 209, 209);
+            public override Color MenuItemBorder                => BlueBorder;
+            public override Color MenuBorder                    => BlueBorder;
             public override Color ToolStripDropDownBackground   => Bg;
             public override Color ImageMarginGradientBegin      => Bg;
             public override Color ImageMarginGradientMiddle     => Bg;
@@ -919,7 +968,15 @@ namespace InventoryKamera
 
         private void MainForm_Activate()
         {
-            BeginInvoke((MethodInvoker)delegate { Activate(); });
+            BeginInvoke((MethodInvoker)delegate
+            {
+                // Minimize then restore to bypass Windows focus-stealing prevention.
+                // When restoring a minimized window Windows grants focus even across processes.
+                WindowState = FormWindowState.Minimized;
+                WindowState = FormWindowState.Normal;
+                Activate();
+                BringToFront();
+            });
         }
 
         private void ErrorLog_Label_Click(object sender, EventArgs e)

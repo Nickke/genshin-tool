@@ -13,6 +13,7 @@ namespace InventoryKamera
     internal class ArtifactScraper : InventoryScraper
 	{
 		private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+		private static readonly Regex SubstatRegex = new Regex(@"^(.*?)(\d+.*)", RegexOptions.Compiled);
 
 		public ArtifactScraper() 
 		{
@@ -112,7 +113,6 @@ namespace InventoryKamera
                 width: (int)((Navigation.IsNormal ? 0.2244 : 0.2236) * Navigation.GetWidth()),
                 height: (int)((Navigation.IsNormal ? 0.0422 : 0.0367) * Navigation.GetHeight())))
             {
-                //Navigation.DisplayBitmap(x);
 				var t = GenshinProcesor.AnalyzeText(x).Trim().ToLower();
 				if (t.Contains("filter"))
 				{
@@ -446,8 +446,7 @@ namespace InventoryKamera
 					Logger.Debug("Parsing artifact substat: {0}", line);
 
 					SubStat substat = new SubStat();
-					Regex re = new Regex(@"^(.*?)(\d+.*)");
-					var result = re.Match(line);
+					var result = SubstatRegex.Match(line);
 					var stat = Regex.Replace(result.Groups[1].Value, @"[^\w]", string.Empty);
 					var value = result.Groups[2].Value;
 

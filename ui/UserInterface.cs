@@ -274,7 +274,10 @@ namespace InventoryKamera
 			MethodInvoker statusAction = delegate
 			{
 				programStatus_Label.Text = status;
-				programStatus_Label.ForeColor = ok ? Color.Green : Color.Red;
+				// Genshin crystal blue for success, soft red for error
+				programStatus_Label.ForeColor = ok
+					? Color.FromArgb(122, 184, 240)   // blu cristallo chiaro
+					: Color.FromArgb(248, 113, 113);  // soft red
 				if (_statusFont == null)
 					_statusFont = new Font(programStatus_Label.Font.FontFamily, 15);
 				programStatus_Label.Font = _statusFont;

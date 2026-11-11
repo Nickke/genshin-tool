@@ -13,6 +13,7 @@ namespace InventoryKamera
     internal class WeaponScraper : InventoryScraper
     {
 		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+		private static readonly Regex EquippedRegex = new Regex("Equipped:", RegexOptions.Compiled);
 
 		public WeaponScraper()
         {
@@ -174,12 +175,6 @@ namespace InventoryKamera
             level = GetLevelBitmap(card);
             refinement = GetRefinementBitmap(card);
 
-            //Navigation.DisplayBitmap(name);
-            //Navigation.DisplayBitmap(locked);
-            //Navigation.DisplayBitmap(equipped);
-            //Navigation.DisplayBitmap(level);
-            //Navigation.DisplayBitmap(refinement);
-
             // Separate to all pieces of card
             List<Bitmap> weaponImages = new List<Bitmap>
             {
@@ -328,7 +323,9 @@ namespace InventoryKamera
 
 		public int ScanRefinement(Bitmap image)
 		{
-			for (double factor = 1; factor <= 2; factor += 0.1)
+			// Try 1.5 first (~90% of reads succeed here), then full range as fallback
+			double[] factors = { 1.5, 1.0, 1.1, 1.2, 1.3, 1.4, 1.6, 1.7, 1.8, 1.9, 2.0 };
+			foreach (double factor in factors)
 			{
 				using (Bitmap up = GenshinProcesor.ScaleImage(image, factor))
 				{
@@ -360,8 +357,7 @@ namespace InventoryKamera
 
 			if (extractedString != "")
 			{
-				var regexItem = new Regex("Equipped:");
-				if (regexItem.IsMatch(extractedString))
+				if (EquippedRegex.IsMatch(extractedString))
 				{
 					var name = extractedString.Split(':')[1];
 

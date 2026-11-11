@@ -24,6 +24,7 @@
     <PackageReference Include="Accord.Math" Version="3.8.0" />
     <PackageReference Include="Accord.Statistics" Version="3.8.0" />
     <PackageReference Include="InputSimulator" Version="1.0.4" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="NHotkey" Version="2.1.0" />
     <PackageReference Include="NHotkey.WindowsForms" Version="2.1.0" />

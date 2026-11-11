@@ -960,7 +960,15 @@ namespace InventoryKamera
 
         private void MainForm_Activate()
         {
-            BeginInvoke((MethodInvoker)delegate { Activate(); });
+            BeginInvoke((MethodInvoker)delegate
+            {
+                // Minimize then restore to bypass Windows focus-stealing prevention.
+                // When restoring a minimized window Windows grants focus even across processes.
+                WindowState = FormWindowState.Minimized;
+                WindowState = FormWindowState.Normal;
+                Activate();
+                BringToFront();
+            });
         }
 
         private void ErrorLog_Label_Click(object sender, EventArgs e)
