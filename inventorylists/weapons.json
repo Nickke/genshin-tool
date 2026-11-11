@@ -1,0 +1,1472 @@
+{
+  "absolution": {
+    "GOOD": "Absolution",
+    "type": 1,
+    "rarity": 5
+  },
+  "akuoumaru": {
+    "GOOD": "Akuoumaru",
+    "type": 2,
+    "rarity": 4
+  },
+  "alleyhunter": {
+    "GOOD": "AlleyHunter",
+    "type": 4,
+    "rarity": 4
+  },
+  "amberbead": {
+    "GOOD": "AmberBead",
+    "type": 1,
+    "rarity": 4
+  },
+  "amenomakageuchi": {
+    "GOOD": "AmenomaKageuchi",
+    "type": 1,
+    "rarity": 4
+  },
+  "amosbow": {
+    "GOOD": "AmosBow",
+    "type": 4,
+    "rarity": 5
+  },
+  "angelosheptades": {
+    "GOOD": "AngelosHeptades",
+    "type": 5,
+    "rarity": 5
+  },
+  "apprenticesnotes": {
+    "GOOD": "ApprenticesNotes",
+    "type": 5,
+    "rarity": 1
+  },
+  "aquasimulacra": {
+    "GOOD": "AquaSimulacra",
+    "type": 4,
+    "rarity": 5
+  },
+  "aquilafavonia": {
+    "GOOD": "AquilaFavonia",
+    "type": 1,
+    "rarity": 5
+  },
+  "ardentstorm": {
+    "GOOD": "ArdentStorm",
+    "type": 1,
+    "rarity": 4
+  },
+  "ardentstormsublimation": {
+    "GOOD": "ArdentStormSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "ashgravendrinkinghorn": {
+    "GOOD": "AshGravenDrinkingHorn",
+    "type": 5,
+    "rarity": 4
+  },
+  "astralvulturescrimsonplumage": {
+    "GOOD": "AstralVulturesCrimsonPlumage",
+    "type": 4,
+    "rarity": 5
+  },
+  "ateaspoonoftranscendence": {
+    "GOOD": "ATeaspoonofTranscendence",
+    "type": 2,
+    "rarity": 5
+  },
+  "athameartis": {
+    "GOOD": "AthameArtis",
+    "type": 1,
+    "rarity": 5
+  },
+  "athousandblazingsuns": {
+    "GOOD": "AThousandBlazingSuns",
+    "type": 2,
+    "rarity": 5
+  },
+  "athousandfloatingdreams": {
+    "GOOD": "AThousandFloatingDreams",
+    "type": 5,
+    "rarity": 5
+  },
+  "atouchoffrostinscorchingsummer": {
+    "GOOD": "ATouchOfFrostInScorchingSummer",
+    "type": 1,
+    "rarity": 4
+  },
+  "azurelight": {
+    "GOOD": "Azurelight",
+    "type": 1,
+    "rarity": 5
+  },
+  "balladoftheboundlessblue": {
+    "GOOD": "BalladoftheBoundlessBlue",
+    "type": 5,
+    "rarity": 4
+  },
+  "balladofthefjords": {
+    "GOOD": "BalladoftheFjords",
+    "type": 3,
+    "rarity": 4
+  },
+  "beaconofthereedsea": {
+    "GOOD": "BeaconoftheReedSea",
+    "type": 2,
+    "rarity": 5
+  },
+  "beginnersprotector": {
+    "GOOD": "BeginnersProtector",
+    "type": 3,
+    "rarity": 1
+  },
+  "beyondthechrysalis": {
+    "GOOD": "BeyondtheChrysalis",
+    "type": 1,
+    "rarity": 5
+  },
+  "blackcliffagate": {
+    "GOOD": "BlackcliffAgate",
+    "type": 5,
+    "rarity": 4
+  },
+  "blackclifflongsword": {
+    "GOOD": "BlackcliffLongsword",
+    "type": 1,
+    "rarity": 4
+  },
+  "blackcliffpole": {
+    "GOOD": "BlackcliffPole",
+    "type": 3,
+    "rarity": 4
+  },
+  "blackcliffslasher": {
+    "GOOD": "BlackcliffSlasher",
+    "type": 2,
+    "rarity": 4
+  },
+  "blackcliffwarbow": {
+    "GOOD": "BlackcliffWarbow",
+    "type": 4,
+    "rarity": 4
+  },
+  "blackmarrowlantern": {
+    "GOOD": "BlackmarrowLantern",
+    "type": 5,
+    "rarity": 4
+  },
+  "blacktassel": {
+    "GOOD": "BlackTassel",
+    "type": 3,
+    "rarity": 3
+  },
+  "bladeofatonement": {
+    "GOOD": "BladeofAtonement",
+    "type": 2,
+    "rarity": 4
+  },
+  "bloodsoakedruins": {
+    "GOOD": "BloodsoakedRuins",
+    "type": 3,
+    "rarity": 5
+  },
+  "bloodtaintedgreatsword": {
+    "GOOD": "BloodtaintedGreatsword",
+    "type": 2,
+    "rarity": 3
+  },
+  "breezebornerefrain": {
+    "GOOD": "BreezeborneRefrain",
+    "type": 4,
+    "rarity": 4
+  },
+  "calamityofeshu": {
+    "GOOD": "CalamityofEshu",
+    "type": 1,
+    "rarity": 4
+  },
+  "calamityqueller": {
+    "GOOD": "CalamityQueller",
+    "type": 3,
+    "rarity": 5
+  },
+  "cashflowsupervision": {
+    "GOOD": "CashflowSupervision",
+    "type": 5,
+    "rarity": 5
+  },
+  "chainbreaker": {
+    "GOOD": "ChainBreaker",
+    "type": 4,
+    "rarity": 4
+  },
+  "cinnabarspindle": {
+    "GOOD": "CinnabarSpindle",
+    "type": 1,
+    "rarity": 4
+  },
+  "clashofkings": {
+    "GOOD": "ClashofKings",
+    "type": 5,
+    "rarity": 4
+  },
+  "cloudforged": {
+    "GOOD": "Cloudforged",
+    "type": 4,
+    "rarity": 4
+  },
+  "compoundbow": {
+    "GOOD": "CompoundBow",
+    "type": 4,
+    "rarity": 4
+  },
+  "coolsteel": {
+    "GOOD": "CoolSteel",
+    "type": 1,
+    "rarity": 3
+  },
+  "covenantoffrostandsnow": {
+    "GOOD": "CovenantofFrostandSnow",
+    "type": 4,
+    "rarity": 4
+  },
+  "cranesechoingcall": {
+    "GOOD": "CranesEchoingCall",
+    "type": 5,
+    "rarity": 5
+  },
+  "crescentpike": {
+    "GOOD": "CrescentPike",
+    "type": 3,
+    "rarity": 4
+  },
+  "crimsonmoonssemblance": {
+    "GOOD": "CrimsonMoonsSemblance",
+    "type": 3,
+    "rarity": 5
+  },
+  "darkironsword": {
+    "GOOD": "DarkIronSword",
+    "type": 1,
+    "rarity": 3
+  },
+  "dawningfrost": {
+    "GOOD": "DawningFrost",
+    "type": 5,
+    "rarity": 4
+  },
+  "dawnstarofsaharsublimation": {
+    "GOOD": "DawnstarOfShaharSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "dawnstarofshahar": {
+    "GOOD": "DawnstarOfShahar",
+    "type": 1,
+    "rarity": 4
+  },
+  "dawnstarofshaharsublimation": {
+    "GOOD": "DawnstarOfShaharSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "deathmatch": {
+    "GOOD": "Deathmatch",
+    "type": 3,
+    "rarity": 4
+  },
+  "debateclub": {
+    "GOOD": "DebateClub",
+    "type": 2,
+    "rarity": 3
+  },
+  "deicide": {
+    "GOOD": "Deicide",
+    "type": 1,
+    "rarity": 4
+  },
+  "dialoguesofthedesertsages": {
+    "GOOD": "DialoguesoftheDesertSages",
+    "type": 3,
+    "rarity": 4
+  },
+  "disasterandremorse": {
+    "GOOD": "DisasterandRemorse",
+    "type": 3,
+    "rarity": 5
+  },
+  "dodocotales": {
+    "GOOD": "DodocoTales",
+    "type": 5,
+    "rarity": 4
+  },
+  "dragonsbane": {
+    "GOOD": "DragonsBane",
+    "type": 3,
+    "rarity": 4
+  },
+  "dragonspinespear": {
+    "GOOD": "DragonspineSpear",
+    "type": 3,
+    "rarity": 4
+  },
+  "dullblade": {
+    "GOOD": "DullBlade",
+    "type": 1,
+    "rarity": 1
+  },
+  "earthshaker": {
+    "GOOD": "EarthShaker",
+    "type": 2,
+    "rarity": 4
+  },
+  "ebonybow": {
+    "GOOD": "EbonyBow",
+    "type": 1,
+    "rarity": 4
+  },
+  "echoesoftheheart": {
+    "GOOD": "EchoesoftheHeart",
+    "type": 5,
+    "rarity": 4
+  },
+  "elegyfortheend": {
+    "GOOD": "ElegyfortheEnd",
+    "type": 4,
+    "rarity": 5
+  },
+  "emberwell": {
+    "GOOD": "Emberwell",
+    "type": 1,
+    "rarity": 4
+  },
+  "emeraldorb": {
+    "GOOD": "EmeraldOrb",
+    "type": 5,
+    "rarity": 3
+  },
+  "endoftheline": {
+    "GOOD": "EndoftheLine",
+    "type": 4,
+    "rarity": 4
+  },
+  "engulfinglightning": {
+    "GOOD": "EngulfingLightning",
+    "type": 3,
+    "rarity": 5
+  },
+  "etherlightspindlelute": {
+    "GOOD": "EtherlightSpindlelute",
+    "type": 5,
+    "rarity": 4
+  },
+  "everlastingmoonglow": {
+    "GOOD": "EverlastingMoonglow",
+    "type": 5,
+    "rarity": 5
+  },
+  "exaiphanesblade": {
+    "GOOD": "ExaiphanesBlade",
+    "type": 1,
+    "rarity": 5
+  },
+  "eyeofperception": {
+    "GOOD": "EyeofPerception",
+    "type": 5,
+    "rarity": 4
+  },
+  "fadingtwilight": {
+    "GOOD": "FadingTwilight",
+    "type": 4,
+    "rarity": 4
+  },
+  "fangofthemountainking": {
+    "GOOD": "FangoftheMountainKing",
+    "type": 2,
+    "rarity": 5
+  },
+  "favoniuscodex": {
+    "GOOD": "FavoniusCodex",
+    "type": 5,
+    "rarity": 4
+  },
+  "favoniusgreatsword": {
+    "GOOD": "FavoniusGreatsword",
+    "type": 2,
+    "rarity": 4
+  },
+  "favoniuslance": {
+    "GOOD": "FavoniusLance",
+    "type": 3,
+    "rarity": 4
+  },
+  "favoniussword": {
+    "GOOD": "FavoniusSword",
+    "type": 1,
+    "rarity": 4
+  },
+  "favoniuswarbow": {
+    "GOOD": "FavoniusWarbow",
+    "type": 4,
+    "rarity": 4
+  },
+  "ferrousshadow": {
+    "GOOD": "FerrousShadow",
+    "type": 2,
+    "rarity": 3
+  },
+  "festeringdesire": {
+    "GOOD": "FesteringDesire",
+    "type": 1,
+    "rarity": 4
+  },
+  "filletblade": {
+    "GOOD": "FilletBlade",
+    "type": 1,
+    "rarity": 3
+  },
+  "finaleofthedeep": {
+    "GOOD": "FinaleoftheDeep",
+    "type": 1,
+    "rarity": 4
+  },
+  "flameforgedinsight": {
+    "GOOD": "FlameForgedInsight",
+    "type": 2,
+    "rarity": 4
+  },
+  "fleuvecendreferryman": {
+    "GOOD": "FleuveCendreFerryman",
+    "type": 1,
+    "rarity": 4
+  },
+  "flowerwreathedfeathers": {
+    "GOOD": "FlowerWreathedFeathers",
+    "type": 4,
+    "rarity": 4
+  },
+  "flowingpurity": {
+    "GOOD": "FlowingPurity",
+    "type": 5,
+    "rarity": 4
+  },
+  "fluteofezpitzal": {
+    "GOOD": "FluteofEzpitzal",
+    "type": 1,
+    "rarity": 4
+  },
+  "footprintoftherainbow": {
+    "GOOD": "FootprintoftheRainbow",
+    "type": 3,
+    "rarity": 4
+  },
+  "forestregalia": {
+    "GOOD": "ForestRegalia",
+    "type": 2,
+    "rarity": 4
+  },
+  "forgedbythegoldenmelody": {
+    "GOOD": "ForgedbytheGoldenMelody",
+    "type": 2,
+    "rarity": 4
+  },
+  "fracturedhalo": {
+    "GOOD": "FracturedHalo",
+    "type": 3,
+    "rarity": 5
+  },
+  "freedomsworn": {
+    "GOOD": "FreedomSworn",
+    "type": 1,
+    "rarity": 5
+  },
+  "frostbearer": {
+    "GOOD": "Frostbearer",
+    "type": 5,
+    "rarity": 4
+  },
+  "frostbreath": {
+    "GOOD": "Frostbreath",
+    "type": 3,
+    "rarity": 4
+  },
+  "fruitfulhook": {
+    "GOOD": "FruitfulHook",
+    "type": 2,
+    "rarity": 4
+  },
+  "fruitoffulfillment": {
+    "GOOD": "FruitofFulfillment",
+    "type": 5,
+    "rarity": 4
+  },
+  "gestofthemightywolf": {
+    "GOOD": "GestoftheMightyWolf",
+    "type": 2,
+    "rarity": 5
+  },
+  "goldenboughofnemorensis": {
+    "GOOD": "GoldenBoughOfNemorensis",
+    "type": 1,
+    "rarity": 4
+  },
+  "goldenboughofnemorensissublimation": {
+    "GOOD": "GoldenBoughOfNemorensisSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "goldenfrostboundoath": {
+    "GOOD": "GoldenFrostboundOath",
+    "type": 4,
+    "rarity": 5
+  },
+  "hakushinring": {
+    "GOOD": "HakushinRing",
+    "type": 5,
+    "rarity": 4
+  },
+  "halberd": {
+    "GOOD": "Halberd",
+    "type": 3,
+    "rarity": 3
+  },
+  "hallowedfetters": {
+    "GOOD": "HallowedFetters",
+    "type": 1,
+    "rarity": 4
+  },
+  "hallowedfetterssublimation": {
+    "GOOD": "HallowedFettersSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "hamayumi": {
+    "GOOD": "Hamayumi",
+    "type": 4,
+    "rarity": 4
+  },
+  "harangeppakufutsu": {
+    "GOOD": "HaranGeppakuFutsu",
+    "type": 1,
+    "rarity": 5
+  },
+  "harbingerofdawn": {
+    "GOOD": "HarbingerofDawn",
+    "type": 1,
+    "rarity": 3
+  },
+  "hereticsmoltenblade": {
+    "GOOD": "HereticsMoltenBlade",
+    "type": 1,
+    "rarity": 4
+  },
+  "huntersbow": {
+    "GOOD": "HuntersBow",
+    "type": 4,
+    "rarity": 1
+  },
+  "hunterspath": {
+    "GOOD": "HuntersPath",
+    "type": 4,
+    "rarity": 5
+  },
+  "hymnofthemaelstrom": {
+    "GOOD": "HymnoftheMaelstrom",
+    "type": 5,
+    "rarity": 5
+  },
+  "ibispiercer": {
+    "GOOD": "IbisPiercer",
+    "type": 4,
+    "rarity": 4
+  },
+  "ironpoint": {
+    "GOOD": "IronPoint",
+    "type": 3,
+    "rarity": 2
+  },
+  "ironsting": {
+    "GOOD": "IronSting",
+    "type": 1,
+    "rarity": 4
+  },
+  "jadefallssplendor": {
+    "GOOD": "JadefallsSplendor",
+    "type": 5,
+    "rarity": 5
+  },
+  "jadevista": {
+    "GOOD": "JadeVista",
+    "type": 4,
+    "rarity": 4
+  },
+  "kagotsurubeisshin": {
+    "GOOD": "KagotsurubeIsshin",
+    "type": 1,
+    "rarity": 4
+  },
+  "kagurasverity": {
+    "GOOD": "KagurasVerity",
+    "type": 5,
+    "rarity": 5
+  },
+  "katsuragikirinagamasa": {
+    "GOOD": "KatsuragikiriNagamasa",
+    "type": 2,
+    "rarity": 4
+  },
+  "keyofkhajnisut": {
+    "GOOD": "KeyofKhajNisut",
+    "type": 1,
+    "rarity": 5
+  },
+  "kingssquire": {
+    "GOOD": "KingsSquire",
+    "type": 4,
+    "rarity": 4
+  },
+  "kitaincrossspear": {
+    "GOOD": "KitainCrossSpear",
+    "type": 3,
+    "rarity": 4
+  },
+  "kunwuswyrmbane": {
+    "GOOD": "KunwusWyrmbane",
+    "type": 1,
+    "rarity": 4
+  },
+  "lightbearingmoonshard": {
+    "GOOD": "LightbearingMoonshard",
+    "type": 1,
+    "rarity": 5
+  },
+  "lightoffoliarincision": {
+    "GOOD": "LightofFoliarIncision",
+    "type": 1,
+    "rarity": 5
+  },
+  "lionsroar": {
+    "GOOD": "LionsRoar",
+    "type": 1,
+    "rarity": 4
+  },
+  "lithicblade": {
+    "GOOD": "LithicBlade",
+    "type": 2,
+    "rarity": 4
+  },
+  "lithicspear": {
+    "GOOD": "LithicSpear",
+    "type": 3,
+    "rarity": 4
+  },
+  "lostballade": {
+    "GOOD": "LostBallade",
+    "type": 1,
+    "rarity": 4
+  },
+  "lostprayertothesacredwinds": {
+    "GOOD": "LostPrayertotheSacredWinds",
+    "type": 5,
+    "rarity": 5
+  },
+  "lumidouceelegy": {
+    "GOOD": "LumidouceElegy",
+    "type": 3,
+    "rarity": 5
+  },
+  "lumiduceelegy": {
+    "GOOD": "LumidouceElegy",
+    "type": 1,
+    "rarity": 4
+  },
+  "luxurioussealord": {
+    "GOOD": "LuxuriousSeaLord",
+    "type": 2,
+    "rarity": 4
+  },
+  "magicguide": {
+    "GOOD": "MagicGuide",
+    "type": 5,
+    "rarity": 3
+  },
+  "mailedflower": {
+    "GOOD": "MailedFlower",
+    "type": 2,
+    "rarity": 4
+  },
+  "makhairaaquamarine": {
+    "GOOD": "MakhairaAquamarine",
+    "type": 2,
+    "rarity": 4
+  },
+  "mappamare": {
+    "GOOD": "MappaMare",
+    "type": 5,
+    "rarity": 4
+  },
+  "masterkey": {
+    "GOOD": "MasterKey",
+    "type": 2,
+    "rarity": 4
+  },
+  "memoryofdust": {
+    "GOOD": "MemoryofDust",
+    "type": 5,
+    "rarity": 5
+  },
+  "messenger": {
+    "GOOD": "Messenger",
+    "type": 4,
+    "rarity": 3
+  },
+  "mirrorbreaker": {
+    "GOOD": "MirrorBreaker",
+    "type": 1,
+    "rarity": 4
+  },
+  "missivewindspear": {
+    "GOOD": "MissiveWindspear",
+    "type": 3,
+    "rarity": 4
+  },
+  "mistsplitterreforged": {
+    "GOOD": "MistsplitterReforged",
+    "type": 1,
+    "rarity": 5
+  },
+  "mitternachtswaltz": {
+    "GOOD": "MitternachtsWaltz",
+    "type": 4,
+    "rarity": 4
+  },
+  "moonpiercer": {
+    "GOOD": "Moonpiercer",
+    "type": 3,
+    "rarity": 4
+  },
+  "moonweaversdawn": {
+    "GOOD": "MoonweaversDawn",
+    "type": 1,
+    "rarity": 4
+  },
+  "mountainbracingbolt": {
+    "GOOD": "MountainBracingBolt",
+    "type": 3,
+    "rarity": 4
+  },
+  "mouunsmoon": {
+    "GOOD": "MouunsMoon",
+    "type": 4,
+    "rarity": 4
+  },
+  "newbough": {
+    "GOOD": "NewBough",
+    "type": 1,
+    "rarity": 4
+  },
+  "nightweaverslookingglass": {
+    "GOOD": "NightweaversLookingGlass",
+    "type": 5,
+    "rarity": 5
+  },
+  "nocturnescurtaincall": {
+    "GOOD": "NocturnesCurtainCall",
+    "type": 5,
+    "rarity": 5
+  },
+  "nocturnesscurtaincall": {
+    "GOOD": "NocturnesCurtainCall",
+    "type": 1,
+    "rarity": 4
+  },
+  "oathsworneye": {
+    "GOOD": "OathswornEye",
+    "type": 5,
+    "rarity": 4
+  },
+  "oldmercspal": {
+    "GOOD": "OldMercsPal",
+    "type": 2,
+    "rarity": 2
+  },
+  "oneside": {
+    "GOOD": "OneSide",
+    "type": 1,
+    "rarity": 4
+  },
+  "otherworldlystory": {
+    "GOOD": "OtherworldlyStory",
+    "type": 5,
+    "rarity": 3
+  },
+  "peakpatrolsong": {
+    "GOOD": "PeakPatrolSong",
+    "type": 1,
+    "rarity": 5
+  },
+  "phantasmalgiftstaromen": {
+    "GOOD": "PhantasmalGiftStarOmen",
+    "type": 1,
+    "rarity": 4
+  },
+  "pocketgrimoire": {
+    "GOOD": "PocketGrimoire",
+    "type": 5,
+    "rarity": 2
+  },
+  "polarstar": {
+    "GOOD": "PolarStar",
+    "type": 4,
+    "rarity": 5
+  },
+  "portablepowersaw": {
+    "GOOD": "PortablePowerSaw",
+    "type": 2,
+    "rarity": 4
+  },
+  "predator": {
+    "GOOD": "Predator",
+    "type": 4,
+    "rarity": 4
+  },
+  "primordialjadecutter": {
+    "GOOD": "PrimordialJadeCutter",
+    "type": 1,
+    "rarity": 5
+  },
+  "primordialjadegreatsword": {
+    "GOOD": "PrimordialJadeGreatsword",
+    "type": 1,
+    "rarity": 4
+  },
+  "primordialjadevista": {
+    "GOOD": "PrimordialJadeVista",
+    "type": 1,
+    "rarity": 4
+  },
+  "primordialjadewingedspear": {
+    "GOOD": "PrimordialJadeWingedSpear",
+    "type": 3,
+    "rarity": 5
+  },
+  "prizedisshinblade": {
+    "GOOD": "PrizedIsshinBlade",
+    "type": 1,
+    "rarity": 4
+  },
+  "prospectorsdrill": {
+    "GOOD": "ProspectorsDrill",
+    "type": 3,
+    "rarity": 4
+  },
+  "prospectorsshovel": {
+    "GOOD": "ProspectorsShovel",
+    "type": 3,
+    "rarity": 4
+  },
+  "prototypeamber": {
+    "GOOD": "PrototypeAmber",
+    "type": 5,
+    "rarity": 4
+  },
+  "prototypearchaic": {
+    "GOOD": "PrototypeArchaic",
+    "type": 2,
+    "rarity": 4
+  },
+  "prototypecrescent": {
+    "GOOD": "PrototypeCrescent",
+    "type": 4,
+    "rarity": 4
+  },
+  "prototyperancour": {
+    "GOOD": "PrototypeRancour",
+    "type": 1,
+    "rarity": 4
+  },
+  "prototypestarglitter": {
+    "GOOD": "PrototypeStarglitter",
+    "type": 3,
+    "rarity": 4
+  },
+  "quartz": {
+    "GOOD": "Quartz",
+    "type": 1,
+    "rarity": 4
+  },
+  "rainbowserpentsrainbow": {
+    "GOOD": "RainbowSerpentsRainBow",
+    "type": 4,
+    "rarity": 4
+  },
+  "rainslasher": {
+    "GOOD": "Rainslasher",
+    "type": 2,
+    "rarity": 4
+  },
+  "rangegauge": {
+    "GOOD": "RangeGauge",
+    "type": 4,
+    "rarity": 4
+  },
+  "ravenbow": {
+    "GOOD": "RavenBow",
+    "type": 4,
+    "rarity": 3
+  },
+  "recurvebow": {
+    "GOOD": "RecurveBow",
+    "type": 4,
+    "rarity": 3
+  },
+  "redhornstonethresher": {
+    "GOOD": "RedhornStonethresher",
+    "type": 2,
+    "rarity": 5
+  },
+  "reliquaryoftruth": {
+    "GOOD": "ReliquaryofTruth",
+    "type": 5,
+    "rarity": 5
+  },
+  "rightfulreward": {
+    "GOOD": "RightfulReward",
+    "type": 3,
+    "rarity": 4
+  },
+  "ringofyaxche": {
+    "GOOD": "RingofYaxche",
+    "type": 5,
+    "rarity": 4
+  },
+  "royalbow": {
+    "GOOD": "RoyalBow",
+    "type": 4,
+    "rarity": 4
+  },
+  "royalgreatsword": {
+    "GOOD": "RoyalGreatsword",
+    "type": 2,
+    "rarity": 4
+  },
+  "royalgrimoire": {
+    "GOOD": "RoyalGrimoire",
+    "type": 5,
+    "rarity": 4
+  },
+  "royallongsword": {
+    "GOOD": "RoyalLongsword",
+    "type": 1,
+    "rarity": 4
+  },
+  "royalspear": {
+    "GOOD": "RoyalSpear",
+    "type": 3,
+    "rarity": 4
+  },
+  "rust": {
+    "GOOD": "Rust",
+    "type": 4,
+    "rarity": 4
+  },
+  "sacrificersstaff": {
+    "GOOD": "SacrificersStaff",
+    "type": 3,
+    "rarity": 4
+  },
+  "sacrificialbow": {
+    "GOOD": "SacrificialBow",
+    "type": 4,
+    "rarity": 4
+  },
+  "sacrificialfragments": {
+    "GOOD": "SacrificialFragments",
+    "type": 5,
+    "rarity": 4
+  },
+  "sacrificialgreatsword": {
+    "GOOD": "SacrificialGreatsword",
+    "type": 2,
+    "rarity": 4
+  },
+  "sacrificialjade": {
+    "GOOD": "SacrificialJade",
+    "type": 5,
+    "rarity": 4
+  },
+  "sacrificialsword": {
+    "GOOD": "SacrificialSword",
+    "type": 1,
+    "rarity": 4
+  },
+  "sapwoodblade": {
+    "GOOD": "SapwoodBlade",
+    "type": 1,
+    "rarity": 4
+  },
+  "scionoftheblazingsun": {
+    "GOOD": "ScionoftheBlazingSun",
+    "type": 4,
+    "rarity": 4
+  },
+  "seasonedhuntersbow": {
+    "GOOD": "SeasonedHuntersBow",
+    "type": 4,
+    "rarity": 2
+  },
+  "sequenceofsolitude": {
+    "GOOD": "SequenceofSolitude",
+    "type": 4,
+    "rarity": 4
+  },
+  "serenityscall": {
+    "GOOD": "SerenitysCall",
+    "type": 1,
+    "rarity": 4
+  },
+  "serpentdevourer": {
+    "GOOD": "SerpentDevourer",
+    "type": 1,
+    "rarity": 4
+  },
+  "serpentdevourersublimation": {
+    "GOOD": "SerpentDevourerSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "serpentspine": {
+    "GOOD": "SerpentSpine",
+    "type": 2,
+    "rarity": 4
+  },
+  "sevenedictsofdustandlight": {
+    "GOOD": "SevenEdictsOfDustAndLight",
+    "type": 1,
+    "rarity": 4
+  },
+  "sharpshootersoath": {
+    "GOOD": "SharpshootersOath",
+    "type": 4,
+    "rarity": 3
+  },
+  "shatteredmoon": {
+    "GOOD": "ShatteredMoon",
+    "type": 1,
+    "rarity": 4
+  },
+  "shatteredmoonsublimation": {
+    "GOOD": "ShatteredMoonSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "silverlight": {
+    "GOOD": "SilverLight",
+    "type": 1,
+    "rarity": 4
+  },
+  "silverradianceofgradlon": {
+    "GOOD": "SilverRadianceOfGradlon",
+    "type": 1,
+    "rarity": 4
+  },
+  "silverradianceofgradlonsublimation": {
+    "GOOD": "SilverRadianceOfGradlonSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "silvershowerheartstrings": {
+    "GOOD": "SilvershowerHeartstrings",
+    "type": 4,
+    "rarity": 5
+  },
+  "silversword": {
+    "GOOD": "SilverSword",
+    "type": 1,
+    "rarity": 2
+  },
+  "skyridergreatsword": {
+    "GOOD": "SkyriderGreatsword",
+    "type": 2,
+    "rarity": 3
+  },
+  "skyridersword": {
+    "GOOD": "SkyriderSword",
+    "type": 1,
+    "rarity": 3
+  },
+  "skywardatlas": {
+    "GOOD": "SkywardAtlas",
+    "type": 5,
+    "rarity": 5
+  },
+  "skywardblade": {
+    "GOOD": "SkywardBlade",
+    "type": 1,
+    "rarity": 5
+  },
+  "skywardharp": {
+    "GOOD": "SkywardHarp",
+    "type": 4,
+    "rarity": 5
+  },
+  "skywardpride": {
+    "GOOD": "SkywardPride",
+    "type": 2,
+    "rarity": 5
+  },
+  "skywardspine": {
+    "GOOD": "SkywardSpine",
+    "type": 3,
+    "rarity": 5
+  },
+  "slingshot": {
+    "GOOD": "Slingshot",
+    "type": 4,
+    "rarity": 3
+  },
+  "snarehook": {
+    "GOOD": "SnareHook",
+    "type": 4,
+    "rarity": 4
+  },
+  "snowtombedstarsilver": {
+    "GOOD": "SnowTombedStarsilver",
+    "type": 2,
+    "rarity": 4
+  },
+  "solarpearl": {
+    "GOOD": "SolarPearl",
+    "type": 5,
+    "rarity": 4
+  },
+  "songofbrokenpines": {
+    "GOOD": "SongofBrokenPines",
+    "type": 2,
+    "rarity": 5
+  },
+  "songofstillness": {
+    "GOOD": "SongofStillness",
+    "type": 4,
+    "rarity": 4
+  },
+  "songofthevigil": {
+    "GOOD": "SongoftheVigil",
+    "type": 3,
+    "rarity": 4
+  },
+  "splendoroftranquilwaters": {
+    "GOOD": "SplendorofTranquilWaters",
+    "type": 1,
+    "rarity": 5
+  },
+  "staffofhoma": {
+    "GOOD": "StaffofHoma",
+    "type": 3,
+    "rarity": 5
+  },
+  "staffofthescarletsands": {
+    "GOOD": "StaffoftheScarletSands",
+    "type": 3,
+    "rarity": 5
+  },
+  "starcallerswatch": {
+    "GOOD": "StarcallersWatch",
+    "type": 5,
+    "rarity": 5
+  },
+  "starlightoffylkir": {
+    "GOOD": "StarlightOfFylkir",
+    "type": 1,
+    "rarity": 4
+  },
+  "starlightoffylkirsublimation": {
+    "GOOD": "StarlightOfFylkirSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "starpiercer": {
+    "GOOD": "Starpiercer",
+    "type": 1,
+    "rarity": 4
+  },
+  "starpiercersublimation": {
+    "GOOD": "StarpiercerSublimation",
+    "type": 1,
+    "rarity": 4
+  },
+  "sturdybone": {
+    "GOOD": "SturdyBone",
+    "type": 1,
+    "rarity": 4
+  },
+  "summitshaper": {
+    "GOOD": "SummitShaper",
+    "type": 1,
+    "rarity": 5
+  },
+  "sunnymorningsleepin": {
+    "GOOD": "SunnyMorningSleepIn",
+    "type": 5,
+    "rarity": 5
+  },
+  "superawesomemagickey": {
+    "GOOD": "SuperAwesomeMagicKey",
+    "type": 1,
+    "rarity": 4
+  },
+  "surfsup": {
+    "GOOD": "SurfsUp",
+    "type": 5,
+    "rarity": 5
+  },
+  "swordofdescension": {
+    "GOOD": "SwordofDescension",
+    "type": 1,
+    "rarity": 4
+  },
+  "swordofnarzissenkreuz": {
+    "GOOD": "SwordofNarzissenkreuz",
+    "type": 1,
+    "rarity": 4
+  },
+  "symphonistofscents": {
+    "GOOD": "SymphonistofScents",
+    "type": 3,
+    "rarity": 5
+  },
+  "talkingstick": {
+    "GOOD": "TalkingStick",
+    "type": 2,
+    "rarity": 4
+  },
+  "tamayurateinoohanashi": {
+    "GOOD": "TamayurateinoOhanashi",
+    "type": 3,
+    "rarity": 4
+  },
+  "thealleyflash": {
+    "GOOD": "TheAlleyFlash",
+    "type": 1,
+    "rarity": 4
+  },
+  "thebell": {
+    "GOOD": "TheBell",
+    "type": 2,
+    "rarity": 4
+  },
+  "theblacksword": {
+    "GOOD": "TheBlackSword",
+    "type": 1,
+    "rarity": 4
+  },
+  "thecatch": {
+    "GOOD": "TheCatch",
+    "type": 3,
+    "rarity": 4
+  },
+  "thedaybreakchronicles": {
+    "GOOD": "TheDaybreakChronicles",
+    "type": 4,
+    "rarity": 5
+  },
+  "thedockhandsassistant": {
+    "GOOD": "TheDockhandsAssistant",
+    "type": 1,
+    "rarity": 4
+  },
+  "thefirstgreatmagic": {
+    "GOOD": "TheFirstGreatMagic",
+    "type": 4,
+    "rarity": 5
+  },
+  "theflagstaff": {
+    "GOOD": "TheFlagstaff",
+    "type": 1,
+    "rarity": 4
+  },
+  "theflute": {
+    "GOOD": "TheFlute",
+    "type": 1,
+    "rarity": 4
+  },
+  "theotherside": {
+    "GOOD": "TheOtherSide",
+    "type": 1,
+    "rarity": 4
+  },
+  "thestringless": {
+    "GOOD": "TheStringless",
+    "type": 4,
+    "rarity": 4
+  },
+  "theunforged": {
+    "GOOD": "TheUnforged",
+    "type": 2,
+    "rarity": 5
+  },
+  "theviridescenthunt": {
+    "GOOD": "TheViridescentHunt",
+    "type": 4,
+    "rarity": 4
+  },
+  "thewidsith": {
+    "GOOD": "TheWidsith",
+    "type": 5,
+    "rarity": 4
+  },
+  "thrillingtalesofdragonslayers": {
+    "GOOD": "ThrillingTalesofDragonSlayers",
+    "type": 5,
+    "rarity": 3
+  },
+  "thunderingpulse": {
+    "GOOD": "ThunderingPulse",
+    "type": 4,
+    "rarity": 5
+  },
+  "tidalshadow": {
+    "GOOD": "TidalShadow",
+    "type": 2,
+    "rarity": 4
+  },
+  "tomeoftheeternalflow": {
+    "GOOD": "TomeoftheEternalFlow",
+    "type": 5,
+    "rarity": 5
+  },
+  "toukaboushigure": {
+    "GOOD": "ToukabouShigure",
+    "type": 1,
+    "rarity": 4
+  },
+  "travelershandysword": {
+    "GOOD": "TravelersHandySword",
+    "type": 1,
+    "rarity": 3
+  },
+  "tulaytullahsremembrance": {
+    "GOOD": "TulaytullahsRemembrance",
+    "type": 5,
+    "rarity": 5
+  },
+  "twinnephrite": {
+    "GOOD": "TwinNephrite",
+    "type": 5,
+    "rarity": 3
+  },
+  "ultimateoverlordsmegamagicsword": {
+    "GOOD": "UltimateOverlordsMegaMagicSword",
+    "type": 2,
+    "rarity": 4
+  },
+  "unbreakabledurandarte": {
+    "GOOD": "UnbreakableDurandarte",
+    "type": 1,
+    "rarity": 4
+  },
+  "urakumisugiri": {
+    "GOOD": "UrakuMisugiri",
+    "type": 1,
+    "rarity": 5
+  },
+  "verdict": {
+    "GOOD": "Verdict",
+    "type": 2,
+    "rarity": 5
+  },
+  "vividnotions": {
+    "GOOD": "VividNotions",
+    "type": 5,
+    "rarity": 5
+  },
+  "vortexvanquisher": {
+    "GOOD": "VortexVanquisher",
+    "type": 3,
+    "rarity": 5
+  },
+  "wanderingevenstar": {
+    "GOOD": "WanderingEvenstar",
+    "type": 5,
+    "rarity": 4
+  },
+  "wastergreatsword": {
+    "GOOD": "WasterGreatsword",
+    "type": 2,
+    "rarity": 1
+  },
+  "wavebreakersfin": {
+    "GOOD": "WavebreakersFin",
+    "type": 3,
+    "rarity": 4
+  },
+  "waveridingwhirl": {
+    "GOOD": "WaveridingWhirl",
+    "type": 5,
+    "rarity": 4
+  },
+  "waveridinwhirl": {
+    "GOOD": "WaveridingWhirl",
+    "type": 1,
+    "rarity": 4
+  },
+  "whiteblind": {
+    "GOOD": "Whiteblind",
+    "type": 2,
+    "rarity": 4
+  },
+  "whiteirongreatsword": {
+    "GOOD": "WhiteIronGreatsword",
+    "type": 2,
+    "rarity": 3
+  },
+  "whitelakefrostfeather": {
+    "GOOD": "WhitelakeFrostfeather",
+    "type": 1,
+    "rarity": 5
+  },
+  "whitetassel": {
+    "GOOD": "WhiteTassel",
+    "type": 3,
+    "rarity": 3
+  },
+  "windblumeode": {
+    "GOOD": "WindblumeOde",
+    "type": 4,
+    "rarity": 4
+  },
+  "wineandsong": {
+    "GOOD": "WineandSong",
+    "type": 5,
+    "rarity": 4
+  },
+  "wintersheavyheart": {
+    "GOOD": "WintersHeavyHeart",
+    "type": 5,
+    "rarity": 4
+  },
+  "wolffang": {
+    "GOOD": "WolfFang",
+    "type": 1,
+    "rarity": 4
+  },
+  "wolfsgravestone": {
+    "GOOD": "WolfsGravestone",
+    "type": 2,
+    "rarity": 5
+  },
+  "xiphosmoonlight": {
+    "GOOD": "XiphosMoonlight",
+    "type": 1,
+    "rarity": 4
+  },
+  "yayu": {
+    "GOOD": "Yayu",
+    "type": 1,
+    "rarity": 4
+  },
+  "yayusublimation": {
+    "GOOD": "YayuSublimation",
+    "type": 1,
+    "rarity": 4
+  }
+}
