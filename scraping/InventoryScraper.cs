@@ -269,13 +269,11 @@ namespace InventoryKamera
                 gray.Dispose();
 
                 blobCounter.ProcessImage(thresholded);
-                thresholded.Dispose();
-                // Note: Processing won't always detect all item rectangles on screen. Since the
-                // background isn't a solid color it's a bit trickier to filter out.
 
                 // Don't save overlapping blobs
                 List<Rectangle> rectangles = new List<Rectangle>();
                 List<Rectangle> blobRects = blobCounter.GetObjectsRectangles().ToList();
+                thresholded.Dispose(); // must be after GetObjectsRectangles (BlobCounter uses bitmap internally)
                 if (blobRects.Count == 0)
                     return (new List<Rectangle>(), 0, 0);
 

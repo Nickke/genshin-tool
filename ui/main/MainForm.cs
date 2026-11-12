@@ -694,8 +694,8 @@ namespace InventoryKamera
 
                     case System.Windows.Forms.LinkLabel ll:
                         ll.BackColor       = Color.Transparent;
-                        ll.ForeColor       = Accent;
-                        ll.LinkColor       = Accent;
+                        ll.ForeColor       = CrystalBlue;
+                        ll.LinkColor       = CrystalBlue;
                         ll.ActiveLinkColor = Color.FromArgb(0, 90, 180);
                         break;
 
