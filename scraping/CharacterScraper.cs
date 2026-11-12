@@ -553,7 +553,8 @@ namespace InventoryKamera
 						break;
                 }
 
-                while (talents[talent] < 1 || talents[talent] > 15)
+                int talentAttempts = 0;
+                while ((talents[talent] < 1 || talents[talent] > 15) && talentAttempts++ < 50)
 				{
 					Bitmap talentLevel = Navigation.CaptureRegion(region);
 

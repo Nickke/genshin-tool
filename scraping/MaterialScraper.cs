@@ -176,8 +176,8 @@ namespace InventoryKamera
 			}
 
 			// LastPage: scroll to bottom and scan remaining items
-			// scroll down as much as possible
-			for (int i = 0; i < 20; i++)
+			// scroll down as much as possible (200 scrolls to reach the end of large inventories)
+			for (int i = 0; i < 200; i++)
 			{
 				Navigation.sim.Mouse.VerticalScroll(-1);
 				Navigation.SystemWait(Navigation.Speed.InventoryScroll);
