@@ -1,5 +1,4 @@
 # Binari non necessari
-*.dll
 *.pdb
 
 # File di log e output personali
