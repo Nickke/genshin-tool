@@ -993,6 +993,34 @@
     ],
     "WeaponType": 1
   },
+  "wonderlandmanekin": {
+    "GOOD": "WonderlandManekin",
+    "ConstellationName": [
+      "——"
+    ],
+    "ConstellationOrder": [
+      "skill",
+      "burst"
+    ],
+    "Element": [
+      "none"
+    ],
+    "WeaponType": 1
+  },
+  "wonderlandmanekina": {
+    "GOOD": "WonderlandManekina",
+    "ConstellationName": [
+      "——"
+    ],
+    "ConstellationOrder": [
+      "skill",
+      "burst"
+    ],
+    "Element": [
+      "none"
+    ],
+    "WeaponType": 1
+  },
   "mavuika": {
     "GOOD": "Mavuika",
     "ConstellationName": [
