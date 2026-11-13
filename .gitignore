@@ -1,10 +1,10 @@
-# Binari non necessari
-*.pdb
-
-# File di log e output personali
+# File creati dall'EXE durante l'esecuzione
+logging/
 *.log
-genshinData_GOOD_*.json
 
-# Windows
+# Output JSON (vanno in genshin-data, non qui)
+GenshinData/
+
+# File temporanei Windows
 Thumbs.db
 desktop.ini
