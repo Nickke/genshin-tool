@@ -1,4 +1,4 @@
-{
+﻿{
   "aino": {
     "GOOD": "Aino",
     "ConstellationName": [
@@ -993,6 +993,34 @@
     ],
     "WeaponType": 1
   },
+  "wonderlandmanekin": {
+    "GOOD": "WonderlandManekin",
+    "ConstellationName": [
+      "——"
+    ],
+    "ConstellationOrder": [
+      "skill",
+      "burst"
+    ],
+    "Element": [
+      "none"
+    ],
+    "WeaponType": 1
+  },
+  "wonderlandmanekina": {
+    "GOOD": "WonderlandManekina",
+    "ConstellationName": [
+      "——"
+    ],
+    "ConstellationOrder": [
+      "skill",
+      "burst"
+    ],
+    "Element": [
+      "none"
+    ],
+    "WeaponType": 1
+  },
   "mavuika": {
     "GOOD": "Mavuika",
     "ConstellationName": [
@@ -1834,6 +1862,20 @@
     ],
     "Element": [
       "geo"
+    ],
+    "WeaponType": 1
+  },
+  "valeriy": {
+    "GOOD": "Valeriy",
+    "ConstellationName": [
+      "Exercitus Fulminis"
+    ],
+    "ConstellationOrder": [
+      "skill",
+      "burst"
+    ],
+    "Element": [
+      "electro"
     ],
     "WeaponType": 1
   }
