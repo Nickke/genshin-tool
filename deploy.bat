@@ -2,7 +2,7 @@
 REM Script di deploy: copia i file del tool in una cartella di esecuzione dedicata
 REM Eseguire dopo git pull dalla cartella genshin-tool
 
-SET DEST=C:\GenshinKamera
+SET DEST=D:\GenshinKamera
 
 echo Creo cartella di esecuzione: %DEST%
 if not exist "%DEST%" mkdir "%DEST%"
